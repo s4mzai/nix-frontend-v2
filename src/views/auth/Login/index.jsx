@@ -1,4 +1,5 @@
-import dtutimesIcon from '../../assets/dtutimesIcon.svg'
+import dtutimesIcon from '../../../assets/dtutimesIcon.svg'
+
 export default function Login() {
     return (
       <>
