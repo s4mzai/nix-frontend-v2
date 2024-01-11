@@ -1,9 +1,14 @@
 import App from '@/App.jsx';
 import ErrorPage from '@/error-page';
 
+import { Outlet } from 'react-router-dom';
+
 import NewStory from '@/features/story/NewStory';
 import Login from '@/features/auth/Login';
-import { Outlet } from 'react-router-dom';
+import AllRoles from '@/features/roles/AllRoles';
+import NewRole from '@/features/roles/NewRole';
+
+
 
 export const AppRoutes = [
     {
@@ -22,6 +27,20 @@ export const AppRoutes = [
                     {
                         path: 'new-story', 
                         element: <NewStory/>
+                    },
+                ]
+            },
+            {
+                path: 'role/', 
+                element: <> role root for now (TODO) <Outlet/></>,
+                children: [
+                    {
+                        path: 'all-roles', 
+                        element: <AllRoles/>,
+                    },
+                    {
+                        path: 'new-role', 
+                        element: <NewRole/>,
                     },
                 ]
             },
