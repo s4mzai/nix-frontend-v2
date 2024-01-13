@@ -11,9 +11,11 @@ export default function NewStory() {
     const [slug, setSlug] = useState('slug');
     const [selectedCategory, setSelectedCategory] = useState("1");
     const [createdAt, setCreatedAt] = useState('');
+
     const [blogImage, setBlogImage] = useState(undefined);
     const [metaDescription, setMetaDescription] = useState('');
     const [metaTitle, setMetaTitle] = useState('');
+
 
     const {user} = useSelector(state => state.auth)
 
@@ -30,7 +32,6 @@ export default function NewStory() {
           console.log(error);
       }
     }
-
 
     return (
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded ">
@@ -82,20 +83,6 @@ export default function NewStory() {
 
           />
         </div>
-        <div className="mb-6">
-          <label className="block mb-2" htmlFor="created-at">
-            Created at
-          </label>
-          <input
-            className="w-full p-2 border border-gray-300 rounded"
-            id="created-at"
-            placeholder="MM-DD-YYYY HH:mm:ss A"
-            value={createdAt}
-            onChange={(e) => setCreatedAt(e.target.value)}
-            disabled={true}
-          />
-        </div>
-
         <div className="mb-6">
           <label className="block mb-2" htmlFor="blog-image">
             Blog image
