@@ -1,30 +1,15 @@
 import { useEffect, useState } from "react";
 import { TextEditor } from "../../../components/TextEditor";
 
-const getCurrentDateTime = () => {
-    const now = new Date();
-    const options = {
-        year: 'numeric', month: 'numeric', day: 'numeric',
-        hour: 'numeric', minute: 'numeric', second: 'numeric',
-        hour12: true,
-      };
-    return now.toLocaleString('en-US', options);
-};
 
 export default function NewStory() {
     const [title, setTitle] = useState('');
     const [byliner, setByliner] = useState('');
     const [content, setContent] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [createdAt, setCreatedAt] = useState('');
     const [blogImage, setBlogImage] = useState(undefined);
     const [metaDescription, setMetaDescription] = useState('');
     const [metaTitle, setMetaTitle] = useState('');
-
-    useEffect(() => {
-        setCreatedAt(getCurrentDateTime());
-    }, []);
-
 
     return (
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded ">
@@ -75,20 +60,6 @@ export default function NewStory() {
 
           />
         </div>
-        <div className="mb-6">
-          <label className="block mb-2" htmlFor="created-at">
-            Created at
-          </label>
-          <input
-            className="w-full p-2 border border-gray-300 rounded"
-            id="created-at"
-            placeholder="MM-DD-YYYY HH:mm:ss A"
-            value={createdAt}
-            onChange={(e) => setCreatedAt(e.target.value)}
-            disabled={true}
-          />
-        </div>
-
         <div className="mb-6">
           <label className="block mb-2" htmlFor="blog-image">
             Blog image
