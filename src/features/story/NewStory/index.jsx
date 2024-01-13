@@ -1,18 +1,41 @@
 import { useEffect, useState } from "react";
 import { TextEditor } from "../../../components/TextEditor";
-
+import { toast } from 'react-toastify';
+import API from "../../../services/API";
+import { useSelector } from 'react-redux';
 
 export default function NewStory() {
     const [title, setTitle] = useState('');
-    const [byliner, setByliner] = useState('');
-    const [content, setContent] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [biliner, setBiliner] = useState('');
+    const [content, setContent] = useState('content');
+    const [slug, setSlug] = useState('slug');
+    const [selectedCategory, setSelectedCategory] = useState("1");
+    const [createdAt, setCreatedAt] = useState('');
+
     const [blogImage, setBlogImage] = useState(undefined);
     const [metaDescription, setMetaDescription] = useState('');
     const [metaTitle, setMetaTitle] = useState('');
 
+
+    const {user} = useSelector(state => state.auth)
+
+    const handleSubmit = async () => {
+      try {
+        const category_id = parseInt(selectedCategory, 10);
+        
+        const { data } = await API.post('/blog/create-blog', { title: title, slug: slug, biliner: biliner, body: content, category_id, meta_title: metaTitle , meta_description: metaDescription });
+        if (data.success === "success") {
+            toast.success("New record added");
+            window.location.reload();
+        }
+      } catch (error) {
+          console.log(error);
+      }
+    }
+
     return (
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded ">
+        {user ? <h1>`${user}`</h1> : <h1>HY</h1>}
         <h1 className="text-4xl font-bold mb-4">
           <input 
             className="text-4xl  mb-4 focus:outline-none leading-tight"
@@ -31,8 +54,8 @@ export default function NewStory() {
             className="w-full p-2 border border-gray-300 rounded"
             id="byliner"
             placeholder="Byliner sells the story, give this a byliner."
-            value={byliner}
-            onChange={(e) => setByliner(e.target.value)}           
+            value={biliner}
+            onChange={(e) => setBiliner(e.target.value)}           
           />
         </div>
 
@@ -99,7 +122,7 @@ export default function NewStory() {
 
         <div className="flex space-x-4">
           <button className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500">Save as Draft</button>
-          <button className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500">Submit for approval</button>
+          <button className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500" onClick={handleSubmit}>Submit for approval</button>
         </div>
       </div>
     )
