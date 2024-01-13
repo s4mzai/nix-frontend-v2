@@ -6,7 +6,7 @@ import { AppRoutes } from '@/routes';
 function App() {
   return (
     <>
-      hi this is root component (for now)
+      hi this is root component (for now) 
       <Outlet/>
     </>
   )
