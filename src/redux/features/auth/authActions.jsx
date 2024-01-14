@@ -53,3 +53,22 @@ export const userRegister = createAsyncThunk(
         }
     }
 )
+
+export const getCurrentUser = createAsyncThunk(
+    'auth/getCurrentUser',
+    async ({ rejectWithValue }) => {
+        try {
+            const {data} = await API.get('/user/current-user')
+            if (data.status === "success") {
+                return data;
+            }
+        } catch (error) {
+            console.log(error);
+            if (error.response && error.response.data.message) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(error);
+            }
+        }
+    }
+)
