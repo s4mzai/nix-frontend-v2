@@ -1,13 +1,25 @@
-import { Outlet } from 'react-router-dom';
-import './App.css'
-import { AppRoutes } from '@/routes';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from './public-protected routes/ProtectedRoute';
+import HomePage from './features/HomePage';
+import Login from '@/features/auth/Login';
+import PublicRoute from './public-protected routes/PublicRoute';
 
 
 function App() {
   return (
     <>
-      hi this is root component (for now) 
-      <Outlet/>
+      <ToastContainer/>
+      <Routes>
+        <Route path='/' element= {
+          <ProtectedRoute><HomePage/></ProtectedRoute>
+        }/>
+        <Route path='/login' element= {
+          <PublicRoute><Login/></PublicRoute>
+          // <Login/>
+        }/>
+      </Routes>
     </>
   )
 }
