@@ -3,11 +3,12 @@ import { useDispatch } from 'react-redux'
 import API from '../services/API';
 import { getCurrentUser } from '../redux/features/auth/authActions';
 import { Navigate } from 'react-router-dom';
+import { protectedRoutes } from './protected';
+import { useRoutes } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-    const dispatch = useDispatch();
+    const element = useRoutes([...protectedRoutes]);
 
-    //get current user
     const getUser = async () => {
         try {
             const { data } = await API.get('/user/current-user');
@@ -23,10 +24,11 @@ const ProtectedRoute = ({ children }) => {
         getUser();
     });
 
+    
     if (localStorage.getItem('token')) {
-        return children;
+        return <>{element}</>;
     } else {
-        return <Navigate to='/login' />
+        return <Navigate to='/login'/>
     }
 }
 
