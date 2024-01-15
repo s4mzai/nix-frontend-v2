@@ -10,15 +10,16 @@ import PublicRoute from './public-protected routes/PublicRoute';
 function App() {
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <Routes>
-        <Route path='/' element= {
-          <ProtectedRoute><HomePage/></ProtectedRoute>
-        }/>
-        <Route path='/login' element= {
-          <PublicRoute><Login/></PublicRoute>
-          // <Login/>
-        }/>
+        <Route path='/' element={
+          <ProtectedRoute><HomePage /></ProtectedRoute>
+          // <HomePage />
+        } />
+        <Route path='/login' element={
+          <PublicRoute><Login /></PublicRoute>
+          // <Login />
+        } />
       </Routes>
     </>
   )
