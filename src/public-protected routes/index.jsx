@@ -37,7 +37,7 @@ const AppRoute = ({ children }) => {
     return (
         <>
             <Routes>
-            <Route path="/login" element={<NewRole/>} />
+            <Route path="/login" element={<Login/>} />
             <Route path="/*" element={<ProtectedRoute />} />
             <Route path="/" element={<HomePage />} />
             </Routes>
