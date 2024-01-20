@@ -7,7 +7,7 @@ export default function Collapsible (props) {
               <h2 className="text-xl font-medium">{props.label}</h2>
               <ChevronDownIcon className="text-gray-400" />
             </summary>
-            <div className="p-4">
+            <div className="p-4 border-l-4 border-blue-500">
               {props.children}
             </div>
           </details>
