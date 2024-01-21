@@ -12,25 +12,18 @@ export default function AllRoles() {
     const rolesEndpoint = '/role';
     const permsEndpoint = '/permissions';
 
-    API.get(permsEndpoint)
-      .then((response) => {
-        setPermMap(response.data.data);
+    Promise.all([
+      API.get(permsEndpoint),
+      API.get(rolesEndpoint),
+    ]).then(([permsResponse, rolesResponse]) => {
+        setPermMap(permsResponse.data.data);
+        setRolesList(rolesResponse.data.data);
         setLoading(false);
-      })
+    })
       .catch((error) => {
         setError(error);
         setLoading(false);
-      });
-
-    API.get(rolesEndpoint)
-      .then(response => {
-        setRolesList(response.data.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
+      })   
   }, []);
 
   return (
