@@ -37,7 +37,7 @@ export default function AllRoles() {
         ) : error ? (
           <p>Error: {error.message} </p>
         ) : (
-          <div className="space-y-4">
+          <div >
           {rolesList.map((role) => (
             <div key={role.role_id}>
              <Collapsible label={role.role_name.charAt(0).toUpperCase() + role.role_name.slice(1).toLowerCase()}>

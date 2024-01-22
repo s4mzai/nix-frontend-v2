@@ -1,56 +1,96 @@
 import { useEffect, useState } from "react";
 import MyMultiselect from "@/components/MultiSelect";
+import API from "../../../services/API";
+import { toast } from "react-toastify";
 
-const permissionsList = [
-  {name: 'read'},
-  {name: 'write'},
-  {name: 'delete'},
-  {name: 'publish'},
-];
+// const permissionsList = [
+//   {name: 'read'},
+//   {name: 'write'},
+//   {name: 'delete'},
+//   {name: 'publish'},
+// ];
 
-const rolesList = [
-  {name: 'editor', permissions: [ {name: 'read'}, {name: 'write'}, {name: 'delete'},]},
-  {name: 'superuser', permissions: [ {name: 'read'}, {name: 'write'}, {name: 'delete'}, {name: 'publish'},]},
-];
+// const rolesList = [
+//   {name: 'editor', permissions: [ {name: 'read'}, {name: 'write'}, {name: 'delete'},]},
+//   {name: 'superuser', permissions: [ {name: 'read'}, {name: 'write'}, {name: 'delete'}, {name: 'publish'},]},
+// ];
 
 export default function NewRole() {
   const [roleName, setRoleName] = useState("");
   const [selectedPermissions, setSelectedPermissions] = useState([]);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
 
-  const handleToggleChange = (e) => {
+  //get requests for permMap and roles to populate dropdown
+  const [permMap, setPermMap] = useState({});
+  const [rolesList, setRolesList] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  //to toggle between update and create mode 
+  const handleToggleChange = (e) => {         
     setIsUpdateMode((prevMode) => !prevMode);
     setRoleName("");
     setSelectedPermissions([]);
   }
 
-  const handleRoleNameChange = (selectedRole) => {
+  const handleRoleNameChange = (e) => {
+    const roleData = e[0];
+    console.log(e[0]);
     if (isUpdateMode) {
-      setRoleName(selectedRole?.name);
-      setSelectedPermissions(selectedRole?.permissions || []);  
+      setRoleName(roleData.name);
+      setSelectedPermissions(roleData.permissions.map((index) => ({name: permMap[index], id: index})));  
     } else {
-      setRoleName(selectedRole.target.value);
+      setRoleName(e.target.value);
     }
   };
 
-  const handlePermissionChange = (selectedOptions) => {
-    console.log(selectedOptions);
-    if (Array.isArray(selectedOptions)) {
-      setSelectedPermissions(selectedOptions.map(option => ({ name: option.name })));
-    }
+  const handlePermissionChange = (selectedItems) => {
+    setSelectedPermissions(selectedItems);
+    console.log(selectedItems);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("submitted");
+    const request = {
+      role_name: roleName,
+      permissions: selectedPermissions.map(permission => permission.id),
+    };
+
+    const updateRoleEndpoint = '/role/update';
+
+    console.log(request, selectedPermissions);
+    API.post(updateRoleEndpoint, request)
+      .then(toast.success("successfully submitted"))
+      .catch(toast.success("failed"));
+
+    //alert("submitted");
   };
 
   useEffect(() => {
+    const rolesEndpoint = '/role';
+    const permsEndpoint = '/permissions';
+
+    Promise.all([
+      API.get(permsEndpoint),
+      API.get(rolesEndpoint),
+    ]).then(([permsResponse, rolesResponse]) => {
+        setPermMap(permsResponse.data.data);
+        setRolesList(rolesResponse.data.data);
+        setLoading(false);
+    })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      })   
+    
+    console.log(rolesList);
  
     if (isUpdateMode) {
       // const roles = API.get('/role/update');
       // console.log(roles);
     }
+    //useEffect runs when value of isUpdateMode changes
   }, [isUpdateMode]);
 
   return (
@@ -65,14 +105,14 @@ export default function NewRole() {
         <span className="ms-3 text-sm font-medium text-gray-900 ">Switch Mode</span>
       </label>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6">
         <div className="flex flex-col">
           <label className="text-2xl font-medium leading-none mb-2" htmlFor="name">
             Name
           </label>
           {isUpdateMode ? (
             <MyMultiselect
-              options={rolesList}
+              options={rolesList.map(role => ({name: role.role_name, id: role.role_id, permissions: role.permissions}))}
               selectedOptions={[{ name: roleName, permissions: selectedPermissions }]}
               onSelectionChange={handleRoleNameChange}
               isSingleSelect={true}
@@ -90,15 +130,27 @@ export default function NewRole() {
         <fieldset className="flex flex-col">
           <label className="text-2xl text-black font-medium leading-none mb-2">Permissions</label>
           <MyMultiselect
-            options={permissionsList}
+            options={Object.values(permMap).map((perm, index) => ({name: perm, id: index}))}
             selectedOptions={selectedPermissions}
             onSelectionChange={handlePermissionChange}
             isSingleSelect={false}
           />
         </fieldset>
+
+      {isUpdateMode ? (
+          <button className="update-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl"
+          type="update"
+          onClick={handleSubmit}>Update
+          </button>
+      ) : (
         <button className="create-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl"
                 type="create"
-                onClick={handleSubmit}>Create</button>
+                onClick={handleSubmit}>Create
+        </button>
+      )}
+
+      
+        
       </form>
     </div>
   )

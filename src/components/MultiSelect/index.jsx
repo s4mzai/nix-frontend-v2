@@ -6,14 +6,14 @@ const MyMultiselect = ({ options, selectedOptions, onSelectionChange, isSingleSe
     <Multiselect
       options={options}
       selectedValues={selectedOptions}
-      onSelect={(_, selectedItems) => onSelectionChange(selectedItems)}
-      onRemove={(_, selectedItems) => onSelectionChange(selectedItems)}
+      onSelect={(selectedItems) => onSelectionChange(selectedItems)}
+      onRemove={(selectedItems) => onSelectionChange(selectedItems)}
       displayValue="name"
-      showCheckbox="true"
-      avoidHighlightFirstOption="true"
+      showCheckbox={true}
+      avoidHighlightFirstOption={true}
       placeholder="placeholder"
-      hidePlaceholder="true"
-      showArrow="true"
+      hidePlaceholder={true}
+      showArrow={true}
       singleSelect={isSingleSelect}
     />
   );
