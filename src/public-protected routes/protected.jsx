@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom';
 
-import ErrorPage from '../error-page';
+import ErrorPage from '@/error-page';
 
 import NewStory from '@/features/story/NewStory';
 import AllRoles from '@/features/roles/AllRoles';
 import NewRole from '@/features/roles/NewRole';
-import Login from '../features/auth/Login';
+import Login from '@/features/auth/Login';
+import AllMembers from '@/features/member/allMembers';
 
 export const protectedRoutes = [
     {
@@ -35,6 +36,16 @@ export const protectedRoutes = [
                         path: 'new-role/', 
                         element: <NewRole/>,
                     },
+                ]
+            },
+            {
+                path: 'member/',
+                element: <><Outlet/></>,
+                children: [
+                    {
+                        path: "all-members/",
+                        element: <AllMembers/>
+                    }
                 ]
             },
         ],
