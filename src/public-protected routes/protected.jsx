@@ -5,18 +5,19 @@ import ErrorPage from '@/error-page';
 import NewStory from '@/features/story/NewStory';
 import AllRoles from '@/features/roles/AllRoles';
 import NewRole from '@/features/roles/NewRole';
-import Login from '@/features/auth/Login';
 import AllMembers from '@/features/member/allMembers';
+import Layout from '@/features/HomePage';
 
 export const protectedRoutes = [
     {
         path: '/',
-        element: <>hi<Outlet/> </>,
+        element: <Layout><Outlet/> </Layout>,
+        
         errorElement: <ErrorPage/>,
         children: [
             {
                 path: 'story/', 
-                element: <> story root for now (TODO) <Outlet/></>,
+                element: <><Outlet/></>,
                 children: [
                     {
                         path: 'new-story/', 
@@ -26,7 +27,7 @@ export const protectedRoutes = [
             },
             {
                 path: 'role/', 
-                element: <> role root for now (TODO) <Outlet/></>,
+                element: <><Outlet/></>,
                 children: [
                     {
                         path: 'all-roles/', 
