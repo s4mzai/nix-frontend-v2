@@ -1,6 +1,6 @@
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import MyMultiselect from "@/components/MultiSelect";
-import API from "../../../services/API";
+import API from "@/services/API";
 import { toast } from "react-toastify";
 
 const initialState = {
@@ -142,8 +142,8 @@ export default function NewRole() {
       dispatch({ type: "set_loading", payload: false });
     })
       .catch((error) => {
-        setError(error);
-        setLoading(false);
+        dispatch({type: "set_error", payload: error});
+        dispatch({type: "set_loading", payload: false});
       })   
     
 
@@ -211,10 +211,7 @@ export default function NewRole() {
                 type="create"
                 onClick={handleSubmit}>Create
         </button>
-      )}
-
-      
-        
+      )}  
       </form>
     </div>
   )
