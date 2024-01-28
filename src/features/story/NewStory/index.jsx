@@ -1,41 +1,125 @@
-import { useEffect, useState } from "react";
-import { TextEditor } from "../../../components/TextEditor";
+import { useState, useReducer} from "react";
+import { TextEditor } from "@/components/TextEditor";
 import { toast } from 'react-toastify';
-import API from "../../../services/API";
+import API from "@/services/API";
 import { useSelector } from 'react-redux';
 
+const initialState = {
+  title: "",
+  byliner: "",
+  content: "",
+  slug: "",
+  selectedCategory: 0, //to do 
+  createdAt: '',
+  blogImage: undefined,
+  metaDescription: '',
+  metaTitle: '',
+  error: null,
+};
+
+const reducer = (state, action) => {
+  const updatedData = { ...state };
+  switch (action.type) {
+    case "set_title":
+      updatedData.title = action.payload;
+      break;
+    case "set_byliner":
+      updatedData.byliner = action.payload;
+      break;
+    case "set_content":
+      updatedData.content = action.payload;
+      break;
+    case "set_slug":
+      updatedData.slug = action.payload;
+      break;
+    case "set_selected_category":
+      updatedData.selectedCategory = action.payload;
+      break;
+    case "set_blog_image":
+      updatedData.blogImage = action.payload;
+      break;
+    case "set_meta_description":
+      updatedData.metaDescription = action.payload;
+      break;
+    case "set_meta_title":
+      updatedData.metaTitle = action.payload;
+      break;
+    case "set_error":
+      updatedData.error = action.payload;
+      break;
+    default:
+      return updatedData;
+  }
+  return updatedData;
+}
+
 export default function NewStory() {
-    const [title, setTitle] = useState('');
-    const [biliner, setBiliner] = useState('');
-    const [content, setContent] = useState('content');
-    const [slug, setSlug] = useState('slug');
-    const [selectedCategory, setSelectedCategory] = useState("1");
-    const [createdAt, setCreatedAt] = useState('');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-    const [blogImage, setBlogImage] = useState(undefined);
-    const [metaDescription, setMetaDescription] = useState('');
-    const [metaTitle, setMetaTitle] = useState('');
+  const {
+    title,
+    byliner,
+    content,
+    slug,
+    selectedCategory,
+    blogImage,
+    metaDescription,
+    metaTitle,
+    error,
+  } = state;
 
+    // const [title, setTitle] = useState('');
+    // const [byliner, setByliner] = useState('');
+    // const [content, setContent] = useState('');
+    // const [slug, setSlug] = useState('slug');
+    // const [selectedCategory, setSelectedCategory] = useState("1");
+
+    // const [blogImage, setBlogImage] = useState(undefined);
+    // const [metaDescription, setMetaDescription] = useState('');
+    // const [metaTitle, setMetaTitle] = useState('');
 
     const {user} = useSelector(state => state.auth)
 
-    const handleSubmit = async () => {
-      try {
-        const category_id = parseInt(selectedCategory, 10);
-        
-        const { data } = await API.post('/blog/create-blog', { title: title, slug: slug, biliner: biliner, body: content, category_id, meta_title: metaTitle , meta_description: metaDescription });
-        if (data.success === "success") {
-            toast.success("New record added");
-            window.location.reload();
-        }
-      } catch (error) {
-          console.log(error);
+    const categories = ["Editorial", "Blog", "Interview", "Edition"];
+
+    const handleSubmit = (e, saveAsDraft) => {
+      e.preventDefault();
+      const createEndPoint = '/blog/create-blog';
+
+      const createRequest = {
+          title: title,
+          byliner: byliner,
+          slug: slug,
+          body: content,
+          category_id: 0,
+          meta_title: metaTitle,
+          meta_description: metaDescription,
+          user_id: user.id,
+          saveAsDraft: saveAsDraft,
       }
+
+      API.post(createEndPoint, createRequest)
+        .then(() => {
+          const successMessage = saveAsDraft ? "Successfully saved" : "Successfully submitted";
+          toast.success(successMessage, {
+            onClose: () => {
+              //let the toast notif be seen its v pretty 
+              if(!saveAsDraft) {
+                setTimeout(() => {
+                  window.location.reload();
+                }, 2000);
+              }            
+            }
+          });         
+        })
+        .catch((error) => toast.error(error));
     }
+
+    if (error) return <p>Error: {error.message} </p>;
 
     return (
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded ">
-        {user ? <h1>`${user}`</h1> : <h1>HY</h1>}
+        {/* {user ? <h1>{user.name}</h1> : <h1>HY</h1>} */}
         <h1 className="text-4xl font-bold mb-4">
           <input 
             className="text-4xl  mb-4 focus:outline-none leading-tight"
@@ -43,7 +127,7 @@ export default function NewStory() {
             placeholder="Give this story some title"
             autoFocus={true}
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => dispatch({type: "set_title", payload: e.target.value})}
           />
         </h1>
         <div className="mb-6 ">
@@ -54,22 +138,24 @@ export default function NewStory() {
             className="w-full p-2 border border-gray-300 rounded"
             id="byliner"
             placeholder="Byliner sells the story, give this a byliner."
-            value={biliner}
-            onChange={(e) => setBiliner(e.target.value)}           
+            value={byliner}
+            onChange={(e) => dispatch({type: "set_byliner", payload: e.target.value})}           
           />
         </div>
 
         <div className="mb-6">
-          <label className="block mb-2" htmlFor="byliner">
+          <label className="block mb-2">
               Content
-          </label>
-          <div className="w-full border-gray-300 rounded">
-            <TextEditor></TextEditor>
+              <div className="py-2 w-full border-gray-300 rounded">
+              <TextEditor
+                value={content}
+                onChange={(value) => dispatch({ type: "set_content", payload: value })}
+              />
           </div>
-
+          </label>
+          
         </div>
         
-
         <h2 className="text-2xl font-semibold mb-4">SEO Details</h2>
         <div className="mb-6">
           <label className="block mb-2" htmlFor="category">
@@ -79,9 +165,14 @@ export default function NewStory() {
             className="w-full p-2 border border-gray-300 rounded"
             id="category"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-
-          />
+            onChange={(e) => dispatch({type: "set_selected_category", payload: e.target.value})}
+          >
+            {categories.map((category) => (
+              <option className="bg-white border-none" key={category} value={category.toLowerCase()}>
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="mb-6">
           <label className="block mb-2" htmlFor="blog-image">
@@ -92,37 +183,50 @@ export default function NewStory() {
             id="blog-image" 
             type="file" 
             value={blogImage}
-            onChange={(e) => setBlogImage(e.target.files[0])}/>
+            onChange={(e) => dispatch({type: "set_blog_image", payload: e.target.files[0]})}
+          />
         </div>
 
         <div className="mb-6">
           <label className="block mb-2" htmlFor="meta-description">
-            Meta Description here
+            Meta Description
           </label>
           <textarea
             className="w-full p-2 border border-gray-300 rounded h-20"
             id="meta-description"
-            placeholder="Meta Description here"
+            placeholder="Enter meta description here"
             value={metaDescription}
-            onChange={(e) => setMetaDescription(e.target.value)}
+            onChange={(e) => dispatch({type: "set_meta_description", payload: e.target.value})}
           />
         </div>
         <div className="mb-6">
           <label className="block mb-2" htmlFor="meta-title">
-            Meta Title here
+            Meta Title
           </label>
           <textarea
             className="w-full p-2 border border-gray-300 rounded h-20"
             id="meta-title"
-            placeholder="Meta Title here"
+            placeholder="Enter meta title here"
             value={metaTitle}
-            onChange={(e) => setMetaTitle(e.target.value)}
+            onChange={(e) => dispatch({type: "set_meta_title", payload: e.target.value})}
+          />
+        </div>
+        <div className="mb-6">
+          <label className="block mb-2" htmlFor="slug">
+            Slug
+          </label>
+          <input
+            className="w-full p-2 border border-gray-300 rounded"
+            id="slug"
+            placeholder="Enter slug here"
+            value={slug}
+            onChange={(e) => dispatch({type: "set_slug", payload: e.target.value})}
           />
         </div>
 
         <div className="flex space-x-4">
-          <button className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500">Save as Draft</button>
-          <button className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500" onClick={handleSubmit}>Submit for approval</button>
+          <button className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500" onClick={(e) => handleSubmit(e, true)}>Save as Draft</button>
+          <button className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500" onClick={(e) => handleSubmit(e, false)}>Submit for approval</button>
         </div>
       </div>
     )

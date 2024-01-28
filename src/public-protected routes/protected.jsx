@@ -6,7 +6,7 @@ import NewStory from '@/features/story/NewStory';
 import AllRoles from '@/features/roles/AllRoles';
 import NewRole from '@/features/roles/NewRole';
 import AllMembers from '@/features/member/allMembers';
-import Layout from '@/features/HomePage';
+import Layout from '@/features/Layout';
 
 export const protectedRoutes = [
     {
