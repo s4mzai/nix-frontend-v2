@@ -2,7 +2,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import './index.css';
 
-export const TextEditor = (value, onChange) => {
+export const TextEditor = ({value, onChange}) => {
     return <CKEditor
         editor={ ClassicEditor }
         config={{
@@ -20,15 +20,13 @@ export const TextEditor = (value, onChange) => {
         }}
         
         onReady={ editor => {
-            console.log( 'Editor is ready to use!', editor );
-            //editor.ui.view.editable.element.style.minHeight = "150px";
+            //console.log( 'Editor is ready to use!', editor );
         }}
         onBlur={ ( event, editor ) => {
-            console.log( 'Blur.', editor );
+           // console.log( 'Blur.', editor );
         } }
         onFocus={ ( event, editor ) => {  
-             //
-            console.log( 'Focus.', editor );
+            //console.log( 'Focus.', editor );
         } }
     />
 }
