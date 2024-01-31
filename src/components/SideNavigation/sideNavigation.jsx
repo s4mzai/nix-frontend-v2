@@ -1,8 +1,38 @@
 import React, { useState } from 'react';
-// import dtutimesIcon from '../../assets/dtutimesIcon.svg';
 import { SocialIcon } from 'react-social-icons';
 import { Link } from 'react-router-dom';
 import { FaAngleRight, FaAngleDown } from 'react-icons/fa';
+
+const socialLinks = [
+  { url: 'mailto:dtutimes@dtu.ac.in', bgColor: '#252525' },
+  { url: 'https://twitter.com/dtutimes', bgColor: '#252525' },
+  { url: 'https://www.facebook.com/dtutimes/', bgColor: '#252525' },
+  { url: 'https://www.instagram.com/dtu_times/', bgColor: '#252525' },
+];
+
+const sideItems = [
+  { to: '/profile', label: 'Profile' },
+  { to: '/login', label: 'Logout' },
+  { to: '/dashboard', label: 'Dashboard' },
+  {
+    to: '/story',
+    label: 'Story',
+    submenuItems: [{ to: '/new-story', label: 'New Story' }],
+  },
+  {
+    to: '/role',
+    label: 'Role',
+    submenuItems: [
+      { to: '/all-roles', label: 'All Roles' },
+      { to: '/new-role', label: 'New Role' },
+    ],
+  },
+  {
+    to: '/member',
+    label: 'Member',
+    submenuItems: [{ to: '/all-members', label: 'All Members' }],
+  },
+];
 
 const SidebarLink = ({ to, label, isOpen, onClick }) => {
   return (
@@ -40,7 +70,7 @@ const SideNavigation = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-[280px] bg-[#252525] text-white p-4">
+    <div className="flex flex-col min-h-screen w-[280px] bg-[#252525] text-white p-4">
       <div className="m-4 p-4">
         <a
           href="https://nix.dtutimes.com"
@@ -49,7 +79,6 @@ const SideNavigation = () => {
           <img
             className="h-20 pr-4"
             src="https://nix.dtutimes.com/logo-light.png"
-            // src={dtutimesIcon}
             alt="dtutimesIcon"
           />
         </a>
@@ -57,27 +86,11 @@ const SideNavigation = () => {
           <span>DTU Times </span>
           <span>2024</span>
           <ul className="flex justify-center">
-            <li>
-              <SocialIcon url="mailto:dtutimes@dtu.ac.in" bgColor="#252525" />
-            </li>
-            <li>
-              <SocialIcon
-                url="https://twitter.com/dtutimes"
-                bgColor="#252525"
-              />
-            </li>
-            <li>
-              <SocialIcon
-                url="https://www.facebook.com/dtutimes/"
-                bgColor="#252525"
-              />
-            </li>
-            <li>
-              <SocialIcon
-                url="https://www.instagram.com/dtu_times/"
-                bgColor="#252525"
-              />
-            </li>
+            {socialLinks.map((link, index) => (
+              <li key={index}>
+                <SocialIcon url={link.url} bgColor={link.bgColor} />
+              </li>
+            ))}
           </ul>
           <span className="text-xs">
             Got any issues? Contact the Developers.
@@ -85,61 +98,31 @@ const SideNavigation = () => {
         </div>
       </div>
 
-      <Link
-        to="/profile"
-        className="mb-2 p-2 rounded transition hover:bg-[#404040]"
-      >
-        Profile
-      </Link>
-
-      <Link
-        to="/login"
-        className="mb-2 p-2 rounded transition hover:bg-[#404040]"
-      >
-        Logout
-      </Link>
-      <Link
-        to="/dashboard"
-        className="mb-2 p-2 rounded transition hover:bg-[#404040]"
-      >
-        Dashboard
-      </Link>
-
-      <SidebarLink
-        to="/story"
-        label="Story"
-        isOpen={openMenu === 1}
-        onClick={() => handleMenuClick(1)}
-      />
-      <SubMenu
-        isOpen={openMenu === 1}
-        items={[{ to: '/new-story', label: 'New Story' }]}
-      />
-
-      <SidebarLink
-        to="/role"
-        label="Role"
-        isOpen={openMenu === 2}
-        onClick={() => handleMenuClick(2)}
-      />
-      <SubMenu
-        isOpen={openMenu === 2}
-        items={[
-          { to: '/all-roles', label: 'All Roles' },
-          { to: '/new-role', label: 'New Role' },
-        ]}
-      />
-
-      <SidebarLink
-        to="/member"
-        label="Member"
-        isOpen={openMenu === 3}
-        onClick={() => handleMenuClick(3)}
-      />
-      <SubMenu
-        isOpen={openMenu === 3}
-        items={[{ to: '/all-members', label: 'All Members' }]}
-      />
+      {sideItems.map((item, index) => (
+        <>
+          {item.submenuItems ? (
+            <>
+              <SidebarLink
+                to={item.to}
+                label={item.label}
+                isOpen={openMenu === index + 1}
+                onClick={() => handleMenuClick(index + 1)}
+              />
+              <SubMenu
+                isOpen={openMenu === index + 1}
+                items={item.submenuItems}
+              />
+            </>
+          ) : (
+            <Link
+              to={item.to}
+              className="mb-2 p-2 rounded transition hover:bg-[#404040]"
+            >
+              {item.label}
+            </Link>
+          )}
+        </>
+      ))}
     </div>
   );
 };
