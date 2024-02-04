@@ -1,5 +1,5 @@
-const SearchBar = ({searchTerm, onSearch, selectedCategory, onCategoryChange}) => {
-    const categories = ["Name", "Role", "Email"];
+const SearchBar = ({searchTerm, onSearch, categories=null, selectedCategory=null, onCategoryChange=null}) => {
+    //const categories = ["Name", "Role", "Email"];
 
     return (
         <div className="flex justify-center items-center">
@@ -17,6 +17,7 @@ const SearchBar = ({searchTerm, onSearch, selectedCategory, onCategoryChange}) =
                         onChange={(e) => onSearch(e.target.value)} 
                     />
                 </div>
+                {categories && (
                 <select 
                     id="select-category"
                     className="flex bg-blue-500 py-3 px-4 rounded-lg text-gray-900 font-semibold cursor-pointer"
@@ -29,6 +30,7 @@ const SearchBar = ({searchTerm, onSearch, selectedCategory, onCategoryChange}) =
                         </option>
                     ))}
                 </select>
+                )}
             </div>
         </div>
     );
