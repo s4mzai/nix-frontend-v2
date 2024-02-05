@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { SocialIcon } from 'react-social-icons';
+import { useState } from 'react';
+// import { SocialIcon } from 'react-social-icons';
 import { Link } from 'react-router-dom';
-import { FaAngleRight, FaAngleDown } from 'react-icons/fa';
+// import { FaAngleRight, FaAngleDown } from 'react-icons/fa';
+import ChevronDownIcon from '../../assets/ChevronDownIcon';
 
 const socialLinks = [
   { url: 'mailto:dtutimes@dtu.ac.in', bgColor: '#252525' },
@@ -41,7 +42,7 @@ const SidebarLink = ({ to, label, isOpen, onClick }) => {
       onClick={onClick}
     >
       <span>{label}</span>
-      {isOpen ? <FaAngleDown /> : <FaAngleRight />}
+      {isOpen ? <ChevronDownIcon /> : <ChevronDownIcon/>}
     </div>
   );
 };
@@ -86,11 +87,11 @@ const SideNavigation = () => {
           <span>DTU Times </span>
           <span>2024</span>
           <ul className="flex justify-center">
-            {socialLinks.map((link, index) => (
+            {/* {socialLinks.map((link, index) => (
               <li key={index}>
-                <SocialIcon url={link.url} bgColor={link.bgColor} />
+                <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
               </li>
-            ))}
+            ))} */}
           </ul>
           <span className="text-xs">
             Got any issues? Contact the Developers.

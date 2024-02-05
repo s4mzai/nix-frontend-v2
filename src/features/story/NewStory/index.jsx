@@ -1,4 +1,4 @@
-import { useState, useReducer} from "react";
+import { useReducer} from "react";
 import { TextEditor } from "@/components/TextEditor";
 import { toast } from 'react-toastify';
 import API from "@/services/API";
@@ -118,7 +118,7 @@ export default function NewStory() {
     if (error) return <p>Error: {error.message} </p>;
 
     return (
-      <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded ">
+      <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded">
         {/* {user ? <h1>{user.name}</h1> : <h1>HY</h1>} */}
         <h1 className="text-4xl font-bold mb-4">
           <input 
