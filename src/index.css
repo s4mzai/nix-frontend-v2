@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --bg-color: white;
+    --alt-bg-color: theme('colors.blue.500');
+    --accent-color: blue-500;
+    --text-color-main: gray-900;
+    --text-color-highlight: gray-500;
+}

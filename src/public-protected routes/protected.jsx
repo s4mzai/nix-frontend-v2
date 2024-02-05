@@ -6,6 +6,7 @@ import NewStory from '@/features/story/NewStory';
 import AllRoles from '@/features/roles/AllRoles';
 import NewRole from '@/features/roles/NewRole';
 import AllMembers from '@/features/member/allMembers';
+import AllStory from '@/features/story/AllStory';
 import Layout from '@/features/Layout';
 
 export const protectedRoutes = [
@@ -19,6 +20,10 @@ export const protectedRoutes = [
                 path: 'story/', 
                 element: <><Outlet/></>,
                 children: [
+                    {
+                        path: 'all-story/', 
+                        element: <AllStory/>
+                    },
                     {
                         path: 'new-story/', 
                         element: <NewStory/>
