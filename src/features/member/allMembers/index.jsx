@@ -47,6 +47,8 @@ export default function AllMembers() {
     error,
   } = state;
 
+  const categories = ["Name", "Role", "Email"];
+
   useEffect(() => {
     const membersEndpoint = '/user';
 
@@ -80,6 +82,7 @@ export default function AllMembers() {
         <SearchBar 
           searchTerm={searchTerm} 
           onSearch={(value) => dispatch({type: "set_search_term", payload: value})} 
+          categories = {categories}
           selectedCategory={selectedCategory}
           onCategoryChange={(value) => dispatch({ type: "set_selected_category", payload: value })}
         />
