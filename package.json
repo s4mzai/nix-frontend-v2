@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "npm run build && serve dist",
+    "start": "VITE_NIX_BACKEND=http://134.209.159.97:8080/api/v1 vite build && serve dist -l 5173",
     "prod": "npx pm2 delete NixFrontend; pm2 --name NixFrontend --time start npm -- start"
   },
   "dependencies": {
@@ -16,7 +16,6 @@
     "@ckeditor/ckeditor5-react": "^6.2.0",
     "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.6.5",
-    "dotenv": "^16.3.1",
     "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -34,9 +33,9 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "pm2": "^5.3.0",
     "postcss": "^8.4.33",
     "serve": "^14.2.1",
-    "pm2": "^5.3.0",
     "tailwindcss": "^3.4.0",
     "vite": "^4.4.5"
   }
