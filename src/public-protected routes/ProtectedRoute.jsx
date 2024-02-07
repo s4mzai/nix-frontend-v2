@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import API from '../services/API';
-import { getCurrentUser } from '../redux/features/auth/authActions';
 import { Navigate } from 'react-router-dom';
 import { protectedRoutes } from './protected';
 import { useRoutes } from 'react-router-dom';
@@ -13,16 +12,18 @@ const ProtectedRoute = () => {
 
 
     // get current user
-    const getUser = async () => {
-        try {
-            const { data } = await API.get('/user/current-user');
+    const getUser = () => {
+        API.get('/user/current-user').then((d) => {
+            console.log(d);
+            console.log("hi");
+            const data = d.data.data;
             if (data?.status === 'success') {
-                dispatch(getCurrentUser(data));
-            }
-        } catch (error) {
+                dispatch(data);
+            } else { throw data; }
+        }).catch((error) => {
             localStorage.clear();
             console.log(error);
-        }
+        })
     };
 
     useEffect(() => {
@@ -30,6 +31,7 @@ const ProtectedRoute = () => {
         if (!authUser) {
             getUser();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, authUser]);
 
     if (localStorage.getItem('token')) {
