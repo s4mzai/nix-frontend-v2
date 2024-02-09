@@ -1,8 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{html,jsx}"],
+  content: ["./src/**/*.{html,jsx,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        "id-back": "url('id_back.jpg')"
+      },
       colors: {
         "brand-blue": "#0c598a",
         "brand-red": "#ff0000",
