@@ -35,14 +35,15 @@ const sideItems = [
   },
 ];
 
-const SidebarLink = ({  label, isOpen, onClick }) => {
+const SidebarLink = ({ label, isOpen, onClick }) => {
   return (
     <div
       className="mb-2 p-2 rounded transition hover:bg-[#404040] flex justify-between items-center"
       onClick={onClick}
+      key={label}
     >
       <span>{label}</span>
-      {isOpen ? <ChevronDownIcon /> : <ChevronDownIcon/>}
+      {isOpen ? <ChevronDownIcon /> : <ChevronDownIcon />}
     </div>
   );
 };
@@ -86,13 +87,13 @@ const SideNavigation = () => {
         <div className="p-2 ml-auto text-center text-xs">
           <span>DTU Times </span>
           <span>2024</span>
-          <ul className="flex justify-center">
-            {/* {socialLinks.map((link, index) => (
+          {/* <ul className="flex justify-center">
+            {socialLinks.map((link, index) => (
               <li key={index}>
                 <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
               </li>
-            ))} */}
-          </ul>
+            ))}
+          </ul> */}
           <span className="text-xs">
             Got any issues? Contact the Developers.
           </span>
@@ -100,9 +101,9 @@ const SideNavigation = () => {
       </div>
 
       {sideItems.map((item, index) => (
-        <>
+        <div key={item.label}>
           {item.submenuItems ? (
-            <>
+            <div key={item.label + "submenu"}>
               <SidebarLink
                 label={item.label}
                 isOpen={openMenu === index + 1}
@@ -113,16 +114,17 @@ const SideNavigation = () => {
                 items={item.submenuItems}
                 to={item.to}
               />
-            </>
+            </div>
           ) : (
             <Link
               to={item.to}
+              key={item.label}
               className="mb-2 p-2 rounded transition hover:bg-[#404040]"
             >
               {item.label}
             </Link>
           )}
-        </>
+        </div>
       ))}
     </div>
   );

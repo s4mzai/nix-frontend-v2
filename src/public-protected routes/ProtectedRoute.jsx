@@ -15,7 +15,7 @@ const ProtectedRoute = () => {
     // get current user
     const getUser = async () => {
         try {
-            const { data } = await API.get('/user/current-user');
+            const { data } = getCurrentUser();
             // todo: this if check may not be required caz axios will throw error if status is not 2xx
             if (data?.status === 'success') {
                 // dispatch(getCurrentUser(data));
