@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import dtutimesIcon from '../../../assets/dtutimesIcon.svg';
+import dtutimesIcon from '@/assets/dtutimesIcon.svg';
 import { handleLogin } from '../../../services/authService';
 
 export default function Login() {

@@ -9,34 +9,39 @@ import { useRoutes } from 'react-router-dom';
 const ProtectedRoute = () => {
     const element = useRoutes([...protectedRoutes]);
     const authUser = useSelector((state) => state.auth.user);
+    const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
 
 
     // get current user
     const getUser = async () => {
-        try {
-            const { data } = getCurrentUser();
-            // todo: this if check may not be required caz axios will throw error if status is not 2xx
-            if (data?.status === 'success') {
-                // dispatch(getCurrentUser(data));
-                // this should fix the double api calls
-                dispatch(data);
-            }
-        } catch (error) {
-            localStorage.clear();
-            console.log(error);
+        const { data } = getCurrentUser();
+        // todo: this if check may not be required caz axios will throw error if status is not 2xx
+        if (data?.status === 'success') {
+            dispatch(getCurrentUser(data));
+            console.log(data, "fetched");
+            dispatch(data);
         }
+        return data;
     };
 
     useEffect(() => {
-        // Dispatch getCurrentUser only if auth.user is null
-        if (!authUser) {
-            getUser();
-        }
+        getUser()
+            .then((data) => {
+                // redirect to /dashboard
+                console.log('User is authenticated with data', data);
+            })
+            .catch((err) => {
+                console.log(err.message);
+                alert('An error occurred while fetching user details');
+            });
     }, [dispatch, authUser]);
 
     if (localStorage.getItem('token')) {
-        return <>{element}</>;
+        return <>
+            Error? : {error}
+            {element}
+        </>;
     } else {
         return <Navigate to="/login" />;
     }
