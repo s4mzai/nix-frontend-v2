@@ -16,8 +16,11 @@ const ProtectedRoute = () => {
     const getUser = async () => {
         try {
             const { data } = await API.get('/user/current-user');
+            // todo: this if check may not be required caz axios will throw error if status is not 2xx
             if (data?.status === 'success') {
-                dispatch(getCurrentUser(data));
+                // dispatch(getCurrentUser(data));
+                // this should fix the double api calls
+                dispatch(data);
             }
         } catch (error) {
             localStorage.clear();
