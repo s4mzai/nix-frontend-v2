@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 // import { FaAngleRight, FaAngleDown } from 'react-icons/fa';
 import ChevronDownIcon from '../../assets/ChevronDownIcon';
 
-const socialLinks = [
+/* const socialLinks = [
   { url: 'mailto:dtutimes@dtu.ac.in', bgColor: '#252525' },
   { url: 'https://twitter.com/dtutimes', bgColor: '#252525' },
   { url: 'https://www.facebook.com/dtutimes/', bgColor: '#252525' },
   { url: 'https://www.instagram.com/dtu_times/', bgColor: '#252525' },
-];
+]; */
 
 const sideItems = [
   { to: '/profile', label: 'Profile' },
@@ -35,24 +35,25 @@ const sideItems = [
   },
 ];
 
-const SidebarLink = ({ to, label, isOpen, onClick }) => {
+const SidebarLink = ({ label, isOpen, onClick }) => {
   return (
     <div
-      className="mb-2 p-2 rounded transition hover:bg-[#404040] flex justify-between items-center"
+      className="flex justify-between items-center"
       onClick={onClick}
+      key={label}
     >
       <span>{label}</span>
-      {isOpen ? <ChevronDownIcon /> : <ChevronDownIcon/>}
+      {isOpen ? <ChevronDownIcon /> : <ChevronDownIcon />}
     </div>
   );
 };
 
-const SubMenu = ({ items, isOpen }) => {
+const SubMenu = ({ items, isOpen, to }) => {
   return isOpen ? (
-    <div className="ml-4 flex flex-col">
+    <div className="ml-4 flex flex-col mt-2">
       {items.map((item) => (
         <Link
-          to={item.to}
+          to={to + item.to}
           key={item.label}
           className="mb-2 p-2 rounded transition hover:bg-[#404040]"
         >
@@ -87,11 +88,13 @@ const SideNavigation = () => {
           <span>DTU Times </span>
           <span>2024</span>
           <ul className="flex justify-center">
-            {/* {socialLinks.map((link, index) => (
-              <li key={index}>
-                <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
-              </li>
-            ))} */}
+            {/*
+              {socialLinks.map((link, index) => (
+                <li key={index}>
+                  <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
+                </li>
+              ))}
+            */}
           </ul>
           <span className="text-xs">
             Got any issues? Contact the Developers.
@@ -100,11 +103,10 @@ const SideNavigation = () => {
       </div>
 
       {sideItems.map((item, index) => (
-        <>
+        <div key={item.label} className='mb-2 p-2 rounded transition hover:bg-[#404040]'>
           {item.submenuItems ? (
-            <>
+            <div key={item.label + "submenu"}>
               <SidebarLink
-                to={item.to}
                 label={item.label}
                 isOpen={openMenu === index + 1}
                 onClick={() => handleMenuClick(index + 1)}
@@ -112,17 +114,19 @@ const SideNavigation = () => {
               <SubMenu
                 isOpen={openMenu === index + 1}
                 items={item.submenuItems}
+                to={item.to}
               />
-            </>
+            </div>
           ) : (
             <Link
               to={item.to}
+              key={item.label}
               className="mb-2 p-2 rounded transition hover:bg-[#404040]"
             >
               {item.label}
             </Link>
           )}
-        </>
+        </div>
       ))}
     </div>
   );

@@ -3,7 +3,7 @@ import ProtectedRoute from './ProtectedRoute';
 // import HomePage from '../features/HomePage';
 import Login from '../features/auth/Login';
 
-const AppRoute = ({ children }) => {
+const AppRoute = () => {
     return (
         <>
             <Routes>

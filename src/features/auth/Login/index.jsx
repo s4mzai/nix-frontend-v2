@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import dtutimesIcon from '../../../assets/dtutimesIcon.svg';
 import { handleLogin } from '../../../services/authService';
 
 export default function Login() {
+  const authUser = useSelector((state) => state.auth.user);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (!authUser) {
+      console.log("User not found");
+    } else {
+      console.log(authUser);
+    }
+  })
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -16,7 +28,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleLogin(e,email,password);
+    handleLogin(e, email, password);
   };
 
   return (
