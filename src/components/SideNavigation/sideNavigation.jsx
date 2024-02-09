@@ -38,7 +38,7 @@ const sideItems = [
 const SidebarLink = ({ label, isOpen, onClick }) => {
   return (
     <div
-      className="mb-2 p-2 rounded transition hover:bg-[#404040] flex justify-between items-center"
+      className="flex justify-between items-center"
       onClick={onClick}
       key={label}
     >
@@ -50,7 +50,7 @@ const SidebarLink = ({ label, isOpen, onClick }) => {
 
 const SubMenu = ({ items, isOpen, to }) => {
   return isOpen ? (
-    <div className="ml-4 flex flex-col">
+    <div className="ml-4 flex flex-col mt-2">
       {items.map((item) => (
         <Link
           to={to + item.to}
@@ -87,13 +87,15 @@ const SideNavigation = () => {
         <div className="p-2 ml-auto text-center text-xs">
           <span>DTU Times </span>
           <span>2024</span>
-          {/* <ul className="flex justify-center">
-            {socialLinks.map((link, index) => (
-              <li key={index}>
-                <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
-              </li>
-            ))}
-          </ul> */}
+          <ul className="flex justify-center">
+            {/*
+              {socialLinks.map((link, index) => (
+                <li key={index}>
+                  <ChevronDownIcon url={link.url} bgColor={link.bgColor} />
+                </li>
+              ))}
+            */}
+          </ul>
           <span className="text-xs">
             Got any issues? Contact the Developers.
           </span>
@@ -101,7 +103,7 @@ const SideNavigation = () => {
       </div>
 
       {sideItems.map((item, index) => (
-        <div key={item.label}>
+        <div key={item.label} className='mb-2 p-2 rounded transition hover:bg-[#404040]'>
           {item.submenuItems ? (
             <div key={item.label + "submenu"}>
               <SidebarLink
