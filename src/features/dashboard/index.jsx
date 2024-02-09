@@ -29,7 +29,7 @@ export default function Dashbboard() {
                             </div>
                         </div>
                         <div className="flex mt-16 justify-center">
-                            <AvatarImage alt="Aditya Khuntia" className="h-36 w-36" src={`${uri}/images/get/avatar.jpg?thumbnail=144`} />
+                            <AvatarImage alt={auth_user.name} className="h-36 w-36" src={`${uri}/images/get/avatar.jpg?thumbnail=144`} />
                         </div>
                     </div>
                     <div className="bg-black p-6 text-center self-end">
