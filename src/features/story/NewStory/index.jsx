@@ -3,6 +3,7 @@ import { TextEditor } from "@/components/TextEditor";
 import { toast } from 'react-toastify';
 import API from "@/services/API";
 import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
   title: "",
@@ -54,6 +55,7 @@ const reducer = (state, action) => {
 }
 
 export default function NewStory() {
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -68,22 +70,17 @@ export default function NewStory() {
     error,
   } = state;
 
-    // const [title, setTitle] = useState('');
-    // const [byliner, setByliner] = useState('');
-    // const [content, setContent] = useState('');
-    // const [slug, setSlug] = useState('slug');
-    // const [selectedCategory, setSelectedCategory] = useState("1");
-
-    // const [blogImage, setBlogImage] = useState(undefined);
-    // const [metaDescription, setMetaDescription] = useState('');
-    // const [metaTitle, setMetaTitle] = useState('');
-
     const {user} = useSelector(state => state.auth)
 
     const categories = ["Editorial", "Blog", "Interview", "Edition"];
 
     const handleSubmit = (e, saveAsDraft) => {
       e.preventDefault();
+
+      if (!title || !byliner || !metaDescription || !metaTitle || !slug){
+        toast.error("Please fill out all the required fields.");
+        return;
+      }
       const createEndPoint = '/blog/create-blog';
 
       const createRequest = {
@@ -108,7 +105,10 @@ export default function NewStory() {
                 setTimeout(() => {
                   window.location.reload();
                 }, 2000);
-              }            
+              } else {
+                console.log("hi");
+                navigate("/story/all-story", {replace: true});
+              }         
             }
           });         
         })
@@ -118,7 +118,7 @@ export default function NewStory() {
     if (error) return <p>Error: {error.message} </p>;
 
     return (
-      <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded">
+      <form className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded">
         {/* {user ? <h1>{user.name}</h1> : <h1>HY</h1>} */}
         <h1 className="text-4xl font-bold mb-4">
           <input 
@@ -139,21 +139,20 @@ export default function NewStory() {
             id="byliner"
             placeholder="Byliner sells the story, give this a byliner."
             value={byliner}
-            onChange={(e) => dispatch({type: "set_byliner", payload: e.target.value})}           
+            onChange={(e) => dispatch({type: "set_byliner", payload: e.target.value})}          
           />
         </div>
 
         <div className="mb-6">
-          <label className="block mb-2">
+          <div className="block mb-2" htmlFor="ck_editor">
               Content
-              <div className="py-2 w-full border-gray-300 rounded">
-              <TextEditor
-                value={content}
-                onChange={(value) => dispatch({ type: "set_content", payload: value })}
-              />
+              <div className="py-2 w-full border-gray-300 rounded" id="ck_editor">
+                <TextEditor
+                  value={content}
+                  onChange={(value) => dispatch({ type: "set_content", payload: value })}
+                />
+              </div>
           </div>
-          </label>
-          
         </div>
         
         <h2 className="text-2xl font-semibold mb-4">SEO Details</h2>
@@ -174,6 +173,7 @@ export default function NewStory() {
             ))}
           </select>
         </div>
+
         <div className="mb-6">
           <label className="block mb-2" htmlFor="blog-image">
             Blog image
@@ -197,6 +197,7 @@ export default function NewStory() {
             placeholder="Enter meta description here"
             value={metaDescription}
             onChange={(e) => dispatch({type: "set_meta_description", payload: e.target.value})}
+  
           />
         </div>
         <div className="mb-6">
@@ -228,6 +229,6 @@ export default function NewStory() {
           <button className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500" onClick={(e) => handleSubmit(e, true)}>Save as Draft</button>
           <button className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500" onClick={(e) => handleSubmit(e, false)}>Submit for approval</button>
         </div>
-      </div>
+      </form>
     )
   }
