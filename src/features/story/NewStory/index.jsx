@@ -2,7 +2,6 @@ import { useReducer} from "react";
 import { TextEditor } from "@/components/TextEditor";
 import { toast } from 'react-toastify';
 import API from "@/services/API";
-import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
@@ -69,8 +68,6 @@ export default function NewStory() {
     metaTitle,
     error,
   } = state;
-
-    const {user} = useSelector(state => state.auth)
 
     const categories = ["Editorial", "Blog", "Interview", "Edition"];
 
