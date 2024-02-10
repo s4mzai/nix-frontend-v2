@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import API from "@/services/API";
 
 const AvatarImage = ({ src, alt, className }) => {
@@ -11,7 +10,7 @@ import dtutimesIcon from '../../assets/dtutimesIcon.svg';
 const uri = API.getUri();
 
 export default function Dashbboard() {
-    const auth_user = useSelector((state) => state.auth.user);
+    const auth_user = JSON.parse(localStorage.getItem('user'));
     useEffect(() => {
         console.log(auth_user);
     });
@@ -46,9 +45,9 @@ export default function Dashbboard() {
                 </div>
             </div>
             <div className="p-8">
-                <h1 className="text-xl font-bold mb-4">Hello {auth_user.name.split(" ")[0]},</h1>
+                <h1 className="text-xl font-bold mb-4">Hello {auth_user.name},</h1>
                 <p className="text-lg">Welcome to DTU Times!</p>
-                <p>Well done on your role as {auth_user.role?.name}</p>
+                <p>Well done on your role as {auth_user.name}</p>
             </div>
         </div>
     )

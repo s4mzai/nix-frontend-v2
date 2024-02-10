@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import dtutimesIcon from '@/assets/dtutimesIcon.svg';
-import { handleLogin } from '../../../services/authService';
+import API from './../../../services/API';
+import { toast } from 'react-toastify';
+
 
 export default function Login() {
-  const authUser = useSelector((state) => state.auth.user);
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    if (!authUser) {
-      console.log("User not found");
-    } else {
-      console.log(authUser);
-    }
-  })
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -26,9 +18,19 @@ export default function Login() {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleLogin(e, email, password);
+    try {
+      const { data } = await API.post('/auth/login', { email, password });
+      if (data.status === "success") {
+        localStorage.setItem('token', data.data.accessToken);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        toast.success('Logged in successfully');
+        navigate('/');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
