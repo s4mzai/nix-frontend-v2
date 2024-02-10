@@ -147,11 +147,3 @@ export default function AllStory() {
     </div>
   )
 }
-
-
-
-
-
-
-
-

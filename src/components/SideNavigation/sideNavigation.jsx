@@ -2,7 +2,7 @@ import { useState } from 'react';
 // import { SocialIcon } from 'react-social-icons';
 import { Link } from 'react-router-dom';
 // import { FaAngleRight, FaAngleDown } from 'react-icons/fa';
-import ChevronDownIcon from '../../assets/ChevronDownIcon';
+import ChevronDownIcon from '@/assets/ChevronDownIcon';
 
 /* const socialLinks = [
   { url: 'mailto:dtutimes@dtu.ac.in', bgColor: '#252525' },
@@ -12,9 +12,8 @@ import ChevronDownIcon from '../../assets/ChevronDownIcon';
 ]; */
 
 const sideItems = [
-  { to: '/profile', label: 'Profile' },
-  { to: '/login', label: 'Logout' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/login', label: 'Logout' },
   {
     to: '/story',
     label: 'Story',

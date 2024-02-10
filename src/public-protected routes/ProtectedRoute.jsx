@@ -8,11 +8,13 @@ import { useRoutes } from 'react-router-dom';
 const ProtectedRoute = () => {
     const element = useRoutes([...protectedRoutes]);
     const authUser = useSelector((state) => state.auth.user);
+    const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
 
 
     // get current user
     const getUser = async () => {
+
         try {
             const { data } = getCurrentUser();
             // todo: this if check may not be required caz axios will throw error if status is not 2xx
@@ -33,10 +35,14 @@ const ProtectedRoute = () => {
             getUser();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [dispatch, authUser]);
 
     if (localStorage.getItem('token')) {
-        return <>{element}</>;
+        return <>
+            Error? : {error}
+            {element}
+        </>;
     } else {
         return <Navigate to="/login" />;
     }
