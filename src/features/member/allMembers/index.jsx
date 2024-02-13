@@ -14,24 +14,24 @@ const initialState = {
 const reducer = (state, action) => {
   const updatedData = { ...state };
   switch (action.type) {
-    //underscore convention from react docs
-    case "set_members_list":
-      updatedData.membersList = action.payload;
-      break;
-    case "set_search_term":
-      updatedData.searchTerm = action.payload;
-      break;
-    case "set_selected_category":
-      updatedData.selectedCategory = action.payload;
-      break;
-    case "set_loading":
-      updatedData.loading = action.payload;
-      break;
-    case "set_error":
-      updatedData.error = action.payload;
-      break;
-    default:
-      return updatedData;
+  //underscore convention from react docs
+  case "set_members_list":
+    updatedData.membersList = action.payload;
+    break;
+  case "set_search_term":
+    updatedData.searchTerm = action.payload;
+    break;
+  case "set_selected_category":
+    updatedData.selectedCategory = action.payload;
+    break;
+  case "set_loading":
+    updatedData.loading = action.payload;
+    break;
+  case "set_error":
+    updatedData.error = action.payload;
+    break;
+  default:
+    return updatedData;
   }
   return updatedData;
 }
@@ -53,10 +53,10 @@ export default function AllMembers() {
     const membersEndpoint = '/user';
 
     API.get(membersEndpoint)
-        .then((membersResponse) => {
+      .then((membersResponse) => {
         dispatch({type: "set_members_list", payload: membersResponse.data.data});
         dispatch({type: "set_loading", payload: false});
-    })
+      })
       .catch((error) => {
         dispatch({type: "set_error", payload: error});
         dispatch({type: "set_loading", payload: false});

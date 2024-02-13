@@ -21,33 +21,33 @@ const reducer = (state, action) => {
   const updatedData = { ...state };
   const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
-    case "set_blogs":
-      updatedData.blogs = action.payload;
-      break;
-    case "set_search_term":
-      updatedData.searchTerm = action.payload;
-      break;
-    case "toggle_status_filter":
-      //also spread operator creates only a shallow copy so mutable data structures like arrays still
-      //refer to their originals. so we need to spread it out again
-      //if present in filter, remove. Else, add
-      if (newStatusFilters.includes(action.payload)) {
-        console.log(newStatusFilters, action.payload);
-        newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
-        console.debug(newStatusFilters);
-      } else {
-        newStatusFilters.push(action.payload);
-      }
-      updatedData.statusFilters = newStatusFilters;
-      break;
-    case "set_loading":
-      updatedData.loading = action.payload;
-      break;
-    case "set_error":
-      updatedData.error = action.payload;
-      break;
-    default:
-      return updatedData;
+  case "set_blogs":
+    updatedData.blogs = action.payload;
+    break;
+  case "set_search_term":
+    updatedData.searchTerm = action.payload;
+    break;
+  case "toggle_status_filter":
+    //also spread operator creates only a shallow copy so mutable data structures like arrays still
+    //refer to their originals. so we need to spread it out again
+    //if present in filter, remove. Else, add
+    if (newStatusFilters.includes(action.payload)) {
+      console.log(newStatusFilters, action.payload);
+      newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
+      console.debug(newStatusFilters);
+    } else {
+      newStatusFilters.push(action.payload);
+    }
+    updatedData.statusFilters = newStatusFilters;
+    break;
+  case "set_loading":
+    updatedData.loading = action.payload;
+    break;
+  case "set_error":
+    updatedData.error = action.payload;
+    break;
+  default:
+    return updatedData;
   }
   return updatedData;
 }
@@ -87,9 +87,9 @@ export default function AllStory() {
     const blogEndpoint = '/blog';
 
     API.get(blogEndpoint)
-        .then((blogResponse) => {
-          dispatch({type: "set_blogs", payload: blogResponse.data.data});
-          dispatch({type: "set_loading", payload: false});
+      .then((blogResponse) => {
+        dispatch({type: "set_blogs", payload: blogResponse.data.data});
+        dispatch({type: "set_loading", payload: false});
       })
       .catch((error) => {
         dispatch({type: "set_error", payload: error});
@@ -114,10 +114,10 @@ export default function AllStory() {
           {blogStatus.map((status) => (
             <label key={status.id} className="ms-2  text-md text-gray-900">
               <input
-              className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-              type="checkbox"
-              checked={statusFilters.includes(status.name)}
-              onChange={() => dispatch({ type: "toggle_status_filter", payload: status.name})}
+                className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                type="checkbox"
+                checked={statusFilters.includes(status.name)}
+                onChange={() => dispatch({ type: "toggle_status_filter", payload: status.name})}
               />
               {status.name}
             </label>
@@ -132,9 +132,9 @@ export default function AllStory() {
             blog.title,
             blogCategories[blog.category_id].name,
             <span
-            className={`px-2 py-1 rounded-md ${blogStatus[blog.status].color.bgClass} ${blogStatus[blog.status].color.textClass}`}
-            key={blog.category_id}
-          >
+              className={`px-2 py-1 rounded-md ${blogStatus[blog.status].color.bgClass} ${blogStatus[blog.status].color.textClass}`}
+              key={blog.category_id}
+            >
               <TagIcon className="w-4 h-4 inline-block mr-1" />
               {blogStatus[blog.status].name}
             </span>,
