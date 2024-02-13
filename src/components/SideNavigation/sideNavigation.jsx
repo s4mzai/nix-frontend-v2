@@ -15,7 +15,7 @@ function Sidebar() {
           />
         </a>
         <div className="p-2 ml-auto text-center text-xs">
-          <span>DTU Times </span>
+          <span>DTU Times</span>
           <span>2024</span>
           <ul className="flex justify-center">
             {/*

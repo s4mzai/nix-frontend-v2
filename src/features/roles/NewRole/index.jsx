@@ -18,34 +18,34 @@ const reducer = (state, action) => {
   //console.log(action); (good way to keep track of state)
   const updatedData = { ...state };
   switch (action.type) {
-    //underscore convention from react docs
-    case "set_role_name":
-      //TODO check for role name constraints here
-      updatedData.roleName = action.payload;
-      break;
-    case "set_selected_permissions":
-      updatedData.selectedPermissions = action.payload;
-      break;
-    case "set_role_id":
-      updatedData.roleId = action.payload;
-      break;
-    case "set_is_update_mode":
-      updatedData.isUpdateMode = action.payload;
-      break;
-    case "set_perm_map":
-      updatedData.permMap = action.payload;
-      break;
-    case "set_roles_list":
-      updatedData.rolesList = action.payload;
-      break;
-    case "set_loading":
-      updatedData.loading = action.payload;
-      break;
-    case "set_error":
-      updatedData.error = action.payload;
-      break;
-    default:
-      return updatedData;
+  //underscore convention from react docs
+  case "set_role_name":
+    //TODO check for role name constraints here
+    updatedData.roleName = action.payload;
+    break;
+  case "set_selected_permissions":
+    updatedData.selectedPermissions = action.payload;
+    break;
+  case "set_role_id":
+    updatedData.roleId = action.payload;
+    break;
+  case "set_is_update_mode":
+    updatedData.isUpdateMode = action.payload;
+    break;
+  case "set_perm_map":
+    updatedData.permMap = action.payload;
+    break;
+  case "set_roles_list":
+    updatedData.rolesList = action.payload;
+    break;
+  case "set_loading":
+    updatedData.loading = action.payload;
+    break;
+  case "set_error":
+    updatedData.error = action.payload;
+    break;
+  default:
+    return updatedData;
   }
   return updatedData;
 }
@@ -175,19 +175,19 @@ export default function NewRole() {
               selectedOptions={[{ name: roleName, permissions: selectedPermissions }]}
               onSelectionChange={handleRoleNameChange}
               isSingleSelect={true}
-              />
+            />
           ) : (
             <input className="name border p-2 rounded " 
-            type="text"
-            id="roleName"
-            placeholder="Enter role name"
-            name="name"
-            value={roleName}
-            onChange={handleRoleNameChange} 
-            pattern="[A-Za-z]+"
-            title="Only alphabetical role names are allowed" 
-            required
-     />
+              type="text"
+              id="roleName"
+              placeholder="Enter role name"
+              name="name"
+              value={roleName}
+              onChange={handleRoleNameChange} 
+              pattern="[A-Za-z]+"
+              title="Only alphabetical role names are allowed" 
+              required
+            />
           )}
          
         </div>
@@ -201,17 +201,17 @@ export default function NewRole() {
           />
         </fieldset>
 
-      {isUpdateMode ? (
+        {isUpdateMode ? (
           <button className="update-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl"
-          type="update"
-          onClick={handleSubmit}>Update
+            type="update"
+            onClick={handleSubmit}>Update
           </button>
-      ) : (
-        <button className="create-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl"
-                type="create"
-                onClick={handleSubmit}>Create
-        </button>
-      )}  
+        ) : (
+          <button className="create-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl"
+            type="create"
+            onClick={handleSubmit}>Create
+          </button>
+        )}  
       </form>
     </div>
   )
