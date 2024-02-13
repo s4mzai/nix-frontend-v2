@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DownArrow from '@/assets/ChevronDownIcon';
+import UpArrow from "@/assets/ChevronUpIcon";
 import { Link } from "react-router-dom";
 
 function SidebarItem({ items }) {
@@ -15,7 +16,7 @@ function SidebarItem({ items }) {
                     <div className="flex items-center">
                         <span>{items.label}</span>
                     </div>
-                    <div>{open ? <DownArrow /> : <DownArrow />}</div>
+                    <div>{open ? <UpArrow /> : <DownArrow />}</div>
                 </div>
                 <div className={`${open ? "block" : "hidden"} pl-4`}>
                     {items.submenuItems.map((item, index) => (
