@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import DownArrow from '@/assets/ChevronDownIcon';
-// import PropTypes from "prop-types"; // Import PropTypes for prop type validation
 import { Link } from "react-router-dom";
 
 function SidebarItem({ items }) {
