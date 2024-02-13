@@ -7,7 +7,7 @@ function SidebarItem({ items }) {
   const [open, setOpen] = useState(false);
   if (items.submenuItems) {
     return (
-    // make this div appear in full screen
+      // make this div appear in full screen
       <div className="flex flex-col">
         <div
           className="flex items-center justify-between text-white p-2 cursor-pointer"
@@ -18,11 +18,18 @@ function SidebarItem({ items }) {
           </div>
           <div>{open ? <UpArrow /> : <DownArrow />}</div>
         </div>
-        <div className={`${open ? "block" : "hidden"} pl-4`}>
+        {open ? <div className="pl-4">
           {items.submenuItems.map((item, index) => (
-            <SidebarItem key={index} items={item} />
+            <SidebarItem key={index} items={
+              {
+                ...item,
+                href: `${items.href}${item.href}`,
+              }
+            } />
           ))}
-        </div>
+        </div> : <></>
+        }
+
       </div>
     );
   } else {
