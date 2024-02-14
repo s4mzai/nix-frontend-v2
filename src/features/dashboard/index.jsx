@@ -17,7 +17,7 @@ export default function Dashbboard() {
   return (
     <div className="flex justify-start flex-col xl:flex-row">
       <div className="flex justify-evenly flex-col lg:flex-row">
-        <div className="m-6 w-[300px] h-[464px] bg-gray-800 text-white rounded-xl overflow-hidden grid grid-rows-2">
+        <div className="m-6 w-[300px] h-[464px] border-black border-2 bg-gray-800 text-white rounded-xl overflow-hidden grid grid-rows-2">
           <div className="self-start flex flex-col">
             <div className="flex justify-between">
               <img src={dtutimesIcon} className="h-16 w-16" />
@@ -28,26 +28,33 @@ export default function Dashbboard() {
               </div>
             </div>
             <div className="flex mt-16 justify-center">
-              <AvatarImage alt={auth_user.name} className="h-36 w-36" src={`${uri}/images/get/avatar.jpg?thumbnail=144`} />
+              <AvatarImage alt={auth_user.name} className="h-36 w-36" src={`${uri}/images/get/${auth_user.avatar}?thumbnail=144`} />
             </div>
           </div>
           <div className="bg-black p-6 text-center self-end">
-            <div className="text-base pb-2">Columnist</div>
+            <div className="text-base pb-2">{auth_user.role}</div>
             <div className="text-lg font-semibold">{auth_user.name}</div>
           </div>
         </div>
-        <div className="m-6 w-[300px] h-[464px] bg-id-back bg-cover text-white rounded-xl overflow-hidden grid grid-rows-2">
+        <div className="m-6 w-[300px] h-[464px] bg-id-back bg-cover border-black border-2 text-white rounded-xl overflow-hidden grid grid-rows-2">
           <div className="self-start flex flex-col">
           </div>
           <div className="bg-black bg-opacity-50 text-opacity-100 p-6 text-right self-end pl-14">
-            <div className="text-lg font-semibold">To be or not to be hhhhhaaa!! oh no shakespear is dead! lets get the tasty robots to lineup and generate a new shakespear for us</div>
+            <div className="text-lg font-semibold">{auth_user.bio}</div>
           </div>
         </div>
       </div>
       <div className="p-8">
         <h1 className="text-xl font-bold mb-4">Hello {auth_user.name},</h1>
-        <p className="text-lg">Welcome to DTU Times!</p>
-        <p>Well done on your role as {auth_user.name}</p>
+        <p className="text-lg mb-4">Welcome to DTU Times!</p>
+        <p>Well done on your role as {auth_user.role}!</p>
+        <p className="text-sm my-4">This is your Dashboard where you can update your details shared with us! Make sure they are up-to-date as these are your official record available to DTU Times.</p>
+        <div className="p-4 flex flex-col">
+          <button className="p-4">Update Name</button>
+          <button className="p-4">Update Avatar</button>
+          <button className="p-4">Update Email</button>
+          <button className="p-4">Update Bio</button>
+          </div>
       </div>
     </div>
   )
