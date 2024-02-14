@@ -8,8 +8,10 @@ function Sidebar() {
   const user_data = localStorage.getItem("user");
   if (!user_data) return <Navigate to="/login?sessionExpired=true" />;
   const user = JSON.parse(user_data);
-  console.error("There appears to be an issue with the saved JSON object.", user_data);
-  if(!user) return <Navigate to="/login?sessionExpired=true" />;
+  if (!user) {
+    console.error("There appears to be an issue with the saved JSON object.", user_data);
+    return <Navigate to="/login?sessionExpired=true" />;
+  }
   const perms = user.permissions as Permission[];
 
   return (
@@ -45,7 +47,7 @@ function Sidebar() {
         </div>
         <div className="flex-none w-64 bg-[#252525] overflow-auto">
           {items.map((item, index) => (<>
-            <SidebarItem key={index} items={item} user_perm={user.is_superuser ? "*" : user.permissions}/>
+            <SidebarItem key={index} items={item} />
           </>
           ))}
         </div>
