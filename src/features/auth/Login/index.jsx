@@ -2,9 +2,27 @@ import { useNavigate } from 'react-router-dom';
 import dtutimesIcon from '@/assets/dtutimesIcon.svg';
 import API from '../../../services/API';
 import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 
 export default function Login() {
+  useEffect(() => {
+    // todo: for some reasons search params standard way doesn't work so have to do manual string search; fix it
+    const session_expired = window?.location?.href?.includes('sessionExpired=true');
+    const forced_logout = window?.location?.href?.includes('forcedLogout=true');
+    if (forced_logout) {
+      API.post('/auth/logout').then(() => {
+        toast.info('You have been logged out!');
+      }).catch(() => {
+        toast.error('Server rejected your logout!');
+      }).finally(() => localStorage.clear());
+    } else if (session_expired) {
+      localStorage.clear();
+      toast.error('Session expired, please login again!');
+    } else if (localStorage.getItem('token')) {
+      navigate('/dashboard');
+    }
+  }, []);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,10 +36,10 @@ export default function Login() {
         localStorage.setItem('token', data.data.accessToken);
         localStorage.setItem('user', JSON.stringify(data.data.user));
         toast.success('Logged in successfully');
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 

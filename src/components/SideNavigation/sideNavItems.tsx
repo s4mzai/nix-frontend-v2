@@ -1,10 +1,17 @@
 import { useState } from "react";
-import DownArrow from '@/assets/ChevronDownIcon';
-import UpArrow from "@/assets/ChevronUpIcon";
+import DownArrow from '../../assets/ChevronDownIcon';
+import UpArrow from "../../assets/ChevronUpIcon";
 import { Link } from "react-router-dom";
+import Permission from "../../data/permissions";
+import React from "react";
 
-function SidebarItem({ items }) {
+type Superuser = "*";
+
+function SidebarItem({ items, user_perm }: { items: any, user_perm: Permission[] | Superuser }) {
   const [open, setOpen] = useState(false);
+  if (!(user_perm === "*") && items.permission?.length > 0 && !items.permission.some((perm: Permission) => user_perm.includes(perm))) {
+    return <></>;
+  }
   if (items.submenuItems) {
     return (
       // make this div appear in full screen
@@ -25,7 +32,9 @@ function SidebarItem({ items }) {
                 ...item,
                 href: `${items.href}${item.href}`,
               }
-            } />
+            }
+              user_perm={user_perm}
+            />
           ))}
         </div> : <></>
         }
