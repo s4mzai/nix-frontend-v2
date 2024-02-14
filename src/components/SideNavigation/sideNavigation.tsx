@@ -46,9 +46,8 @@ function Sidebar() {
           </div>
         </div>
         <div className="flex-none w-64 bg-[#252525] overflow-auto">
-          {items.map((item, index) => (<>
-            <SidebarItem key={index} items={item} />
-          </>
+          {items.map((item, index) => (
+            <SidebarItem key={`sidebar-root-${index}`} items={item} />
           ))}
         </div>
       </div>

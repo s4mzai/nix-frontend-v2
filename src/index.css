@@ -4,7 +4,7 @@
  
 :root {
     /* this is just to test tailwind theme config */
-    --bg-color: theme('colors.brand-blue');
+    --bg-color: theme('colors.white');
     --alt-bg-color: theme('colors.blue.500');
     --accent-color: blue-500;
     --text-color-main: gray-900;

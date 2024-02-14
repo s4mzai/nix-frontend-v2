@@ -22,8 +22,8 @@ function SidebarItem({ items }) {
           </div>
           {open ? <div className="pl-4">
             {items.submenuItems.map((item, index) => (
-              <PermissionProtector permission={item.permission} silent={true}>
-                <SidebarItem key={index} items={
+              <PermissionProtector key={`nested-${item.label}.${index}`} permission={item.permission} silent={true}>
+                <SidebarItem items={
                   {
                     ...item,
                     href: `${items.href}${item.href}`,
