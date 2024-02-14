@@ -4,20 +4,28 @@ import { createContext, useEffect, useState } from 'react';
 import { useRoutes } from 'react-router-dom';
 import Permission from '../data/permissions';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 const appContext = createContext();
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
   const auth_user = JSON.parse(localStorage.getItem('user'));
   const user_perms = auth_user?.is_superuser ? "*" : (auth_user?.permissions || []);
-  const [error, setError] = useState('');
   const [permissionError, setPermissionError] = useState([]);
   const [permissions, setPermsUser] = useState(user_perms);
   const updateValue = (data) => {
     const err_code = data?.response?.status;
-    if (err_code && (err_code === 401 || err_code === 403)) {
-      localStorage.clear();
-      setError(true);
+    if (err_code) {
+      switch (err_code) {
+      case 401:
+        navigate('/login?sessionExpired=true');
+        break;
+      case 403:
+        toast.error("Permission denied by the server! Relogin to update permissions.");
+        break;
+      default:
+        toast.error(data?.response?.data?.message || data?.message || "An error occurred!");
+      }
     }
   };
   const setPermErr = (data) => {
@@ -52,8 +60,7 @@ const ProtectedRoute = () => {
                 Okay
               </button>
             </div>
-          </div> :
-          (error ? <Navigate to="/login?sessionExpired=true" /> : element)
+          </div> : element
         }
       </appContext.Provider>);
   } else {

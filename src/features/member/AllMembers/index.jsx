@@ -1,4 +1,4 @@
-import { useEffect, useReducer} from "react";
+import { useEffect, useReducer } from "react";
 import API from "@/services/API";
 import SearchBar from "@/components/SearchBar";
 import UserCard from "@/components/UserCard";
@@ -16,24 +16,24 @@ const initialState = {
 const reducer = (state, action) => {
   const updatedData = { ...state };
   switch (action.type) {
-  //underscore convention from react docs
-  case "set_members_list":
-    updatedData.membersList = action.payload;
-    break;
-  case "set_search_term":
-    updatedData.searchTerm = action.payload;
-    break;
-  case "set_selected_category":
-    updatedData.selectedCategory = action.payload;
-    break;
-  case "set_loading":
-    updatedData.loading = action.payload;
-    break;
-  case "set_error":
-    updatedData.error = action.payload;
-    break;
-  default:
-    return updatedData;
+    //underscore convention from react docs
+    case "set_members_list":
+      updatedData.membersList = action.payload;
+      break;
+    case "set_search_term":
+      updatedData.searchTerm = action.payload;
+      break;
+    case "set_selected_category":
+      updatedData.selectedCategory = action.payload;
+      break;
+    case "set_loading":
+      updatedData.loading = action.payload;
+      break;
+    case "set_error":
+      updatedData.error = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 }
@@ -56,13 +56,13 @@ export default function AllMembers() {
 
     API.get(membersEndpoint)
       .then((membersResponse) => {
-        dispatch({type: "set_members_list", payload: membersResponse.data.data});
-        dispatch({type: "set_loading", payload: false});
+        dispatch({ type: "set_members_list", payload: membersResponse.data.data });
+        dispatch({ type: "set_loading", payload: false });
       })
       .catch((error) => {
-        dispatch({type: "set_error", payload: error});
-        dispatch({type: "set_loading", payload: false});
-      })   
+        dispatch({ type: "set_error", payload: error });
+        dispatch({ type: "set_loading", payload: false });
+      })
   }, []);
 
   //filter members based on search term
@@ -81,10 +81,10 @@ export default function AllMembers() {
         List of all the members of the DTU Times team.
       </p>
       <div className="px-3">
-        <SearchBar 
-          searchTerm={searchTerm} 
-          onSearch={(value) => dispatch({type: "set_search_term", payload: value})} 
-          categories = {categories}
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearch={(value) => dispatch({ type: "set_search_term", payload: value })}
+          categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={(value) => dispatch({ type: "set_selected_category", payload: value })}
         />
@@ -92,14 +92,10 @@ export default function AllMembers() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
         {filteredMembers.map((member) => (
           <div key={member.id}>
-            <PermissionProtector permission={[Permission.DeleteProfile]} silent={true}>
-              i am super duper protected component hehehehhe
-            </PermissionProtector>
             <UserCard name={member.name} role={member.role} email={member.email}>
               <h4>{member.email}</h4>
             </UserCard>
-          </div>
-        ))}
+          </div>        ))}
       </div>
     </div>
   );
