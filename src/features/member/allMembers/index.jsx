@@ -2,6 +2,8 @@ import { useEffect, useReducer} from "react";
 import API from "@/services/API";
 import SearchBar from "@/components/SearchBar";
 import UserCard from "@/components/UserCard";
+import { PermissionProtector } from "../../../components/PermissionProtector";
+import Permission from "../../../data/permissions";
 
 const initialState = {
   membersList: [],
@@ -90,6 +92,9 @@ export default function AllMembers() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
         {filteredMembers.map((member) => (
           <div key={member.id}>
+            <PermissionProtector permission={[Permission.DeleteProfile]} silent={true}>
+              i am super duper protected component hehehehhe
+            </PermissionProtector>
             <UserCard name={member.name} role={member.role} email={member.email}>
               <h4>{member.email}</h4>
             </UserCard>
