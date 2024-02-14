@@ -1,14 +1,17 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 
+import Layout from '@/features/Layout';
 import ErrorPage from '@/error-page';
 
-import NewStory from '@/features/story/NewStory';
-import AllRoles from '@/features/roles/AllRoles';
-import NewRole from '@/features/roles/NewRole';
-import AllMembers from '@/features/member/allMembers';
-import AllStory from '@/features/story/AllStory';
-import Layout from '@/features/Layout';
-import Dashbboard from '@/features/dashboard';
+//lazy imports
+const NewStory = React.lazy(() => import("@/features/story/NewStory"));
+const AllStory = React.lazy(() => import("@/features/story/AllStory"));
+const AllRoles = React.lazy(() => import("@/features/roles/AllRoles"));
+const NewRole = React.lazy(() => import("@/features/roles/NewRole"));
+const AllMembers = React.lazy(() => import("@/features/member/AllMembers"));
+const Dashbboard = React.lazy(() => import("@/features/dashboard"));
+
 
 export const protectedRoutes = [
   {
