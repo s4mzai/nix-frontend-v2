@@ -14,10 +14,9 @@ export default function Login() {
       API.post('/auth/logout').then(() => {
         toast.info('You have been logged out!');
       }).catch(() => {
-        toast.error('Server rejected you logout!');
+        toast.error('Server rejected your logout!');
       }).finally(() => localStorage.clear());
-    }
-    if (session_expired) {
+    } else if (session_expired) {
       localStorage.clear();
       toast.error('Session expired, please login again!');
     } else if (localStorage.getItem('token')) {
