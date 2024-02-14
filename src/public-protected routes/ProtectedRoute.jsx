@@ -9,7 +9,7 @@ const appContext = createContext();
 const ProtectedRoute = () => {
   const navigate = useNavigate();
   const auth_user = JSON.parse(localStorage.getItem('user'));
-  const user_perms = auth_user.is_superuser ? "*" : (auth_user.permissions || []);
+  const user_perms = auth_user?.is_superuser ? "*" : (auth_user?.permissions || []);
   const [error, setError] = useState('');
   const [permissionError, setPermissionError] = useState([]);
   const [permissions, setPermsUser] = useState(user_perms);
@@ -27,7 +27,9 @@ const ProtectedRoute = () => {
     setPermsUser(data);
   }
   const element = useRoutes([...protectedRoutes]);
-
+  if (!auth_user) {
+    return <Navigate to="/login" />;
+  }
   if (localStorage.getItem('token')) {
     return (
       <appContext.Provider value={{ updateValue, setPermErr, permissions, setPerms }}>
