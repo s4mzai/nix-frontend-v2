@@ -1,8 +1,8 @@
 import React from "react";
-import { useReducer} from "react";
+import { useReducer, useEffect } from "react";
 import { toast } from 'react-toastify';
 import API from "@/services/API";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import TextEditor from "@/components/TextEditor";
 // const TextEditor = React.lazy(() => import("@/components/TextEditor"))
 const initialState = {
@@ -56,6 +56,8 @@ const reducer = (state, action) => {
 
 export default function NewStory() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const draftBlog  = location.state?.key; //if we are redirected from edit in allstory
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -72,16 +74,32 @@ export default function NewStory() {
 
   const categories = ["Editorial", "Blog", "Interview", "Edition"];
 
+  useEffect(() => {
+    console.log(draftBlog);
+    console.log(localStorage.getItem("user"));
+    if (draftBlog) {
+      dispatch({ type: "set_title", payload: draftBlog.title });
+      dispatch({ type: "set_byliner", payload: draftBlog.byliner });
+      dispatch({ type: "set_content", payload: draftBlog.body });
+      dispatch({ type: "set_slug", payload: draftBlog.slug });
+      dispatch({ type: "set_selected_category", payload: draftBlog.category_id});
+      dispatch({ type: "set_blog_image", payload: draftBlog.blog_image });
+      dispatch({ type: "set_meta_description", payload: draftBlog.meta_description });
+      dispatch({ type: "set_meta_title", payload: draftBlog.meta_title });
+    }
+  }, [draftBlog]);
+
   const handleSubmit = (e, saveAsDraft) => {
+    console.log(saveAsDraft)
     e.preventDefault();
 
     if (!title || !byliner || !metaDescription || !metaTitle || !slug){
       toast.error("Please fill out all the required fields.");
       return;
     }
-    const createEndPoint = '/blog/create-blog';
 
-    const createRequest = {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const request = {
       title: title,
       byliner: byliner,
       slug: slug,
@@ -89,29 +107,32 @@ export default function NewStory() {
       category_id: 0,
       meta_title: metaTitle,
       meta_description: metaDescription,
-      user_id: user.id, // todo: what? where is this user? fix this
+      user_id: user.id, // todo: what? where is this user? fix this: FIXED
       saveAsDraft: saveAsDraft,
     }
 
-    API.post(createEndPoint, createRequest)
+
+    const endPoint = draftBlog ? `/blog/update-blog/${draftBlog._id}` : '/blog/create-blog';
+    const requestMethod = draftBlog ? 'PUT' : 'POST';
+
+    API({
+      method: requestMethod,
+      url: endPoint,
+      data: request
+    })
       .then(() => {
         const successMessage = saveAsDraft ? "Successfully saved" : "Successfully submitted";
         toast.success(successMessage, {
           onClose: () => {
             //let the toast notif be seen its v pretty 
-            if(!saveAsDraft) {
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            } else {
-              console.log("hi");
+            setTimeout(() => {
               navigate("/story/all-story", {replace: true});
-            }         
+            }, 2000);      
           }
         });         
       })
       .catch((error) => toast.error(error));
-  }
+  };
 
   if (error) return <p>Error: {error.message} </p>;
 
