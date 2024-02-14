@@ -1,9 +1,10 @@
+import React from "react";
 import { useReducer} from "react";
-import { TextEditor } from "@/components/TextEditor";
 import { toast } from 'react-toastify';
 import API from "@/services/API";
 import { useNavigate } from "react-router-dom";
-
+import TextEditor from "@/components/TextEditor";
+// const TextEditor = React.lazy(() => import("@/components/TextEditor"))
 const initialState = {
   title: "",
   byliner: "",
