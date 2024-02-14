@@ -7,9 +7,19 @@ import { useEffect } from 'react';
 
 export default function Login() {
   useEffect(() => {
+    // todo: for some reasons search params standard way doesn't work so have to do manual string search; fix it
     const session_expired = window?.location?.href?.includes('sessionExpired=true');
+    const forced_logout = window?.location?.href?.includes('forcedLogout=true');
+    if (forced_logout) {
+      API.post('/auth/logout').then(() => {
+        toast.info('You have been logged out!');
+      }).catch(() => {
+        toast.error('Server rejected you logout!');
+      }).finally(() => localStorage.clear());
+    }
     if (session_expired) {
-      toast.error('Session expired, please login again');
+      localStorage.clear();
+      toast.error('Session expired, please login again!');
     } else if (localStorage.getItem('token')) {
       navigate('/dashboard');
     }
