@@ -1,6 +1,6 @@
 import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
-import Permissions from "@/data/permissions";
+import Permissions from "@/types/permissions";
 import React, { ReactNode } from "react";
 import { Spinner } from "../Spinner";
 
@@ -10,7 +10,7 @@ interface PermissionProtectorProps {
   silent?: boolean;
 }
 
-export const PermissionProtector: React.FC<PermissionProtectorProps> = ({ children, permission: required_permissions, silent }) => {
+export const PermissionProtector: React.FC<PermissionProtectorProps> = ({ children, permission: required_permissions = [], silent = false }) => {
   const { grantedPermissions, ready } = React.useContext(CurrUserCtx);
   const { setFailedPermissions } = React.useContext(PermErrCtx);
 

@@ -1,4 +1,4 @@
-import Permission from "@/data/permissions";
+import Permission from "@/types/permissions";
 import { AxiosError } from "axios";
 
 export type RequiredPermissions = Permission[] | null;

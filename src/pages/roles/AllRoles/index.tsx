@@ -2,24 +2,19 @@ import Collapsible from "@/components/Collapsible";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
+import Permission from "@/types/permissions";
 import { useContext, useEffect, useState } from "react";
 
 export default function AllRoles() {
   const [rolesList, setRolesList] = useState([]);
-  const [permMap, setPermMap] = useState({});
   const [loading, setLoading] = useState(true);
   const { setError } = useContext(ErrorContext);
 
   useEffect(() => {
     const rolesEndpoint = "/role";
-    const permsEndpoint = "/permissions";
 
-    Promise.all([
-      API.get(permsEndpoint),
-      API.get(rolesEndpoint),
-    ])
-      .then(([permsResponse, rolesResponse]) => {
-        setPermMap(permsResponse.data.data);
+    API.get(rolesEndpoint)
+      .then((rolesResponse) => {
         setRolesList(rolesResponse.data.data);
         setLoading(false);
       })
@@ -45,7 +40,7 @@ export default function AllRoles() {
                 <h4>
                   <ol className="flex flex-wrap gap-2">
                     {role.permissions.map((permissionId) => (
-                      <li className="text-lg bg-blue-500 rounded-full px-3 py-1" key={permissionId}>{permMap[permissionId]} </li>
+                      <li className="text-lg bg-blue-500 rounded-full px-3 py-1" key={permissionId}>{Permission[permissionId]} </li>
                     ))}
                   </ol>
                 </h4>

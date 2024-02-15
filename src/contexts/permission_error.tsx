@@ -1,4 +1,4 @@
-import Permission from "@/data/permissions";
+import Permission from "@/types/permissions";
 import React from "react";
 import { PermErrCtxType } from "@/types/contextTypes";
 

@@ -1,8 +1,8 @@
 import { PermErrCtx } from "@/contexts/permission_error";
-import Permission from "@/data/permissions";
+import Permission from "@/types/permissions";
 import React, { useEffect } from "react";
 import { Navigate, useNavigate, useRoutes } from "react-router-dom";
-import { protectedRoutes } from "./protected";
+import { protectedRoutes } from "./routeMap";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { getTokenFromStorage } from "@/services/localStorageParser";
 import { Spinner } from "@/components/Spinner";

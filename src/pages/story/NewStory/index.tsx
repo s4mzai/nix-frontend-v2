@@ -3,6 +3,7 @@ import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { getUserFromStorage } from "@/services/localStorageParser";
+import BlogCategory from "@/types/blogCategory";
 import { useContext, useEffect, useReducer } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -77,8 +78,6 @@ export default function NewStory() {
     error,
   } = state;
 
-  const categories = ["Editorial", "Blog", "Interview", "Edition"];
-
   useEffect(() => {
     console.log(draftBlog);
     console.log(getUserFromStorage().user);
@@ -108,10 +107,10 @@ export default function NewStory() {
       byliner: byliner,
       slug: slug,
       body: content,
-      category_id: 0,
+      category_id: selectedCategory,
       meta_title: metaTitle,
       meta_description: metaDescription,
-      user_id: user.id, // todo: what? where is this user? fix this: FIXED
+      user_id: user.id,
       saveAsDraft: saveAsDraft,
     };
 
@@ -188,13 +187,19 @@ export default function NewStory() {
           className="w-full p-2 border border-gray-300 rounded"
           id="category"
           value={selectedCategory}
-          onChange={(e) => dispatch({ type: "set_selected_category", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: "set_selected_category", payload: Number(e.target.value) })}
         >
-          {categories.map((category) => (
-            <option className="bg-white border-none" key={category} value={category.toLowerCase()}>
-              {category}
-            </option>
-          ))}
+          {
+            Object
+              .keys(BlogCategory)
+              .map((v) => Number(v))
+              .filter((v) => !isNaN(v))
+              .map((category_id) => (
+                <option className="bg-white border-none" key={category_id} value={category_id}>
+                  {BlogCategory[category_id]}
+                </option>
+              ))
+          }
         </select>
       </div>
 

@@ -1,4 +1,4 @@
-import Permission from "@/data/permissions";
+import Permission from "@/types/permissions";
 import { GrantedPermissions, IUser } from "@/types/contextTypes";
 
 export const getUserFromStorage = () => {

@@ -1,7 +1,8 @@
-import items from "@/data/menuData";
+import { protectedRoutes } from "@/router/routeMap";
 import SidebarItem from "./sideNavItems.jsx";
 
 function Sidebar() {
+  const items = protectedRoutes[0].children;
   return (
     <div className="min-h-[100vh] bg-[#252525] text-white w-[280px]">
       <div className="flex flex-col p-4">

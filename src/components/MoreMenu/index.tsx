@@ -1,7 +1,19 @@
 import MoreVerticalIcon from "@/assets/MoreIcon";
+import BlogStatus from "@/types/blogStatus";
 import { useEffect, useState } from "react";
+import { PermissionProtector } from "../PermissionProtector";
+import Permission from "@/types/permissions";
 
-export default function MoreMenu({ onDelete, onArchive, onEdit = null, blogId }) {
+interface MoreMenuProps {
+  onDelete: (blogId: string) => void;
+  onArchive: (blogId: string) => void;
+  onEdit: (blogId: string) => void;
+  onSubmit: (blogId: string) => void;
+  blogId: string;
+  status: BlogStatus;
+}
+
+export default function MoreMenu({ onDelete, onArchive, onEdit, onSubmit, blogId, status }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   //let menuRef = useRef(null);
 
@@ -18,11 +30,17 @@ export default function MoreMenu({ onDelete, onArchive, onEdit = null, blogId })
   };
 
   const handleEdit = () => {
-    if (onEdit) {
-      onEdit(blogId);
-      setIsOpen(false);
-    }
+    // these checks will actually make use feel ui isn't working, as it shows nothing if onEdit is not passed
+    // better would be to let the global error handler handle and "post a toast"
+    // if (onEdit) {
+    onEdit(blogId);
+    setIsOpen(false);
+    // }
+  };
 
+  const handleSubmit = () => {
+    onSubmit(blogId);
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -54,7 +72,7 @@ export default function MoreMenu({ onDelete, onArchive, onEdit = null, blogId })
       </div>
       {isOpen && (
         <div className="z-10 origin-top-right absolute  bg-gray-200 rounded-md shadow-md">
-          {onEdit && (
+          {!(status == BlogStatus.Published || status == BlogStatus.Approved) && (
             <button
               className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               onClick={handleEdit}
@@ -69,12 +87,29 @@ export default function MoreMenu({ onDelete, onArchive, onEdit = null, blogId })
           >
             Delete
           </button>
-          <button
-            className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            onClick={handleArchive}
-          >
-            Archive
-          </button>
+
+          {
+            (status == BlogStatus.Published || status == BlogStatus.Approved || status == BlogStatus.Pending) ?
+              <PermissionProtector silent={true} permission={[Permission.DeleteBlog]}>
+                <button
+                  className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  onClick={handleArchive}
+                >
+                  Archive
+                </button>
+              </PermissionProtector>
+              : <></>
+          }
+
+          {
+            (status == BlogStatus.Draft) ?
+              <button
+                className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                onClick={handleSubmit}
+              >
+                Submit
+              </button> : <></>
+          }
         </div>
       )}
     </div>
