@@ -1,9 +1,10 @@
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
 import SearchBar from "@/components/SearchBar";
+import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
 import { ErrorContext } from "@/contexts/error";
-import { blogStatus } from "@/data/blogStatus";
+import { BlogStatus, blogStatusColor } from "@/data/blogStatus";
 import blogCategories from "@/data/categories";
 import API from "@/services/API";
 import { useContext, useEffect, useReducer } from "react";
@@ -53,10 +54,10 @@ const reducer = (state, action) => {
   return updatedData;
 };
 
-const getFilteredBlogs = (blogs, statusFilters, blogStatus, searchTerm) => {
+const getFilteredBlogs = (blogs, statusFilters, searchTerm) => {
   return blogs.filter((blog) =>
-    statusFilters.includes(blogStatus[blog.status].name) &&
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+    statusFilters.includes(BlogStatus[blog.status]) &&
+    blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 };
 
@@ -73,7 +74,6 @@ export default function AllStory() {
     searchTerm,
     statusFilters,
     loading,
-    error,
   } = state;
 
   const handleDelete = (blogId) => {
@@ -137,19 +137,18 @@ export default function AllStory() {
 
     API.get(blogEndpoint)
       .then((blogResponse) => {
+        console.log(blogResponse.data.data);
         dispatch({ type: "set_blogs", payload: blogResponse.data.data });
         dispatch({ type: "set_loading", payload: false });
       })
       .catch((error) => {
-        dispatch({ type: "set_error", payload: error });
+        setError(error);
         dispatch({ type: "set_loading", payload: false });
       });
   }, []);
 
 
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message} </p>;
+  if (loading) return <div className="flex justify-center items-center"><Spinner /></div>;
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -160,37 +159,42 @@ export default function AllStory() {
           onSearch={(value) => dispatch({ type: "set_search_term", payload: value })}
         />
         <div className="flex mt-4 space-x-8">
-          {blogStatus.map((status) => (
-            <label key={status.id} className="ms-2  text-md text-gray-900">
-              <input
-                className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                type="checkbox"
-                checked={statusFilters.includes(status.name)}
-                onChange={() => dispatch({ type: "toggle_status_filter", payload: status.name })}
-              />
-              {status.name}
-            </label>
-          ))}
+          {
+            Object.keys(BlogStatus)
+              .filter((v) => isNaN(Number(v)))
+              .map((status) => { return { status, id: BlogStatus[status] }; })
+              .map(({ status, id }) => (
+                <label key={id} className="ms-2  text-md text-gray-900">
+                  <input
+                    className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                    type="checkbox"
+                    checked={statusFilters.includes(status)}
+                    onChange={() => dispatch({ type: "toggle_status_filter", payload: status })}
+                  />
+                  {status} ({status}/{id})
+                </label>
+              ))
+          }
         </div>
       </div>
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={getFilteredBlogs(blogs, statusFilters, blogStatus, searchTerm).map(blog => [
+          content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
             new Date(blog.updatedAt).toLocaleDateString(),
             blog.title,
             blogCategories[blog.category_id].name,
             <span
-              className={`px-2 py-1 rounded-md ${blogStatus[blog.status].color.bgClass} ${blogStatus[blog.status].color.textClass}`}
+              className={`px-2 py-1 rounded-md ${blogStatusColor[blog.status].bgClass} ${blogStatusColor[blog.status].textClass}`}
               key={blog.category_id}
             >
               <TagIcon className="w-4 h-4 inline-block mr-1" />
-              {blogStatus[blog.status].name}
+              {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
               onDelete={handleDelete}
               onArchive={handleArchive}
-              onEdit={!(blog.status === 1 || blog.status === 2) ? handleEdit : null}
+              onEdit={!(blog.status === BlogStatus.Published || blog.status === BlogStatus.Approved) ? handleEdit : null}
               blogId={blog._id}
               key={blog._id}
             />
