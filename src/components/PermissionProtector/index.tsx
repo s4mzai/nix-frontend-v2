@@ -2,7 +2,6 @@ import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
 import Permissions from "@/data/permissions";
 import React, { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
 import { Spinner } from "../Spinner";
 
 interface PermissionProtectorProps {

@@ -1,10 +1,8 @@
-import { useEffect, useReducer } from "react";
-import API from "@/services/API";
 import SearchBar from "@/components/SearchBar";
-import UserCard from "@/components/UserCard";
-import { PermissionProtector } from "@/components/PermissionProtector";
-import Permission from "@/data/permissions";
 import { Spinner } from "@/components/Spinner";
+import UserCard from "@/components/UserCard";
+import API from "@/services/API";
+import { useEffect, useReducer } from "react";
 
 
 const initialState = {

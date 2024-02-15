@@ -1,8 +1,8 @@
-import { useEffect, useReducer } from "react";
 import MyMultiselect from "@/components/MultiSelect";
-import API from "@/services/API";
-import { toast } from "react-toastify";
 import { Spinner } from "@/components/Spinner";
+import API from "@/services/API";
+import { useEffect, useReducer } from "react";
+import { toast } from "react-toastify";
 
 
 const initialState = {
