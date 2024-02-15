@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        "id-back": "url('id_back.jpg')"
+        "id-back": "url('@/assets/id_back.jpg')"
       },
       colors: {
         "brand-blue": "#0c598a",

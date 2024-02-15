@@ -1,9 +1,9 @@
 import { useState } from "react";
-import DownArrow from '../../assets/ChevronDownIcon';
-import UpArrow from "../../assets/ChevronUpIcon";
+import DownArrow from "@/assets/ChevronDownIcon";
+import UpArrow from "@/assets/ChevronUpIcon";
 import { Link } from "react-router-dom";
-import React from "react";
-import { PermissionProtector } from "../PermissionProtector";
+
+import { PermissionProtector } from "@/components/PermissionProtector";
 
 function SidebarItem({ items }) {
   const [open, setOpen] = useState(false);

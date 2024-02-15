@@ -57,6 +57,6 @@ const sidebar_items = [
       }
     ]
   }
-]
+];
 
 export default sidebar_items;
