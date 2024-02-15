@@ -4,10 +4,10 @@ import UpArrow from "@/assets/ChevronUpIcon";
 import { Link } from "react-router-dom";
 
 import { PermissionProtector } from "@/components/PermissionProtector";
-
+import { protectedRoutes } from "@/router/routeMap";
 function SidebarItem({ items }) {
   const [open, setOpen] = useState(false);
-  if (items.submenuItems) {
+  if (items.children) {
     return (
       <PermissionProtector permission={items.permission} silent={true}>
         <div className="flex flex-col">
@@ -21,12 +21,12 @@ function SidebarItem({ items }) {
             <div>{open ? <UpArrow /> : <DownArrow />}</div>
           </div>
           {open ? <div className="pl-4">
-            {items.submenuItems.map((item, index) => (
+            {items.children.map((item, index) => (
               <PermissionProtector key={`nested-${item.label}.${index}`} permission={item.permission} silent={true}>
                 <SidebarItem items={
                   {
                     ...item,
-                    href: `${items.href}${item.href}`,
+                    path: `${items.path}${item.path}`,
                   }
                 }
                 />
@@ -40,7 +40,7 @@ function SidebarItem({ items }) {
   } else {
     return (
       <PermissionProtector permission={items.permission} silent={true}>
-        <Link to={items.href}>
+        <Link to={items.path}>
           <div className="flex items-center text-white p-2 cursor-pointer hover:bg-gray-500 hover:rounded">
             <span>{items.label}</span>
           </div>
