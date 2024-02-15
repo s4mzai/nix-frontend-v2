@@ -1,15 +1,14 @@
-import { useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import API from "@/services/API";
-import Table from "@/components/Table";
+import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
 import SearchBar from "@/components/SearchBar";
-
-import blogCategories from "@/data/categories";
+import Table from "@/components/Table";
+import { ErrorContext } from "@/contexts/error";
 import { blogStatus } from "@/data/blogStatus";
-
-import { TagIcon } from "@/assets/TagIcon";
+import blogCategories from "@/data/categories";
+import API from "@/services/API";
+import { useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const initialState = {
   blogs: [],
@@ -66,6 +65,7 @@ const tableHeaders = ["Last Updated", "Title", "Category", "Status"];
 
 export default function AllStory() {
   const navigate = useNavigate();
+  const { setError } = useContext(ErrorContext);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -93,7 +93,7 @@ export default function AllStory() {
             }
           });
         })
-        .catch((error) => toast.error(error));
+        .catch((e) => setError(e));
       console.log("story deleted");
     }
   };
@@ -116,7 +116,7 @@ export default function AllStory() {
             }
           });
         })
-        .catch((error) => toast.error(error));
+        .catch((e) => setError(e));
       console.log("story archived");
     }
   };
@@ -128,7 +128,7 @@ export default function AllStory() {
         const blogDetails = blogResponse.data.data;
         navigate("/story/new-story", { state: { key: blogDetails } });
       })
-      .catch((error) => toast.error("This blog cannot be edited."));
+      .catch((e) => setError(e));
     console.log("story edited");
   };
 
@@ -195,7 +195,7 @@ export default function AllStory() {
               key={blog._id}
             />
           ])}
-          onDelete={handleDelete}
+          onDelete={handleDelete} // todo: fix type error
           onEdit={handleEdit}
         />
       </main>

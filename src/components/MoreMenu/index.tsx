@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
 import MoreVerticalIcon from "@/assets/MoreIcon";
+import { useEffect, useState } from "react";
 
 export default function MoreMenu({ onDelete, onArchive, onEdit = null, blogId }) {
   const [isOpen, setIsOpen] = useState(false);
