@@ -4,9 +4,9 @@ import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
 import { ErrorContext } from "@/contexts/error";
-import { BlogStatus, blogStatusColor } from "@/data/blogStatus";
 import blogCategories from "@/data/categories";
 import API from "@/services/API";
+import { BlogStatus } from "@/types/blogStatus";
 import { useContext, useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 const initialState = {
   blogs: [],
   searchTerm: "",
-  statusFilters: ["Pending", "Published", "Approved", "Draft"],
+  statusFilters: Object.keys(BlogStatus).filter((v) => isNaN(Number(v))),
   loading: true,
   error: null,
 };
@@ -171,7 +171,7 @@ export default function AllStory() {
                     checked={statusFilters.includes(status)}
                     onChange={() => dispatch({ type: "toggle_status_filter", payload: status })}
                   />
-                  {status} ({status}/{id})
+                  {status}
                 </label>
               ))
           }
@@ -185,7 +185,10 @@ export default function AllStory() {
             blog.title,
             blogCategories[blog.category_id].name,
             <span
-              className={`px-2 py-1 rounded-md ${blogStatusColor[blog.status].bgClass} ${blogStatusColor[blog.status].textClass}`}
+              // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
+              // alternative fix is to re-export these class names in index.css
+              // i'm lazy, so i just did this impl instead
+              className={`px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
               key={blog.category_id}
             >
               <TagIcon className="w-4 h-4 inline-block mr-1" />

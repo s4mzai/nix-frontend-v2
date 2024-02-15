@@ -10,3 +10,23 @@
     --text-color-main: gray-900;
     --text-color-highlight: gray-500;
 }
+
+.Pending {
+    @apply bg-red-200;
+    @apply text-red-800;
+}
+
+.Published {
+    @apply bg-green-200;
+    @apply text-green-800;
+}
+
+.Approved {
+    @apply bg-yellow-200;
+    @apply text-yellow-800;
+}
+
+.Draft {
+    @apply bg-blue-200;
+    @apply text-blue-800;
+}
