@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 const initialState = {
   blogs: [],
   searchTerm: "",
-  statusFilters: Object.keys(BlogStatus).filter((v) => isNaN(Number(v))),
+  statusFilters: Object.keys(BlogStatus).map((v) => Number(v)).filter((v) => !isNaN(v)),
   loading: true,
   error: null,
 };
@@ -56,7 +56,7 @@ const reducer = (state, action) => {
 
 const getFilteredBlogs = (blogs, statusFilters, searchTerm) => {
   return blogs.filter((blog) =>
-    statusFilters.includes(BlogStatus[blog.status]) &&
+    statusFilters.includes(blog.status) &&
     blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 };
@@ -168,8 +168,8 @@ export default function AllStory() {
                   <input
                     className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                     type="checkbox"
-                    checked={statusFilters.includes(status)}
-                    onChange={() => dispatch({ type: "toggle_status_filter", payload: status })}
+                    checked={statusFilters.includes(id)}
+                    onChange={() => dispatch({ type: "toggle_status_filter", payload: id })}
                   />
                   {status}
                 </label>
