@@ -13,7 +13,6 @@ const ProtectedRoute = () => {
   const { user, ready } = React.useContext(CurrUserCtx);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
-  const element = useRoutes([...protectedRoutes]);
 
   useEffect(() => {
     const token = getTokenFromStorage();
@@ -24,9 +23,12 @@ const ProtectedRoute = () => {
     }
     setLoading(false);
   }, []);
+  
+  const element = useRoutes([...protectedRoutes]);
 
   if (loading) { return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>; }
-  if (ready && !user) { return <Navigate to="/login" />; }
+  if (!loading && ready && !user) { return <Navigate to="/login" />; }
+  
   return (
     <>
       {failedPermissions !== null && failedPermissions.length > 0 ?

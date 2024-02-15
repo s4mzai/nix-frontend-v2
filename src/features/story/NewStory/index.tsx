@@ -108,7 +108,6 @@ export default function NewStory() {
                 window.location.reload();
               }, 2000);
             } else {
-              console.log("hi");
               navigate("/story/all-story", { replace: true });
             }
           }

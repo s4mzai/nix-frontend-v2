@@ -4,6 +4,7 @@ import ProtectedRoute from "./ProtectedRoute.js";
 import ErrorCtxProvider from "@/contexts/error.js";
 import PermErrCtxProvider from "@/contexts/permission_error.js";
 import CurrUserCtxProvider from "@/contexts/current_user.js";
+import HomePage from "@/features/HomePage.js";
 
 const AppRoute = () => {
   return (
@@ -12,6 +13,7 @@ const AppRoute = () => {
         <CurrUserCtxProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/*" element={<ProtectedRoute />} />
           </Routes >
         </CurrUserCtxProvider>

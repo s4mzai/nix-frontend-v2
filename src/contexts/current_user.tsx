@@ -20,7 +20,7 @@ const CurrUserCtxProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const userData = getUserFromStorage();
     if (!userData) {
-      console.error("User data not found in local storage");
+      // console.error("User data not found in local storage");
       setIsReady(true);
       return;
     }

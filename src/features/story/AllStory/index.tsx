@@ -34,9 +34,9 @@ const reducer = (state, action) => {
     //refer to their originals. so we need to spread it out again
     //if present in filter, remove. Else, add
     if (newStatusFilters.includes(action.payload)) {
-      console.log(newStatusFilters, action.payload);
+      // console.log(newStatusFilters, action.payload);
       newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
-      console.debug(newStatusFilters);
+      // console.debug(newStatusFilters);
     } else {
       newStatusFilters.push(action.payload);
     }
