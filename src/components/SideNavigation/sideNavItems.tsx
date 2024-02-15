@@ -4,7 +4,7 @@ import UpArrow from "@/assets/ChevronUpIcon";
 import { Link } from "react-router-dom";
 
 import { PermissionProtector } from "@/components/PermissionProtector";
-import { protectedRoutes } from "@/router/routeMap";
+
 function SidebarItem({ items }) {
   const [open, setOpen] = useState(false);
   if (items.children) {

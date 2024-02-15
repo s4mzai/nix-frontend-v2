@@ -1,6 +1,7 @@
 
 
-export default function Table({headers, content}) {
+export default function Table({ headers, content, onDelete, onEdit }) {
+  // todo: use these functions onDelete & onEdit or remove them
   return (
     <table className="w-full table-auto border-collapse">
       <thead>

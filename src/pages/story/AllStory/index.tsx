@@ -4,9 +4,9 @@ import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
 import { ErrorContext } from "@/contexts/error";
-import blogCategories from "@/data/categories";
+import BlogCategories from "@/types/blogCategory";
+import BlogStatus from "@/types/blogStatus";
 import API from "@/services/API";
-import { BlogStatus } from "@/types/blogStatus";
 import { useContext, useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -183,7 +183,7 @@ export default function AllStory() {
           content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
             new Date(blog.updatedAt).toLocaleDateString(),
             blog.title,
-            blogCategories[blog.category_id].name,
+            BlogCategories[blog.category_id],
             <span
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
               // alternative fix is to re-export these class names in index.css
@@ -202,7 +202,7 @@ export default function AllStory() {
               key={blog._id}
             />
           ])}
-          onDelete={handleDelete} // todo: fix type error
+          onDelete={handleDelete}
           onEdit={handleEdit}
         />
       </main>
