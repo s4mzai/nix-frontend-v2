@@ -1,9 +1,11 @@
-import React from "react";
-import { useReducer, useEffect } from "react";
-import { toast } from "react-toastify";
-import API from "@/services/API";
-import { useNavigate, useLocation } from "react-router-dom";
 import TextEditor from "@/components/TextEditor";
+import { CurrUserCtx } from "@/contexts/current_user";
+import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
+import { getUserFromStorage } from "@/services/localStorageParser";
+import { useContext, useEffect, useReducer } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 // const TextEditor = React.lazy(() => import("@/components/TextEditor"))
 const initialState = {
   title: "",
@@ -56,6 +58,9 @@ const reducer = (state, action) => {
 
 export default function NewStory() {
   const navigate = useNavigate();
+  const { setError } = useContext(ErrorContext);
+  const { user } = useContext(CurrUserCtx);
+
   const location = useLocation();
   const draftBlog = location.state?.key; //if we are redirected from edit in allstory
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -76,7 +81,7 @@ export default function NewStory() {
 
   useEffect(() => {
     console.log(draftBlog);
-    console.log(localStorage.getItem("user"));
+    console.log(getUserFromStorage().user);
     if (draftBlog) {
       dispatch({ type: "set_title", payload: draftBlog.title });
       dispatch({ type: "set_byliner", payload: draftBlog.byliner });
@@ -98,7 +103,6 @@ export default function NewStory() {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user"));
     const request = {
       title: title,
       byliner: byliner,
@@ -131,7 +135,7 @@ export default function NewStory() {
           }
         });
       })
-      .catch((error) => toast.error(error));
+      .catch((e) => setError(e));
   };
 
   if (error) return <p>Error: {error.message} </p>;
@@ -163,6 +167,7 @@ export default function NewStory() {
       </div>
 
       <div className="mb-6">
+        {/*  todo: fix type error */}
         <div className="block mb-2" htmlFor="ck_editor">
           Content
           <div className="py-2 w-full border-gray-300 rounded" id="ck_editor">

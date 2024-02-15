@@ -18,7 +18,7 @@ const ErrorCtxProvider: React.FC<{ children: React.ReactNode }> = ({ children })
           navigate("/login?sessionExpired=true");
           break;
         case 403:
-          toast.error("Permission denied by the server! Relogin to update permissions.");
+          toast.error("Permission denied by the server! Relogin to update permissions if you feel this is a mistake.");
           break;
         default:
           toast.error(data?.response?.data?.message || data?.message || "An error occurred!");
