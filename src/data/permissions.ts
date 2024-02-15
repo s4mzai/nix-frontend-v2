@@ -1,7 +1,7 @@
 /**
  * Enum representing different permissions.
  */
-const enum Permission {
+enum Permission {
     CreateProfile = 0,
     ReadProfile = 1,
     UpdateProfile = 2,

@@ -1,5 +1,6 @@
 import Collapsible from "@/components/Collapsible";
-import { appContext } from "@/public-protected routes/ProtectedRoute";
+import { Spinner } from "@/components/Spinner";
+import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { useContext, useEffect, useState } from "react";
 
@@ -7,7 +8,7 @@ export default function AllRoles() {
   const [rolesList, setRolesList] = useState([]);
   const [permMap, setPermMap] = useState({});
   const [loading, setLoading] = useState(true);
-  const context = useContext(appContext);
+  const { setError } = useContext(ErrorContext);
 
   useEffect(() => {
     const rolesEndpoint = "/role";
@@ -24,7 +25,7 @@ export default function AllRoles() {
       })
       .catch((error) => {
         setLoading(false);
-        context.updateValue(error);
+        setError(error);
       });
   }, []);
 
@@ -35,7 +36,7 @@ export default function AllRoles() {
         Everyone has a different role in Times. Hence different usage of the website.
       </p>
       {loading ? (
-        <p>Loading...</p>
+        <Spinner />
       ) : (
         <div >
           {rolesList.map((role) => (

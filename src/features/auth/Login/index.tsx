@@ -1,10 +1,14 @@
 import TimesLogo from "@/assets/dtutimesIcon";
+import { CurrPermsCtx } from "@/contexts/current_permission";
 import API from "@/services/API";
+import React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function Login() {
+  const { setGrantedPermissions } = React.useContext(CurrPermsCtx);
+
   useEffect(() => {
     // todo: for some reasons search params standard way doesn't work so have to do manual string search; fix it
     const session_expired = window?.location?.href?.includes("sessionExpired=true");
@@ -22,6 +26,7 @@ export default function Login() {
       navigate("/dashboard");
     }
   }, []);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,6 +39,7 @@ export default function Login() {
       if (data.status === "success") {
         localStorage.setItem("token", data.data.accessToken);
         localStorage.setItem("user", JSON.stringify(data.data.user));
+        setGrantedPermissions(data.data.user.permissions);
         toast.success("Logged in successfully");
         navigate("/dashboard");
       } else {
