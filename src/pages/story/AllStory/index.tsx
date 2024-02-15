@@ -4,7 +4,7 @@ import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
 import { ErrorContext } from "@/contexts/error";
-import BlogCategories from "@/types/blogCategory";
+import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import API from "@/services/API";
 import { useContext, useEffect, useReducer } from "react";
@@ -183,7 +183,7 @@ export default function AllStory() {
           content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
             new Date(blog.updatedAt).toLocaleDateString(),
             blog.title,
-            BlogCategories[blog.category_id],
+            BlogCategory[blog.category_id],
             <span
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
               // alternative fix is to re-export these class names in index.css
