@@ -1,4 +1,4 @@
-import Permission from "./permissions";
+import Permission from "../types/permissions";
 
 const sidebar_items = [
   {

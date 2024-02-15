@@ -1,3 +1,6 @@
+// this file should be in sync with backend repo permission.ts
+// https://github.com/dtutimes/Backend_v2/blob/main/src/api/helpers/permissions.ts
+
 /**
  * Enum representing different permissions.
  */

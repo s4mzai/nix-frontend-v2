@@ -2,16 +2,16 @@
 import { Outlet } from "react-router-dom";
 
 import ErrorPage from "@/error-page";
-import Layout from "@/features/Layout";
+import Layout from "@/pages/Layout";
 import React from "react";
 
 //lazy imports
-const NewStory = React.lazy(() => import("@/features/story/NewStory"));
-const AllStory = React.lazy(() => import("@/features/story/AllStory"));
-const AllRoles = React.lazy(() => import("@/features/roles/AllRoles"));
-const NewRole = React.lazy(() => import("@/features/roles/NewRole"));
-const AllMembers = React.lazy(() => import("@/features/member/AllMembers"));
-const Dashbboard = React.lazy(() => import("@/features/dashboard"));
+const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
+const AllStory = React.lazy(() => import("@/pages/story/AllStory"));
+const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
+const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
+const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
+const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
 
 
 export const protectedRoutes = [

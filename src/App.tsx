@@ -1,5 +1,5 @@
 import { Spinner } from "@/components/Spinner";
-import AppRoute from "@/public-protected routes";
+import AppRoute from "@/router";
 import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
