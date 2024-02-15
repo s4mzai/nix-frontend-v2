@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import API from "@/services/API";
 import Table from "@/components/Table";
 import MoreMenu from "@/components/MoreMenu";
@@ -10,8 +10,6 @@ import blogCategories from "@/data/categories";
 import { blogStatus } from "@/data/blogStatus";
 
 import { TagIcon } from "@/assets/TagIcon";
-import { Spinner } from "@/components/Spinner";
-
 
 const initialState = {
   blogs: [],
@@ -36,9 +34,9 @@ const reducer = (state, action) => {
     //refer to their originals. so we need to spread it out again
     //if present in filter, remove. Else, add
     if (newStatusFilters.includes(action.payload)) {
-      // console.log(newStatusFilters, action.payload);
+      console.log(newStatusFilters, action.payload);
       newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
-      // console.debug(newStatusFilters);
+      console.debug(newStatusFilters);
     } else {
       newStatusFilters.push(action.payload);
     }
@@ -92,7 +90,8 @@ export default function AllStory() {
               setTimeout(() => {
                 window.location.reload();
               }, 2000);
-            }});  
+            }
+          });
         })
         .catch((error) => toast.error(error));
       console.log("story deleted");
@@ -114,7 +113,8 @@ export default function AllStory() {
               setTimeout(() => {
                 window.location.reload();
               }, 2000);
-            }});  
+            }
+          });
         })
         .catch((error) => toast.error(error));
       console.log("story archived");
@@ -126,7 +126,7 @@ export default function AllStory() {
     API.get(`/blog/get-blog/${blogId}`)
       .then((blogResponse) => {
         const blogDetails = blogResponse.data.data;
-        navigate('/story/new-story', { state: { key: blogDetails }});
+        navigate("/story/new-story", { state: { key: blogDetails } });
       })
       .catch((error) => toast.error("This blog cannot be edited."));
     console.log("story edited");
@@ -137,27 +137,27 @@ export default function AllStory() {
 
     API.get(blogEndpoint)
       .then((blogResponse) => {
-        dispatch({type: "set_blogs", payload: blogResponse.data.data});
-        dispatch({type: "set_loading", payload: false});
+        dispatch({ type: "set_blogs", payload: blogResponse.data.data });
+        dispatch({ type: "set_loading", payload: false });
       })
       .catch((error) => {
-        dispatch({type: "set_error", payload: error});
-        dispatch({type: "set_loading", payload: false});
-      });   
+        dispatch({ type: "set_error", payload: error });
+        dispatch({ type: "set_loading", payload: false });
+      });
   }, []);
 
 
 
-  if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message} </p>;
 
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1 className="text-4xl font-semibold text-center">Your Stories</h1>
       <div className="px-3 mt-4">
-        <SearchBar 
-          searchTerm={searchTerm} 
-          onSearch={(value) => dispatch({type: "set_search_term", payload: value})} 
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearch={(value) => dispatch({ type: "set_search_term", payload: value })}
         />
         <div className="flex mt-4 space-x-8">
           {blogStatus.map((status) => (
@@ -166,7 +166,7 @@ export default function AllStory() {
                 className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                 type="checkbox"
                 checked={statusFilters.includes(status.name)}
-                onChange={() => dispatch({ type: "toggle_status_filter", payload: status.name})}
+                onChange={() => dispatch({ type: "toggle_status_filter", payload: status.name })}
               />
               {status.name}
             </label>
@@ -174,8 +174,8 @@ export default function AllStory() {
         </div>
       </div>
       <main className="flex-grow p-6">
-        <Table 
-          headers={tableHeaders} 
+        <Table
+          headers={tableHeaders}
           content={getFilteredBlogs(blogs, statusFilters, blogStatus, searchTerm).map(blog => [
             new Date(blog.updatedAt).toLocaleDateString(),
             blog.title,
@@ -187,17 +187,16 @@ export default function AllStory() {
               <TagIcon className="w-4 h-4 inline-block mr-1" />
               {blogStatus[blog.status].name}
             </span>,
-            <MoreMenu 
-              onDelete={handleDelete} 
-              onArchive={handleArchive} 
-              onEdit={!(blog.status === 1 || blog.status === 2) ? handleEdit : null} 
-              blogId={blog._id} 
+            <MoreMenu
+              onDelete={handleDelete}
+              onArchive={handleArchive}
+              onEdit={!(blog.status === 1 || blog.status === 2) ? handleEdit : null}
+              blogId={blog._id}
               key={blog._id}
-            />    
+            />
           ])}
-          // todo : huh? more unknown attributes?
-          // onDelete={handleDelete} 
-          // onEdit={handleEdit}  
+          onDelete={handleDelete}
+          onEdit={handleEdit}
         />
       </main>
     </div>
