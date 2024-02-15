@@ -1,19 +1,7 @@
+import items from "@/data/menuData";
 import SidebarItem from "./sideNavItems.jsx";
-import items from "../../data/menuData";
-import React from "react";
-import { Navigate } from "react-router-dom";
-import Permission from "../../data/permissions.js";
 
 function Sidebar() {
-  const user_data = localStorage.getItem("user");
-  if (!user_data) return <Navigate to="/login?sessionExpired=true" />;
-  const user = JSON.parse(user_data);
-  if (!user) {
-    console.error("There appears to be an issue with the saved JSON object.", user_data);
-    return <Navigate to="/login?sessionExpired=true" />;
-  }
-  const perms = user.permissions as Permission[];
-
   return (
     <div className="min-h-[100vh] bg-[#252525] text-white w-[280px]">
       <div className="flex flex-col p-4">

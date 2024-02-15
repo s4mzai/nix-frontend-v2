@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --fix",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --fix",
     "preview": "vite preview",
     "start": "VITE_NIX_BACKEND=http://134.209.159.97:8080/api/v1 vite build && node server.js",
     "prod": "npx pm2 delete NixFrontend; pm2 --name NixFrontend --time start npm -- start"
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.45.0",
@@ -34,6 +35,7 @@
     "pm2": "^5.3.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.3",
     "vite": "^4.4.5"
   }
 }
