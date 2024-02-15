@@ -1,8 +1,9 @@
-import { CurrPermsCtx } from "@/contexts/current_permission";
+import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
 import Permissions from "@/data/permissions";
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { Spinner } from "../Spinner";
 
 interface PermissionProtectorProps {
   children: ReactNode;
@@ -11,12 +12,14 @@ interface PermissionProtectorProps {
 }
 
 export const PermissionProtector: React.FC<PermissionProtectorProps> = ({ children, permission: required_permissions, silent }) => {
-  const { grantedPermissions } = React.useContext(CurrPermsCtx);
+  const { grantedPermissions, ready } = React.useContext(CurrUserCtx);
   const { setFailedPermissions } = React.useContext(PermErrCtx);
 
   if (!required_permissions || required_permissions?.length === 0 || grantedPermissions === "*") return children;
 
-  if (grantedPermissions) {
+  if (!ready) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
+
+  if (grantedPermissions && grantedPermissions.length > 0) {
     const failedPerm = (required_permissions).filter((permission) => !grantedPermissions.includes(permission));
     if (failedPerm.length > 0) {
       if (!silent) setFailedPermissions(failedPerm);
@@ -25,6 +28,7 @@ export const PermissionProtector: React.FC<PermissionProtectorProps> = ({ childr
       return children;
     }
   } else {
-    return <Navigate to="/login?sessionExpired=true" />;
+    if (!silent) setFailedPermissions(required_permissions);
+    return <></>;
   }
 };

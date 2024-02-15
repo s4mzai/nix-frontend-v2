@@ -4,6 +4,7 @@ import SearchBar from "@/components/SearchBar";
 import UserCard from "@/components/UserCard";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import Permission from "@/data/permissions";
+import { Spinner } from "@/components/Spinner";
 
 
 const initialState = {
@@ -72,7 +73,7 @@ export default function AllMembers() {
     return category.includes(searchTerm.toLowerCase());
   });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
   if (error) return <p>Error: {error.message} </p>;
 
   return (

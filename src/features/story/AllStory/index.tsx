@@ -8,6 +8,7 @@ import blogCategories from "@/data/categories";
 import { blogStatus } from "@/data/blogStatus";
 
 import { TagIcon } from "@/assets/TagIcon";
+import { Spinner } from "@/components/Spinner";
 
 
 const initialState = {
@@ -100,7 +101,7 @@ export default function AllStory() {
 
 
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
   if (error) return <p>Error: {error.message} </p>;
 
   return (

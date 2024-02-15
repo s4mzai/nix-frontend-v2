@@ -1,17 +1,17 @@
 import TimesLogo from "@/assets/dtutimesIcon";
-import { CurrPermsCtx } from "@/contexts/current_permission";
+import { CurrUserCtx } from "@/contexts/current_user";
 import API from "@/services/API";
+import { getTokenFromStorage, getUserFromJSON } from "@/services/localStorageParser";
 import React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function Login() {
-  const { setGrantedPermissions } = React.useContext(CurrPermsCtx);
+  const { setGrantedPermissions, setUser, ready } = React.useContext(CurrUserCtx);
 
   useEffect(() => {
     // todo: for some reasons search params standard way doesn't work so have to do manual string search; fix it
-    const session_expired = window?.location?.href?.includes("sessionExpired=true");
     const forced_logout = window?.location?.href?.includes("forcedLogout=true");
     if (forced_logout) {
       API.post("/auth/logout").then(() => {
@@ -19,13 +19,16 @@ export default function Login() {
       }).catch(() => {
         toast.error("Server rejected your logout!");
       }).finally(() => localStorage.clear());
-    } else if (session_expired) {
-      localStorage.clear();
-      toast.error("Session expired, please login again!");
-    } else if (localStorage.getItem("token")) {
-      navigate("/dashboard");
+    } else if (ready) {
+      const session_expired = window?.location?.href?.includes("sessionExpired=true");
+      if (session_expired) {
+        localStorage.clear();
+        toast.error("Session expired, please login again!");
+      } else if (getTokenFromStorage()) {
+        navigate("/dashboard");
+      }
     }
-  }, []);
+  }, [ready]);
 
   const navigate = useNavigate();
 
@@ -37,9 +40,11 @@ export default function Login() {
     await API.post("/auth/login", { email, password }).then((res) => {
       const data = res.data;
       if (data.status === "success") {
+        const { user, permissions } = getUserFromJSON(data.data.user);
         localStorage.setItem("token", data.data.accessToken);
-        localStorage.setItem("user", JSON.stringify(data.data.user));
-        setGrantedPermissions(data.data.user.permissions);
+        localStorage.setItem("user", JSON.stringify(user));
+        setGrantedPermissions(permissions);
+        setUser(user);
         toast.success("Logged in successfully");
         navigate("/dashboard");
       } else {

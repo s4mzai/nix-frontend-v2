@@ -2,6 +2,7 @@ import { useEffect, useReducer } from "react";
 import MyMultiselect from "@/components/MultiSelect";
 import API from "@/services/API";
 import { toast } from "react-toastify";
+import { Spinner } from "@/components/Spinner";
 
 
 const initialState = {
@@ -151,7 +152,7 @@ export default function NewRole() {
     //useEffect runs when value of isUpdateMode changes
   }, [isUpdateMode]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
   if (error) return <p>Error: {error.message} </p>;
 
   return (

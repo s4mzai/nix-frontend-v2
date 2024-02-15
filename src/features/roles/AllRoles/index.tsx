@@ -36,7 +36,7 @@ export default function AllRoles() {
         Everyone has a different role in Times. Hence different usage of the website.
       </p>
       {loading ? (
-        <Spinner />
+        <div className="flex w-full h-full justify-center items-center"><Spinner /></div>
       ) : (
         <div >
           {rolesList.map((role) => (
