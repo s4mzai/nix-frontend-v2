@@ -1,9 +1,9 @@
 import MyMultiselect from "@/components/MultiSelect";
 import { Spinner } from "@/components/Spinner";
+import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
-
 
 const initialState = {
   roleName: "",
@@ -52,6 +52,7 @@ const reducer = (state, action) => {
   return updatedData;
 };
 export default function NewRole() {
+  const { setError } = useContext(ErrorContext);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -112,7 +113,7 @@ export default function NewRole() {
 
       API.post(updateRoleEndpoint, updateRequest)
         .then(() => toast.success("Successfully updated"))
-        .catch(() => toast.error("Failed to update role"));
+        .catch((e) => setError(e));
 
     } else {
 
@@ -125,9 +126,7 @@ export default function NewRole() {
 
       API.post(createRoleEndpoint, createRequest)
         .then(() => toast.success("Successfully created"))
-        .catch(() => toast.error("Failed to create role"));
-
-
+        .catch((e) => setError(e));
     }
   };
 
