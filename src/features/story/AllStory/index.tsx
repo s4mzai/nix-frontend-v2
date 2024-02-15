@@ -1,4 +1,6 @@
 import { useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import API from "@/services/API";
 import Table from "@/components/Table";
 import MoreMenu from "@/components/MoreMenu";
@@ -65,6 +67,7 @@ const tableHeaders = ["Last Updated", "Title", "Category", "Status"];
 
 
 export default function AllStory() {
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -75,13 +78,57 @@ export default function AllStory() {
     error,
   } = state;
 
-  const handleDelete = () => {
-    //TODO delete story
-    console.log("story deleted");
+  const handleDelete = (blogId) => {
+    const choice = window.confirm(
+      "Are you sure you want to delete this story?"
+    );
+    if (choice) {
+      const deleteEndPoint = `/blog/delete-blog/${blogId}`;
+
+      API.delete(deleteEndPoint)
+        .then(() => {
+          toast.success("Successfully deleted", {
+            onClose: () => {
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }});  
+        })
+        .catch((error) => toast.error(error));
+      console.log("story deleted");
+    }
   };
 
-  const handleEdit = () => {
+  const handleArchive = (blogId) => {
+    //archive is same as takedown dw
+    const choice = window.confirm(
+      "Are you sure you want to archive this story?"
+    );
+    if (choice) {
+      const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
+
+      API.put(archiveEndPoint)
+        .then(() => {
+          toast.success("Successfully archived", {
+            onClose: () => {
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }});  
+        })
+        .catch((error) => toast.error(error));
+      console.log("story archived");
+    }
+  };
+
+  const handleEdit = (blogId) => {
     //TODO edit blog, should open the blog on the new blog view
+    API.get(`/blog/get-blog/${blogId}`)
+      .then((blogResponse) => {
+        const blogDetails = blogResponse.data.data;
+        navigate('/story/new-story', { state: { key: blogDetails }});
+      })
+      .catch((error) => toast.error("This blog cannot be edited."));
     console.log("story edited");
   };
 
@@ -140,7 +187,13 @@ export default function AllStory() {
               <TagIcon className="w-4 h-4 inline-block mr-1" />
               {blogStatus[blog.status].name}
             </span>,
-            <MoreMenu onDelete={handleDelete} onEdit={handleEdit} key={blog.id}/>
+            <MoreMenu 
+              onDelete={handleDelete} 
+              onArchive={handleArchive} 
+              onEdit={!(blog.status === 1 || blog.status === 2) ? handleEdit : null} 
+              blogId={blog._id} 
+              key={blog._id}
+            />    
           ])}
           // todo : huh? more unknown attributes?
           // onDelete={handleDelete} 
