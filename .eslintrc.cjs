@@ -36,7 +36,10 @@ module.exports = {
     ],
     "react/prop-types": 0,
     "indent": ["warn", 2],
-    "no-unused-vars":"off",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_" }
+    ],
   },
 }

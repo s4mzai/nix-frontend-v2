@@ -19,6 +19,9 @@ const initialState = {
   error: null,
 };
 
+const blogEndpoint = "/blog";
+
+
 const reducer = (state, action) => {
   const updatedData = { ...state };
   const newStatusFilters = [...updatedData.statusFilters];
@@ -85,13 +88,8 @@ export default function AllStory() {
 
       API.delete(deleteEndPoint)
         .then(() => {
-          toast.success("Successfully deleted", {
-            onClose: () => {
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            }
-          });
+          toast.success("Successfully deleted");
+          fetchBlogs();
         })
         .catch((e) => setError(e));
       console.log("story deleted");
@@ -108,13 +106,8 @@ export default function AllStory() {
 
       API.put(archiveEndPoint)
         .then(() => {
-          toast.success("Successfully archived", {
-            onClose: () => {
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            }
-          });
+          toast.success("Successfully archived");
+          fetchBlogs();
         })
         .catch((e) => setError(e));
       console.log("story archived");
@@ -132,10 +125,23 @@ export default function AllStory() {
     console.log("story edited");
   };
 
-  useEffect(() => {
-    const blogEndpoint = "/blog";
+  const handleSubmit = (blogId) => {
+    const choice = window.confirm(
+      "Are you sure you want to submit this story for approval?"
+    );
+    if (choice) {
+      API.put(`/blog/submit-for-approval/${blogId}`)
+        .then((_) => {
+          toast.success("Successfully submitted for approval!");
+          fetchBlogs();
+        })
+        .catch((e) => setError(e));
+      console.log("story submitted");
+    }
+  };
 
-    API.get(blogEndpoint)
+  const fetchBlogs = () => {
+    API.get(blogEndpoint, { data: { userOnly: true } })
       .then((blogResponse) => {
         console.log(blogResponse.data.data);
         dispatch({ type: "set_blogs", payload: blogResponse.data.data });
@@ -145,6 +151,10 @@ export default function AllStory() {
         setError(error);
         dispatch({ type: "set_loading", payload: false });
       });
+  };
+
+  useEffect(() => {
+    fetchBlogs();
   }, []);
 
 
@@ -197,9 +207,11 @@ export default function AllStory() {
             <MoreMenu
               onDelete={handleDelete}
               onArchive={handleArchive}
-              onEdit={!(blog.status === BlogStatus.Published || blog.status === BlogStatus.Approved) ? handleEdit : null}
+              onEdit={handleEdit}
+              onSubmit={handleSubmit}
               blogId={blog._id}
               key={blog._id}
+              status={blog.status}
             />
           ])}
           onDelete={handleDelete}

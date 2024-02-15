@@ -8,7 +8,7 @@ import React from "react";
 
 //lazy imports
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
-const AllStory = React.lazy(() => import("@/pages/story/AllStory"));
+const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
 const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
@@ -37,9 +37,9 @@ export const protectedRoutes = [
         permission: [Permission.ReadBlog],
         children: [
           {
-            path: "all-story/",
-            element: <AllStory />,
-            label: "All Stories",
+            path: "your-stories/",
+            element: <YourStories />,
+            label: "Your Stories",
             permission: [Permission.ReadBlog],
           },
           {
