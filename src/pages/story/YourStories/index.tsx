@@ -143,7 +143,6 @@ export default function AllStory() {
   const fetchBlogs = () => {
     API.get(blogEndpoint, { data: { userOnly: true } })
       .then((blogResponse) => {
-        console.log(blogResponse.data.data);
         dispatch({ type: "set_blogs", payload: blogResponse.data.data });
         dispatch({ type: "set_loading", payload: false });
       })
@@ -214,8 +213,6 @@ export default function AllStory() {
               status={blog.status}
             />
           ])}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
         />
       </main>
     </div>
