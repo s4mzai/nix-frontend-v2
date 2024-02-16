@@ -15,7 +15,7 @@ interface NewStoryState {
   slug: string;
   selectedCategory: BlogCategory;
   createdAt: string;
-  blogImage: File | null;
+  blogImage: string | null;
   metaDescription: string;
   metaTitle: string;
 }
@@ -27,7 +27,7 @@ const initialState: NewStoryState = {
   slug: "",
   selectedCategory: BlogCategory.Editorial, //to do 
   createdAt: "",
-  blogImage: undefined,
+  blogImage: null,
   metaDescription: "",
   metaTitle: "",
 };
@@ -41,47 +41,70 @@ const enum ActionType {
   SetBlogImage,
   SetMetaDescription,
   SetMetaTitle,
+  SetBlogImageLink,
 }
-
-const reducer = (state: NewStoryState, action: { type: ActionType, payload }) => {
-  const updatedData = { ...state };
-  switch (action.type) {
-  case ActionType.SetTitle:
-    updatedData.title = action.payload;
-    break;
-  case ActionType.SetByliner:
-    updatedData.byliner = action.payload;
-    break;
-  case ActionType.SetContent:
-    updatedData.content = action.payload;
-    break;
-  case ActionType.SetSlug:
-    updatedData.slug = action.payload;
-    break;
-  case ActionType.SetSelectedCategory:
-    updatedData.selectedCategory = action.payload;
-    break;
-  case ActionType.SetBlogImage:
-    updatedData.blogImage = action.payload;
-    break;
-  case ActionType.SetMetaDescription:
-    updatedData.metaDescription = action.payload;
-    break;
-  case ActionType.SetMetaTitle:
-    updatedData.metaTitle = action.payload;
-    break;
-  default:
-    return updatedData;
-  }
-  return updatedData;
-};
 
 export default function NewStory() {
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);
   const { user } = useContext(CurrUserCtx);
-
   const location = useLocation();
+
+  const reducer = (state: NewStoryState, action: { type: ActionType, payload }) => {
+    const updatedData = { ...state };
+    switch (action.type) {
+    case ActionType.SetTitle:
+      updatedData.title = action.payload;
+      break;
+    case ActionType.SetByliner:
+      updatedData.byliner = action.payload;
+      break;
+    case ActionType.SetContent:
+      updatedData.content = action.payload;
+      break;
+    case ActionType.SetSlug:
+      updatedData.slug = action.payload;
+      break;
+    case ActionType.SetSelectedCategory:
+      updatedData.selectedCategory = action.payload;
+      break;
+    case ActionType.SetBlogImage:
+      {
+        const image = action.payload as File;
+        if (image) {
+          const form = new FormData();
+          form.append("image", image);
+          const endpoint = state.blogImage ? `/images/update/${state.blogImage}` : "/images/upload";
+          const requestMethod = state.blogImage ? "PUT" : "POST";
+
+          API({
+            method: requestMethod,
+            url: endpoint,
+            data: form,
+          })
+            .then((res) => {
+              toast.success(state.blogImage ? "Image updated successfully" : "Image uploaded successfully");
+              const image_name = res.data.data.name;
+              dispatch({ type: ActionType.SetBlogImageLink, payload: image_name });
+            }).catch((e) => setError(e));
+        }
+      }
+      break;
+    case ActionType.SetMetaDescription:
+      updatedData.metaDescription = action.payload;
+      break;
+    case ActionType.SetMetaTitle:
+      updatedData.metaTitle = action.payload;
+      break;
+    case ActionType.SetBlogImageLink:
+      updatedData.blogImage = action.payload;
+      break;
+    default:
+      return updatedData;
+    }
+    return updatedData;
+  };
+
   const draftBlog = location.state?.key; //if we are redirected from edit in allstory
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -103,7 +126,7 @@ export default function NewStory() {
       dispatch({ type: ActionType.SetContent, payload: draftBlog.body });
       dispatch({ type: ActionType.SetSlug, payload: draftBlog.slug });
       dispatch({ type: ActionType.SetSelectedCategory, payload: draftBlog.category_id });
-      dispatch({ type: ActionType.SetBlogImage, payload: draftBlog.blog_image });
+      dispatch({ type: ActionType.SetBlogImageLink, payload: draftBlog.blog_image });
       dispatch({ type: ActionType.SetMetaDescription, payload: draftBlog.meta_description });
       dispatch({ type: ActionType.SetMetaTitle, payload: draftBlog.meta_title });
     }
@@ -128,6 +151,7 @@ export default function NewStory() {
       meta_description: metaDescription,
       user_id: user.id,
       saveAsDraft: saveAsDraft,
+      cover: blogImage,
     };
 
 
@@ -229,6 +253,7 @@ export default function NewStory() {
           onChange={(e) => dispatch({ type: ActionType.SetBlogImage, payload: e.target.files[0] })}
         />
       </div>
+      {blogImage ? <img src={`/images/get/${blogImage}`} alt={blogImage} /> : <></>} {blogImage} hi
 
       <div className="mb-6">
         <label className="block mb-2" htmlFor="meta-description">
