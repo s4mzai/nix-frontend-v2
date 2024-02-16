@@ -4,13 +4,31 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import Permission from "@/types/permissions";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import DeleteIcon from "@/assets/DeleteIcon";
 
 export default function AllRoles() {
   const [rolesList, setRolesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setError } = useContext(ErrorContext);
 
-  useEffect(() => {
+  const handleDelete = (roleId) => {
+    const choice = window.confirm(
+      "Are you sure you want to delete this role?"
+    );
+    if (choice) {
+      const deleteEndPoint = `/role/delete/${roleId}`;
+
+      API.delete(deleteEndPoint)
+        .then(() => {
+          toast.success("Successfully deleted");
+          fetchRoles();
+        })
+        .catch((e) => setError(e));
+    }
+  };
+
+  const fetchRoles = () => {
     const rolesEndpoint = "/role";
 
     API.get(rolesEndpoint)
@@ -22,6 +40,10 @@ export default function AllRoles() {
         setLoading(false);
         setError(error);
       });
+  }
+
+  useEffect(() => {
+    fetchRoles();
   }, []);
 
   return (
@@ -44,6 +66,14 @@ export default function AllRoles() {
                     ))}
                   </ol>
                 </h4>
+                <div className="flex justify-end">
+                    <button 
+                    onClick={() => handleDelete(role.role_id)}
+                    type="button" 
+                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 ">
+                      <DeleteIcon />
+                    </button>
+                  </div>
               </Collapsible>
             </div>
           ))}
