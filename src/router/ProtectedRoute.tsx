@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { Navigate, useNavigate, useRoutes } from "react-router-dom";
 import { protectedRoutes } from "./routeMap";
 import { CurrUserCtx } from "@/contexts/current_user";
-import { getTokenFromStorage } from "@/services/localStorageParser";
+import { getTokenFromStorage, getUserFromStorage } from "@/services/localStorageParser";
 import { Spinner } from "@/components/Spinner";
 
 
@@ -16,7 +16,8 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     const token = getTokenFromStorage();
-    if (!token) {
+    const user = getUserFromStorage();
+    if (!token || !user) {
       setLoading(false);
       navigate("/login?sessionExpired=true");
       return;

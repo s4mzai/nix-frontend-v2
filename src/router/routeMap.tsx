@@ -66,7 +66,7 @@ export const protectedRoutes = [
             path: "new-role/",
             element: <NewRole />,
             label: "New Role",
-            permission: [Permission.CreateBlog],
+            permission: [Permission.CreateRole],
           },
         ]
       },

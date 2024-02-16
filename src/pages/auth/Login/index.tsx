@@ -1,7 +1,7 @@
 import TimesLogo from "@/assets/dtutimesIcon";
 import { CurrUserCtx } from "@/contexts/current_user";
 import API from "@/services/API";
-import { getTokenFromStorage, getUserFromJSON } from "@/services/localStorageParser";
+import { getTokenFromStorage, getUserFromJSON, getUserFromStorage } from "@/services/localStorageParser";
 import React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,23 @@ export default function Login() {
         localStorage.clear();
         toast.error("Session expired, please login again!");
       } else if (getTokenFromStorage()) {
-        navigate("/dashboard");
+        const val = getUserFromStorage();
+        if (!val) {
+          toast.error("Session expired, please login again!");
+          localStorage.clear();
+        } else {
+          API.get("/user/current-user").then((res) => {
+
+            const { user, permissions } = getUserFromJSON(res.data.data);
+            setGrantedPermissions(permissions);
+            setUser(user);
+            localStorage.setItem("user", JSON.stringify(user));
+            navigate("/dashboard");
+          }).catch((e) => {
+            localStorage.clear();
+            toast.error(e.response?.data?.message || e.message);
+          });
+        }
       }
     }
   }, [ready]);
@@ -78,7 +94,7 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-4"
                 />
               </div>
             </div>
@@ -96,7 +112,7 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-4"
                 />
               </div>
               <div className="text-sm text-right">
