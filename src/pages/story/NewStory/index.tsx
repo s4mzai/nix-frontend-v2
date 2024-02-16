@@ -32,7 +32,7 @@ const initialState: NewStoryState = {
   metaTitle: "",
 };
 
-enum ActionType {
+const enum ActionType {
   SetTitle,
   SetByliner,
   SetContent,
@@ -145,7 +145,7 @@ export default function NewStory() {
           onClose: () => {
             //let the toast notif be seen its v pretty 
             setTimeout(() => {
-              navigate("/story/all-story", { replace: true });
+              navigate("/story/your-stories", { replace: true });
             }, 2000);
           }
         });
@@ -226,7 +226,6 @@ export default function NewStory() {
           className="w-full p-2 border border-gray-300 rounded"
           id="blog-image"
           type="file"
-          value={blogImage.name}
           onChange={(e) => dispatch({ type: ActionType.SetBlogImage, payload: e.target.files[0] })}
         />
       </div>

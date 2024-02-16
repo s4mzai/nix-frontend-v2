@@ -31,11 +31,10 @@ export default function Login() {
           localStorage.clear();
         } else {
           API.get("/user/current-user").then((res) => {
-
             const { user, permissions } = getUserFromJSON(res.data.data);
             setGrantedPermissions(permissions);
             setUser(user);
-            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("user", res.data.data);
             navigate("/dashboard");
           }).catch((e) => {
             localStorage.clear();
