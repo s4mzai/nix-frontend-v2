@@ -4,30 +4,41 @@ import { GrantedPermissions, IUser } from "@/types/contextTypes";
 export const getUserFromStorage = () => {
   const data = localStorage.getItem("user");
   if (!data) { return null; }
-
-  const user = JSON.parse(data);
-  return getUserFromJSON(user);
+  try {
+    const user = JSON.parse(data);
+    return getUserFromJSON(user);
+  } catch (e) {
+    localStorage.clear();
+    console.error(e);
+    return null;
+  }
 };
 
 export const getTokenFromStorage = () => {
-  return localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  if (token) return token;
+  localStorage.clear();
+  return null;
 };
 
-export const getUserFromJSON = (user) => {
-  if (!user) { return null; }
+export const getUserFromJSON = (user_data) => {
+  if (!user_data) { return null; }
 
-  const user_data = {
-    name: user.name,
-    email: user.email,
-    id: user.id,
-    avatar: user.avatar,
-    bio: user.bio,
-    role: user.role,
-    permission: user.permission,
-    is_superuser: user.is_superuser
+  const user = {
+    name: user_data.name,
+    email: user_data.email,
+    id: user_data.id,
+    avatar: user_data.avatar,
+    bio: user_data.bio,
+    role: user_data.role,
+    permission: user_data.permission,
+    is_superuser: user_data.is_superuser
   } as IUser;
 
-  const permissions = (user.is_superuser ? "*" : user.permission as Permission[]) as GrantedPermissions;
-
-  return { user: user_data, permissions: permissions };
+  const permissions = (user_data.is_superuser ? "*" : user_data.permission as Permission[]) as GrantedPermissions;
+  if (user.name && user.email && user.id && user.role) {
+    return { user: user, permissions: permissions };
+  } else {
+    return null;
+  }
 };

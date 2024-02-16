@@ -2,54 +2,73 @@ import TextEditor from "@/components/TextEditor";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { getUserFromStorage } from "@/services/localStorageParser";
 import BlogCategory from "@/types/blogCategory";
 import { useContext, useEffect, useReducer } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 // const TextEditor = React.lazy(() => import("@/components/TextEditor"))
-const initialState = {
+
+interface NewStoryState {
+  title: string;
+  byliner: string;
+  content: string;
+  slug: string;
+  selectedCategory: BlogCategory;
+  createdAt: string;
+  blogImage: File | null;
+  metaDescription: string;
+  metaTitle: string;
+}
+
+const initialState: NewStoryState = {
   title: "",
   byliner: "",
   content: "",
   slug: "",
-  selectedCategory: 0, //to do 
+  selectedCategory: BlogCategory.Editorial, //to do 
   createdAt: "",
   blogImage: undefined,
   metaDescription: "",
   metaTitle: "",
-  error: null,
 };
 
-const reducer = (state, action) => {
+enum ActionType {
+  SetTitle,
+  SetByliner,
+  SetContent,
+  SetSlug,
+  SetSelectedCategory,
+  SetBlogImage,
+  SetMetaDescription,
+  SetMetaTitle,
+}
+
+const reducer = (state: NewStoryState, action: { type: ActionType, payload }) => {
   const updatedData = { ...state };
   switch (action.type) {
-  case "set_title":
+  case ActionType.SetTitle:
     updatedData.title = action.payload;
     break;
-  case "set_byliner":
+  case ActionType.SetByliner:
     updatedData.byliner = action.payload;
     break;
-  case "set_content":
+  case ActionType.SetContent:
     updatedData.content = action.payload;
     break;
-  case "set_slug":
+  case ActionType.SetSlug:
     updatedData.slug = action.payload;
     break;
-  case "set_selected_category":
+  case ActionType.SetSelectedCategory:
     updatedData.selectedCategory = action.payload;
     break;
-  case "set_blog_image":
+  case ActionType.SetBlogImage:
     updatedData.blogImage = action.payload;
     break;
-  case "set_meta_description":
+  case ActionType.SetMetaDescription:
     updatedData.metaDescription = action.payload;
     break;
-  case "set_meta_title":
+  case ActionType.SetMetaTitle:
     updatedData.metaTitle = action.payload;
-    break;
-  case "set_error":
-    updatedData.error = action.payload;
     break;
   default:
     return updatedData;
@@ -75,21 +94,18 @@ export default function NewStory() {
     blogImage,
     metaDescription,
     metaTitle,
-    error,
   } = state;
 
   useEffect(() => {
-    console.log(draftBlog);
-    console.log(getUserFromStorage().user);
     if (draftBlog) {
-      dispatch({ type: "set_title", payload: draftBlog.title });
-      dispatch({ type: "set_byliner", payload: draftBlog.byliner });
-      dispatch({ type: "set_content", payload: draftBlog.body });
-      dispatch({ type: "set_slug", payload: draftBlog.slug });
-      dispatch({ type: "set_selected_category", payload: draftBlog.category_id });
-      dispatch({ type: "set_blog_image", payload: draftBlog.blog_image });
-      dispatch({ type: "set_meta_description", payload: draftBlog.meta_description });
-      dispatch({ type: "set_meta_title", payload: draftBlog.meta_title });
+      dispatch({ type: ActionType.SetTitle, payload: draftBlog.title });
+      dispatch({ type: ActionType.SetByliner, payload: draftBlog.byliner });
+      dispatch({ type: ActionType.SetContent, payload: draftBlog.body });
+      dispatch({ type: ActionType.SetSlug, payload: draftBlog.slug });
+      dispatch({ type: ActionType.SetSelectedCategory, payload: draftBlog.category_id });
+      dispatch({ type: ActionType.SetBlogImage, payload: draftBlog.blog_image });
+      dispatch({ type: ActionType.SetMetaDescription, payload: draftBlog.meta_description });
+      dispatch({ type: ActionType.SetMetaTitle, payload: draftBlog.meta_title });
     }
   }, [draftBlog]);
 
@@ -137,7 +153,6 @@ export default function NewStory() {
       .catch((e) => setError(e));
   };
 
-  if (error) return <p>Error: {error.message} </p>;
 
   return (
     <form className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded">
@@ -149,7 +164,7 @@ export default function NewStory() {
           placeholder="Give this story some title"
           autoFocus={true}
           value={title}
-          onChange={(e) => dispatch({ type: "set_title", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: ActionType.SetTitle, payload: e.target.value })}
         />
       </h1>
       <div className="mb-6 ">
@@ -161,18 +176,18 @@ export default function NewStory() {
           id="byliner"
           placeholder="Byliner sells the story, give this a byliner."
           value={byliner}
-          onChange={(e) => dispatch({ type: "set_byliner", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: ActionType.SetByliner, payload: e.target.value })}
         />
       </div>
 
       <div className="mb-6">
         {/*  todo: fix type error */}
-        <div className="block mb-2" htmlFor="ck_editor">
+        <div className="block mb-2" /** htmlFor="ck_editor"*/ >
           Content
           <div className="py-2 w-full border-gray-300 rounded" id="ck_editor">
             <TextEditor
               value={content}
-              onChange={(value) => dispatch({ type: "set_content", payload: value })}
+              onChange={(value) => dispatch({ type: ActionType.SetContent, payload: value })}
             />
           </div>
         </div>
@@ -187,7 +202,7 @@ export default function NewStory() {
           className="w-full p-2 border border-gray-300 rounded"
           id="category"
           value={selectedCategory}
-          onChange={(e) => dispatch({ type: "set_selected_category", payload: Number(e.target.value) })}
+          onChange={(e) => dispatch({ type: ActionType.SetSelectedCategory, payload: Number(e.target.value) })}
         >
           {
             Object
@@ -211,8 +226,8 @@ export default function NewStory() {
           className="w-full p-2 border border-gray-300 rounded"
           id="blog-image"
           type="file"
-          value={blogImage}
-          onChange={(e) => dispatch({ type: "set_blog_image", payload: e.target.files[0] })}
+          value={blogImage.name}
+          onChange={(e) => dispatch({ type: ActionType.SetBlogImage, payload: e.target.files[0] })}
         />
       </div>
 
@@ -225,7 +240,7 @@ export default function NewStory() {
           id="meta-description"
           placeholder="Enter meta description here"
           value={metaDescription}
-          onChange={(e) => dispatch({ type: "set_meta_description", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: ActionType.SetMetaDescription, payload: e.target.value })}
 
         />
       </div>
@@ -238,7 +253,7 @@ export default function NewStory() {
           id="meta-title"
           placeholder="Enter meta title here"
           value={metaTitle}
-          onChange={(e) => dispatch({ type: "set_meta_title", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: ActionType.SetMetaTitle, payload: e.target.value })}
         />
       </div>
       <div className="mb-6">
@@ -250,7 +265,7 @@ export default function NewStory() {
           id="slug"
           placeholder="Enter slug here"
           value={slug}
-          onChange={(e) => dispatch({ type: "set_slug", payload: e.target.value })}
+          onChange={(e) => dispatch({ type: ActionType.SetSlug, payload: e.target.value })}
         />
       </div>
 
