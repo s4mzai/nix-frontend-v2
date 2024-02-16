@@ -126,11 +126,11 @@ export default function NewStory() {
       dispatch({ type: ActionType.SetContent, payload: draftBlog.body });
       dispatch({ type: ActionType.SetSlug, payload: draftBlog.slug });
       dispatch({ type: ActionType.SetSelectedCategory, payload: draftBlog.category_id });
-      dispatch({ type: ActionType.SetBlogImageLink, payload: draftBlog.blog_image });
+      dispatch({ type: ActionType.SetBlogImageLink, payload: draftBlog.cover });
       dispatch({ type: ActionType.SetMetaDescription, payload: draftBlog.meta_description });
       dispatch({ type: ActionType.SetMetaTitle, payload: draftBlog.meta_title });
     }
-  }, [draftBlog]);
+  }, []);
 
   const handleSubmit = (e, saveAsDraft) => {
     console.log(saveAsDraft);
@@ -154,7 +154,7 @@ export default function NewStory() {
       cover: blogImage,
     };
 
-
+    console.log(request);
     const endPoint = draftBlog ? `/blog/update-blog/${draftBlog._id}` : "/blog/create-blog";
     const requestMethod = draftBlog ? "PUT" : "POST";
 
@@ -165,14 +165,8 @@ export default function NewStory() {
     })
       .then(() => {
         const successMessage = saveAsDraft ? "Successfully saved" : "Successfully submitted";
-        toast.success(successMessage, {
-          onClose: () => {
-            //let the toast notif be seen its v pretty 
-            setTimeout(() => {
-              navigate("/story/your-stories", { replace: true });
-            }, 2000);
-          }
-        });
+        toast.success(successMessage);
+        navigate("/story/your-stories", { replace: true });
       })
       .catch((e) => setError(e));
   };
@@ -253,7 +247,8 @@ export default function NewStory() {
           onChange={(e) => dispatch({ type: ActionType.SetBlogImage, payload: e.target.files[0] })}
         />
       </div>
-      {blogImage ? <img src={`/images/get/${blogImage}`} alt={blogImage} /> : <></>} {blogImage} hi
+      {blogImage}
+      {blogImage ? <img className="max-w-md max-h-md" src={`${API.getUri()}/images/get/${blogImage}?thumbnail=256&t=${new Date().getTime()}`} alt={blogImage} /> : <>No image uploaded yet</>}
 
       <div className="mb-6">
         <label className="block mb-2" htmlFor="meta-description">
