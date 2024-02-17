@@ -9,6 +9,7 @@ import PendingStories from "@/pages/story/PendingStories";
 import ReadStory from "@/pages/story/ReadStory";
 
 //lazy imports
+const Login = React.lazy(() => import("@/pages/auth/Login"));
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
 const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
 const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
@@ -31,6 +32,12 @@ export const protectedRoutes = [
         permission: [],
         label: "Dashboard",
         display: true,
+      },
+      {
+        path: "login?forcedLogout=true",
+        element: <Login />,
+        permission: [],
+        label: "Logout"
       },
       {
         path: "story/",
