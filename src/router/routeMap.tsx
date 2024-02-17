@@ -6,6 +6,7 @@ import Layout from "@/pages/Layout";
 import Permission from "@/types/permissions";
 import React from "react";
 import PendingStories from "@/pages/story/PendingStories";
+import ReadStory from "@/pages/story/ReadStory";
 
 //lazy imports
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
@@ -61,7 +62,7 @@ export const protectedRoutes = [
           },
           {
             path: "pending-stories/:blogId",
-            element: <></>,
+            element: <ReadStory />,
             label: "Read Story",
             permission: [Permission.ReadBlog, Permission.PublishBlog],
             display: false,
