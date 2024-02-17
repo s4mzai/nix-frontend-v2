@@ -1,11 +1,10 @@
+import { Spinner } from "@/components/Spinner";
+import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
 import Permission from "@/types/permissions";
 import React, { useEffect } from "react";
 import { Navigate, useNavigate, useRoutes } from "react-router-dom";
 import { protectedRoutes } from "./routeMap";
-import { CurrUserCtx } from "@/contexts/current_user";
-import { getTokenFromStorage, getUserFromStorage } from "@/services/localStorageParser";
-import { Spinner } from "@/components/Spinner";
 
 
 const ProtectedRoute = () => {
