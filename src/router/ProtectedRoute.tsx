@@ -15,21 +15,21 @@ const ProtectedRoute = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getTokenFromStorage();
-    const user = getUserFromStorage();
-    if (!token || !user) {
+    if (ready) {
+      if (!user) {
+        setLoading(false);
+        navigate("/login?sessionExpired=true");
+        return;
+      }
       setLoading(false);
-      navigate("/login?sessionExpired=true");
-      return;
     }
-    setLoading(false);
-  }, []);
-  
+  }, [ready]);
+
   const element = useRoutes([...protectedRoutes]);
 
   if (loading) { return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>; }
   if (!loading && ready && !user) { return <Navigate to="/login" />; }
-  
+
   return (
     <>
       {failedPermissions !== null && failedPermissions.length > 0 ?
