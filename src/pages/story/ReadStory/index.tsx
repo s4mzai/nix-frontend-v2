@@ -7,11 +7,6 @@ import API from "@/services/API";
 import { toast } from "react-toastify";
 import parse from 'html-react-parser';
 
-const convertHtml = (html: string): string => {
-    const tempDivElement = document.createElement("div");
-    tempDivElement.innerHTML = html;
-    return tempDivElement.textContent || tempDivElement.innerText || "";
-};
 
 export default function ReadStory() {
     const location = useLocation();
