@@ -5,6 +5,8 @@ import ErrorPage from "@/error-page";
 import Layout from "@/pages/Layout";
 import Permission from "@/types/permissions";
 import React from "react";
+import PendingStories from "@/pages/story/PendingStories";
+import ReadStory from "@/pages/story/ReadStory";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -22,7 +24,6 @@ export const protectedRoutes = [
   {
     path: "/",
     element: <Layout><Outlet /> </Layout>,
-
     errorElement: <ErrorPage />,
     children: [
       {
@@ -30,6 +31,7 @@ export const protectedRoutes = [
         element: <Dashbboard />,
         permission: [],
         label: "Dashboard",
+        display: true,
       },
       {
         path: "login?forcedLogout=true",
@@ -42,19 +44,36 @@ export const protectedRoutes = [
         element: <><Outlet /></>,
         label: "Story",
         permission: [Permission.ReadBlog],
+        display: true,
         children: [
           {
             path: "your-stories/",
             element: <YourStories />,
             label: "Your Stories",
             permission: [Permission.ReadBlog],
+            display: true,
           },
           {
             path: "new-story/",
             element: <NewStory />,
             label: "New Story",
             permission: [Permission.CreateBlog],
+            display: true,
           },
+          {
+            path: "pending-stories/",
+            element: <PendingStories />,
+            label: "Pending Stories",
+            permission: [Permission.PublishBlog],
+            display: true,
+          },
+          {
+            path: "pending-stories/:blogId",
+            element: <ReadStory />,
+            label: "Read Story",
+            permission: [Permission.ReadBlog, Permission.PublishBlog],
+            display: false,
+          }
         ]
       },
       {
@@ -62,18 +81,21 @@ export const protectedRoutes = [
         label: "Role",
         permission: [Permission.ReadRole],
         element: <><Outlet /></>,
+        display: true,
         children: [
           {
             path: "all-roles/",
             element: <AllRoles />,
             permission: [Permission.ReadRole],
             label: "All Roles",
+            display: true,
           },
           {
             path: "new-role/",
             element: <NewRole />,
             label: "New Role",
             permission: [Permission.CreateRole],
+            display: true,
           },
         ]
       },
@@ -82,12 +104,14 @@ export const protectedRoutes = [
         element: <><Outlet /></>,
         permission: [],
         label: "Member",
+        display: true,
         children: [
           {
             path: "all-members/",
             element: <AllMembers />,
             permission: [],
             label: "All Members",
+            display: true,
           }
         ]
       },

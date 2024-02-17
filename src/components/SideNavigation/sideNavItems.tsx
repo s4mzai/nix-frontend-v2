@@ -7,6 +7,11 @@ import { PermissionProtector } from "@/components/PermissionProtector";
 
 function SidebarItem({ items }) {
   const [open, setOpen] = useState(false);
+
+  if (items.display === false) {
+    return null;
+  };
+
   if (items.children) {
     return (
       <PermissionProtector permission={items.permission} silent={true}>
