@@ -1,16 +1,14 @@
-import { useState } from "react";
 import DownArrow from "@/assets/ChevronDownIcon";
 import UpArrow from "@/assets/ChevronUpIcon";
+import { PermissionProtector } from "@/components/PermissionProtector";
+import RouteElement from "@/types/routeElement";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { PermissionProtector } from "@/components/PermissionProtector";
-
-function SidebarItem({ items }) {
+function SidebarItem({ items }: { items: RouteElement }) {
   const [open, setOpen] = useState(false);
 
-  if (items.display === false) {
-    return null;
-  };
+  if (items.hide) { return null; }
 
   if (items.children) {
     return (
