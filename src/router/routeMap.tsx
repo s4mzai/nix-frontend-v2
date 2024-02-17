@@ -5,6 +5,7 @@ import ErrorPage from "@/error-page";
 import Layout from "@/pages/Layout";
 import Permission from "@/types/permissions";
 import React from "react";
+import Login from "@/pages/auth/Login";
 
 //lazy imports
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
@@ -29,6 +30,12 @@ export const protectedRoutes = [
         element: <Dashbboard />,
         permission: [],
         label: "Dashboard",
+      },
+      {
+        path: "login?forcedLogout=true",
+        element: <Login />,
+        permission: [],
+        label : "Logout"
       },
       {
         path: "story/",
