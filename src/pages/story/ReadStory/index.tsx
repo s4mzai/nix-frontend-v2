@@ -8,6 +8,8 @@ import { ErrorContext } from "@/contexts/error";
 
 import parse from "html-react-parser";
 
+import { Spinner } from "@/components/Spinner";
+
 import { TagIcon } from "@/assets/TagIcon";
 
 import BlogStatus from "@/types/blogStatus";
@@ -17,6 +19,7 @@ interface ReadStoryState {
     showDTPicker: boolean;
     selectedDateTime: string;
     image: string;
+    loading: boolean;
 }
 
 //https://stackoverflow.com/questions/28760254/assign-javascript-date-to-html5-datetime-local-input
@@ -36,12 +39,14 @@ const initialState: ReadStoryState = {
   showDTPicker: false,
   selectedDateTime: getLocalDateTime(),
   image: "",
+  loading: true,
 };
 
 const enum ActionType {
     SetShowDTPicker,
     SetSelectedDateTime,
     SetImage,
+    SetLoading,
 }
 
 const reducer = (state: ReadStoryState, action: {type: ActionType, payload}) => {
@@ -55,6 +60,9 @@ const reducer = (state: ReadStoryState, action: {type: ActionType, payload}) => 
     break;
   case ActionType.SetImage:
     updatedData.image = action.payload;
+    break;
+  case ActionType.SetLoading:
+    updatedData.loading = action.payload;
     break;
   default:
     return updatedData;
@@ -74,7 +82,8 @@ export default function ReadStory() {
   const {
     showDTPicker,
     selectedDateTime,
-    image
+    image,
+    loading,
   } = state;
 
   const handlePublishNow = () => {
@@ -135,16 +144,19 @@ export default function ReadStory() {
           dispatch({ type: ActionType.SetImage, payload: imageDataUrl });
         };
         reader.readAsDataURL(imageBlob);
+        dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
         setError(error);
+        dispatch({ type: ActionType.SetLoading, payload: false });
       });
-};
+  };
 
   useEffect(() => {
     fetchImage();
   }, []);
 
+  if (loading) return <div className="flex justify-center items-center"><Spinner /></div>;
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow round">
