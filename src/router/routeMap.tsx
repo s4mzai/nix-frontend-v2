@@ -3,8 +3,6 @@ import { Outlet } from "react-router-dom";
 
 import ErrorPage from "@/error-page";
 import Layout from "@/pages/Layout";
-import PendingStories from "@/pages/story/PendingStories";
-import ReadStory from "@/pages/story/ReadStory";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
@@ -13,6 +11,9 @@ import React from "react";
 const Login = React.lazy(() => import("@/pages/auth/Login"));
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
 const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
+const PendingStories = React.lazy(() => import("@/pages/story/PendingStories"))
+const ReadStory = React.lazy(() => import("@/pages/story/ReadStory"))
+const PublishedStories = React.lazy(() => import("@/pages/story/PublishedStories"))
 const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
@@ -64,6 +65,12 @@ const routeMap: CustomRouteElement[] = [
         label: "Read Story",
         permission: [Permission.ReadBlog, Permission.PublishBlog],
         hide: true
+      },
+      {
+        path: "published-stories/",
+        element: <PublishedStories />,
+        label: "Published Stories",
+        permission: [Permission.PublishBlog],
       }
     ]
   },

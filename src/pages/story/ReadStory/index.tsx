@@ -1,86 +1,229 @@
-import { ErrorContext } from "@/contexts/error";
-import { useContext, useReducer } from "react";
-import { TagIcon } from "@/assets/TagIcon";
+import { useContext, useReducer, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import BlogStatus from "@/types/blogStatus";
+
 import API from "@/services/API";
 import { toast } from "react-toastify";
-import parse from 'html-react-parser';
+
+import { ErrorContext } from "@/contexts/error";
+
+import parse from "html-react-parser";
+
+import { Spinner } from "@/components/Spinner";
+
+import { TagIcon } from "@/assets/TagIcon";
+
+import BlogStatus from "@/types/blogStatus";
+import { BlogDetails } from "@/types/blog";
+
+interface ReadStoryState {
+    showDTPicker: boolean;
+    selectedDateTime: string;
+    image: string;
+    loading: boolean;
+}
+
+//https://stackoverflow.com/questions/28760254/assign-javascript-date-to-html5-datetime-local-input
+const getLocalDateTime = () => {
+  const d = new Date();
+  const dateTimeLocalValue = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0,-5);
+  return dateTimeLocalValue;
+};
+
+const formatLocalDateTime = (localDateTime) => {
+  const fakeUtcTime = new Date(`${localDateTime}Z`);
+  const d = (new Date(fakeUtcTime.getTime() + fakeUtcTime.getTimezoneOffset() * 60000)).toISOString();
+  return d;
+};
+
+const initialState: ReadStoryState = {
+  showDTPicker: false,
+  selectedDateTime: getLocalDateTime(),
+  image: "",
+  loading: true,
+};
+
+const enum ActionType {
+    SetShowDTPicker,
+    SetSelectedDateTime,
+    SetImage,
+    SetLoading,
+}
+
+const reducer = (state: ReadStoryState, action: {type: ActionType, payload}) => {
+  const updatedData = { ...state };
+  switch (action.type) {
+  case ActionType.SetShowDTPicker:
+    updatedData.showDTPicker = action.payload;
+    break;
+  case ActionType.SetSelectedDateTime:
+    updatedData.selectedDateTime = action.payload;
+    break;
+  case ActionType.SetImage:
+    updatedData.image = action.payload;
+    break;
+  case ActionType.SetLoading:
+    updatedData.loading = action.payload;
+    break;
+  default:
+    return updatedData;
+  }
+  return updatedData;
+};
+
 
 
 export default function ReadStory() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const blog = location.state?.key;
-    const { setError } = useContext(ErrorContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const blog: BlogDetails = location.state?.key;
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { setError } = useContext(ErrorContext);
 
-    const handlePublishNow = () => {
-        const choice = window.confirm(
-            "Are you sure you want to publish this story?"
-          );
-          if (choice) {
-            const publishEndPoint = `/blog/publish-blog/${blog._id}`;
+  const {
+    showDTPicker,
+    selectedDateTime,
+    image,
+    loading,
+  } = state;
 
-            API.put(publishEndPoint)
-                .then(() => {
-                    toast.success("Successfully publishd");
-                    navigate("/story/pending-stories");
-                })
-                .catch((e) => setError(e));
-          }
+  const handlePublishNow = () => {
+    const choice = window.confirm(
+      "Are you sure you want to publish this story?"
+    );
+    if (choice) {
+      const publishEndPoint = `/blog/publish-blog/${blog._id}`;
+
+      API.put(publishEndPoint)
+        .then(() => {
+          toast.success("Successfully published");
+          navigate("/story/pending-stories");
+        })
+        .catch((e) => setError(e));
     }
+  };
 
-    const handlePublishLater = () => {
-        //TODO: get some datetime picker
-        console.log("Published later works");
+  const handlePublishLater = () => {
+    //TODO: get some datetime picker
+    const choice = window.confirm(
+      "Are you sure you want to choose this date and time?"
+    );
+    if (choice) {
+      const publishLaterEndPoint = `/blog/approve-blog/${blog._id}`;
+
+      const request = {
+        time: formatLocalDateTime(selectedDateTime)
+      };
+  
+      API.put(publishLaterEndPoint, request)
+        .then(() => {
+          toast.success("Successfully set publish time");
+          navigate("/story/pending-stories");
+        })
+        .catch((e) => setError(e));
     }
+  };
 
-    const handleSaveToDraft = () => {
-        //TODO: there should be an option to convert pending blogs to drafts
-        console.log("Save to draft not impl in backend rn");
-    }
+  const handleSaveToDraft = () => {
+    //TODO: there should be an option to convert pending blogs to drafts
+    //console.log(image);
+    console.log("Save to draft not impl in backend rn");
+  };
 
-    return (
-        <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow rounded">
-            <h1 className="mb-10 text-4xl font-semibold text-center">{blog.title}</h1>
-            <h4 className="m-2 font-semibold text-gray-500">Created By {blog.user.name}, Last Updated on {new Date(blog.updatedAt).toLocaleDateString()} </h4>
-            <span
-                className={`m-2 px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
-                key={blog.category_id}
-            >
-                <TagIcon className="w-4 h-4 inline-block mr-1" />
-                {BlogStatus[blog.status]}
-            </span>
-            <div className="m-2">
-                <div> {blog.image} </div> {/*todo*/}
-                <div className="mt-2 mb-2 text-gray-500"> {blog.byliner} </div>  
-                <div className="text-gray-900 leading-relaxed"> {parse(blog.body)} </div>
-            </div>
+  const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: ActionType.SetSelectedDateTime, payload: e.target.value });
+  };
+
+  const fetchImage = () => {
+    const imageEndPoint = `/images/get/${blog.cover}`;
+    API.get(imageEndPoint, { responseType: "arraybuffer" })
+      .then((response) => {
+        const imageBlob = new Blob([response.data], { type: "image/png" });
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imageDataUrl = reader.result;
+          dispatch({ type: ActionType.SetImage, payload: imageDataUrl });
+        };
+        reader.readAsDataURL(imageBlob);
+        dispatch({ type: ActionType.SetLoading, payload: false });
+      })
+      .catch((error) => {
+        setError(error);
+        dispatch({ type: ActionType.SetLoading, payload: false });
+      });
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
+
+  if (loading) return <div className="flex justify-center items-center"><Spinner /></div>;
+
+  return (
+    <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow round">
+      <h1 className="mb-10 text-4xl font-semibold text-center">{blog.title}</h1>
+      <h4 className="m-2 font-semibold text-gray-500">Created By {blog.user.name}, Last Updated on {new Date(blog.updatedAt).toLocaleDateString()} </h4>
+      <span
+        className={`m-2 px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
+        key={blog.category_id}
+      >
+        <TagIcon className="w-4 h-4 inline-block mr-1" />
+        {BlogStatus[blog.status]}
+      </span>d
+      <div className="m-2 mt-5 break-words">
+        <div> <img src={image} alt="Cover Image" /> </div>
+        <div className="mt-2 mb-2 text-gray-500"> {blog.byliner} </div>  
+        <div className="text-gray-900 leading-relaxed"> {parse(blog.body)} </div>
+      </div>
             
-            <div>
-                <button
-                    onClick={handlePublishNow}
-                    type="button"
-                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-                    >
+      <div>
+        <button
+          onClick={handlePublishNow}
+          type="button"
+          className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+        >
                         Publish Now
-                </button>
-                <button
-                    onClick={handlePublishLater}
-                    type="button"
-                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-                    >
+        </button>
+        <button
+          onClick={() => dispatch({ type: ActionType.SetShowDTPicker, payload: true })}
+          type="button"
+          className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+        >
                         Publish Later
-                </button>
-                <button
-                    onClick={handleSaveToDraft}
-                    type="button"
-                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-                    >
+        </button>
+        <button
+          onClick={handleSaveToDraft}
+          type="button"
+          className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+        >
                         Save Back to Draft
-                </button>
-            </div>
-
+        </button>
+      </div>
+      {showDTPicker && (
+        <div className="m-2">
+          <label 
+            htmlFor="datetime"
+            className="text-md font-medium text-gray-900 "
+          >
+            Choose when to publish : 
+          </label>
+          <input 
+            type="datetime-local" 
+            id="datetime" 
+            placeholder="YYYY-MM-DD"
+            value={selectedDateTime}
+            min={getLocalDateTime()}
+            onChange={handleDateTimeChange}
+            className="m-2 border rounded-md px-2 py-1"
+          />
+          <button
+            onClick={handlePublishLater}
+            type="button"
+            className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+          >
+                        Confirm Choice
+          </button>
         </div>
-    )
+      )}
+    </div>
+  );
 } 
