@@ -13,51 +13,32 @@ import { toast } from "react-toastify";
 import { Blog } from "@/types/blog";
 import Permission from "@/types/permissions";
 
-interface YourStoriesState {
+interface PublishedStoriesState {
   blogs: Blog[];
   searchTerm: string;
-  statusFilters: number[];
   loading: boolean;
 }
 
-const initialState: YourStoriesState = {
+const initialState: PublishedStoriesState = {
   blogs: [],
   searchTerm: "",
-  statusFilters: Object.keys(BlogStatus).map((v) => Number(v)).filter((v) => !isNaN(v)),
   loading: true,
 };
-
-const blogEndpoint = "/blog";
 
 const enum ActionType {
   SetBlogs,
   SetSearchTerm,
-  SetStatusFilers,
   SetLoading,
 }
 
-const reducer = (state, action) => {
+const reducer = (state: PublishedStoriesState, action: {type: ActionType, payload }) => {
   const updatedData = { ...state };
-  const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
   case ActionType.SetBlogs:
     updatedData.blogs = action.payload;
     break;
   case ActionType.SetSearchTerm:
     updatedData.searchTerm = action.payload;
-    break;
-  case ActionType.SetStatusFilers:
-    //also spread operator creates only a shallow copy so mutable data structures like arrays still
-    //refer to their originals. so we need to spread it out again
-    //if present in filter, remove. Else, add
-    if (newStatusFilters.includes(action.payload)) {
-      console.log(newStatusFilters, action.payload);
-      newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
-      console.debug(newStatusFilters);
-    } else {
-      newStatusFilters.push(action.payload);
-    }
-    updatedData.statusFilters = newStatusFilters;
     break;
   case ActionType.SetLoading:
     updatedData.loading = action.payload;
@@ -68,17 +49,17 @@ const reducer = (state, action) => {
   return updatedData;
 };
 
-const getFilteredBlogs = (blogs, statusFilters, searchTerm) => {
+const getFilteredBlogs = (blogs, searchTerm) => {
   return blogs.filter((blog) =>
-    statusFilters.includes(blog.status) &&
     blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 };
 
-const tableHeaders = ["Last Updated", "Title", "Category", "Status"];
+const tableHeaders = ["Last Published", "Author", "Title", "Category", "Status"];
 
+const blogEndpoint = "/blog";
 
-export default function AllStory() {
+export default function PublishedStories() {
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -86,7 +67,6 @@ export default function AllStory() {
   const {
     blogs,
     searchTerm,
-    statusFilters,
     loading,
   } = state;
 
@@ -125,37 +105,10 @@ export default function AllStory() {
     }
   };
 
-  const handleEdit = (blogId) => {
-    //TODO edit blog, should open the blog on the new blog view
-    console.log(blogId);
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate("/story/new-story", { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-    console.log("story edited");
-  };
-
-  const handleSubmit = (blogId) => {
-    const choice = window.confirm(
-      "Are you sure you want to submit this story for approval?"
-    );
-    if (choice) {
-      API.put(`/blog/submit-for-approval/${blogId}`)
-        .then((_) => {
-          toast.success("Successfully submitted for approval!");
-          fetchBlogs();
-        })
-        .catch((e) => setError(e));
-      console.log("story submitted");
-    }
-  };
-
   const fetchBlogs = () => {
-    API.get(blogEndpoint, { data: { userOnly: true } })
+    API.get(blogEndpoint)
       .then((blogResponse) => {
-        dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data });
+        dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data.filter((blog) => blog.status == BlogStatus.Published) });
         dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
@@ -173,36 +126,19 @@ export default function AllStory() {
 
   return (
     <div className="max-w-4xl mx-auto py-12">
-      <h1 className="text-4xl font-semibold text-center">Your Stories</h1>
+      <h1 className="text-4xl font-semibold text-center">Published Stories</h1>
       <div className="px-3 mt-4">
         <SearchBar
           searchTerm={searchTerm}
           onSearch={(value) => dispatch({ type: ActionType.SetSearchTerm, payload: value })}
         />
-        <div className="flex mt-4 space-x-8">
-          {
-            Object.keys(BlogStatus)
-              .filter((v) => isNaN(Number(v)))
-              .map((status) => { return { status, id: BlogStatus[status] }; })
-              .map(({ status, id }) => (
-                <label key={id} className="ms-2  text-md text-gray-900">
-                  <input
-                    className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                    type="checkbox"
-                    checked={statusFilters.includes(id)}
-                    onChange={() => dispatch({ type: ActionType.SetStatusFilers, payload: id })}
-                  />
-                  {status}
-                </label>
-              ))
-          }
-        </div>
       </div>
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
-            new Date(blog.updatedAt).toLocaleDateString(),
+          content={getFilteredBlogs(blogs, searchTerm).map(blog => [
+            new Date(blog.published_at).toLocaleDateString(),
+            blog.user.name,
             blog.title,
             BlogCategory[blog.category_id],
             <span
@@ -217,13 +153,12 @@ export default function AllStory() {
             </span>,
             <MoreMenu
               options={[
-                {label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions:[Permission.DeleteBlog]},
-                {label: "Archive", handler: handleArchive, show: true, permissions:[Permission.ReadBlog]},
-                {label: "Edit", handler: handleEdit, show: blog.status == BlogStatus.Draft || blog.status == BlogStatus.Pending, permissions:[Permission.ReadBlog]},
-                {label: "Submit", handler: handleSubmit, show: blog.status == BlogStatus.Draft, permissions: []}
+                {label: "Delete", handler: handleDelete, show:true, permissions:[Permission.DeleteBlog]},
+                {label: "Archive", handler: handleArchive, show:true, permissions:[Permission.DeleteBlog]},
               ]}
               blogId={blog._id}
-              key={blog._id}            />
+              key={blog._id}
+            />
           ])}
         />
       </main>
