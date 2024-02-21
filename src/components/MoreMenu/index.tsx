@@ -4,44 +4,38 @@ import { useEffect, useState } from "react";
 import { PermissionProtector } from "../PermissionProtector";
 import Permission from "@/types/permissions";
 
-interface MoreMenuProps {
-  onDelete: (blogId: string) => void;
-  onArchive: (blogId: string) => void;
-  onEdit: (blogId: string) => void;
-  onSubmit: (blogId: string) => void;
-  blogId: string;
-  status: BlogStatus;
+interface Option {
+  label: string;
+  handler: (blogId: string, status: BlogStatus) => void;
+  show: boolean;
+  permissions: Permission[];
 }
 
-export default function MoreMenu({ onDelete, onArchive, onEdit, onSubmit, blogId, status }: MoreMenuProps) {
+interface MoreMenuProps {
+  options: Option[];
+  blogId: string;
+}
+
+//please stick to passing options/function which do something tangible for user because the moremenu needs to close
+//after one click on it 
+export default function MoreMenu({ options, blogId }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   //let menuRef = useRef(null);
 
-  const handleDelete = () => {
-    console.log("hi im in more menu this is blogid ", blogId);
-    onDelete(blogId);
+  const handleOptionFunction = (handler) => {
+    console.log(blogId);
+    handler(blogId);
     setIsOpen(false);
   };
 
-  const handleArchive = () => {
-    console.log("hi im in more menu archive this is blogid ", blogId);
-    onArchive(blogId);
-    setIsOpen(false);
-  };
-
-  const handleEdit = () => {
-    // these checks will actually make use feel ui isn't working, as it shows nothing if onEdit is not passed
-    // better would be to let the global error handler handle and "post a toast"
-    // if (onEdit) {
-    onEdit(blogId);
-    setIsOpen(false);
-    // }
-  };
-
-  const handleSubmit = () => {
-    onSubmit(blogId);
-    setIsOpen(false);
-  };
+  // const handleEdit = () => { 
+  //   // these checks will actually make use feel ui isn't working, as it shows nothing if onEdit is not passed
+  //   // better would be to let the global error handler handle and "post a toast"
+  //   // if (onEdit) {
+  //   onEdit(blogId);
+  //   setIsOpen(false);
+  //   // }
+  // };
 
   useEffect(() => {
     // let handler = (e) => {
@@ -72,7 +66,18 @@ export default function MoreMenu({ onDelete, onArchive, onEdit, onSubmit, blogId
       </div>
       {isOpen && (
         <div className="z-10 origin-top-right absolute  bg-gray-200 rounded-md shadow-md">
-          {!(status == BlogStatus.Published || status == BlogStatus.Approved) && (
+          {options.filter(option => option.show).map((option, index) => (
+            <PermissionProtector key={index} silent={true} permission={option.permissions}>
+              <button
+                className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => handleOptionFunction(option.handler)}
+              >
+                {option.label}
+              </button>
+            </PermissionProtector>
+            
+          ))}
+          {/* {!(status == BlogStatus.Published || status == BlogStatus.Approved) && (
             <button
               className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               onClick={handleEdit}
@@ -109,8 +114,8 @@ export default function MoreMenu({ onDelete, onArchive, onEdit, onSubmit, blogId
               >
                 Submit
               </button> : <></>
-          }
-        </div>
+          }*/}
+        </div> 
       )}
     </div>
   );
