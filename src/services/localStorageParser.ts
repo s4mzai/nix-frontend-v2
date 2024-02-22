@@ -28,7 +28,6 @@ export const getUserFromJSON = (user_data) => {
     name: user_data.name,
     email: user_data.email,
     id: user_data.id,
-    avatar: user_data.avatar,
     bio: user_data.bio,
     role: user_data.role,
     permission: user_data.permission,

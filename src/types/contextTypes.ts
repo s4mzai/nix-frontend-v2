@@ -27,7 +27,6 @@ export interface IUser {
     name: string;
     email: string;
     id: string;
-    avatar: string;
     bio: string;
     role: string;
     permission: Permission[];
