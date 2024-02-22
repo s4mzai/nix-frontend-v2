@@ -2,6 +2,7 @@ import MyMultiselect from "@/components/MultiSelect";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
+import Permission from "@/types/permissions";
 import { useContext, useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
 
@@ -10,7 +11,6 @@ const initialState = {
   selectedPermissions: [],
   roleId: "",
   isUpdateMode: false,
-  permMap: {},
   rolesList: [],
   loading: true,
   error: null,
@@ -85,7 +85,7 @@ export default function NewRole() {
       dispatch({
         type: "set_selected_permissions",
         payload: roleData.permissions.map((index) => ({
-          name: permMap[index],
+          name: Permission[index],
           id: index,
         })),
       });
@@ -96,8 +96,11 @@ export default function NewRole() {
   };
 
   const handlePermissionChange = (selectedItems) => {
-    dispatch({ type: "set_selected_permissions", payload: selectedItems });
-  };
+    const selectedPermissionsWithIntIds = selectedItems.map(permission => ({
+      ...permission,
+      id: parseInt(permission.id)
+    }));
+    dispatch({ type: "set_selected_permissions", payload: selectedPermissionsWithIntIds });  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -108,6 +111,9 @@ export default function NewRole() {
         role_id: roleId,
         permissions: selectedPermissions.map(permission => permission.id),
       };
+
+      console.log(selectedPermissions.map(permission => permission.id))
+      console.log(updateRequest);
 
       const updateRoleEndpoint = "/role/update";
 
@@ -121,6 +127,8 @@ export default function NewRole() {
         role_name: roleName,
         permissions: selectedPermissions.map(permission => permission.id),
       };
+
+      console.log(createRequest);
 
       const createRoleEndpoint = "/role/update";
 
@@ -195,7 +203,7 @@ export default function NewRole() {
         <fieldset className="flex flex-col">
           <label className="text-2xl text-black font-medium leading-none mb-2">Permissions</label>
           <MyMultiselect
-            options={Object.values(permMap).map((perm, index) => ({ name: perm, id: index }))}
+            options={Object.keys(Permission).map(key => ({ name: Permission[key], id: key }))}
             selectedOptions={selectedPermissions}
             onSelectionChange={handlePermissionChange}
             isSingleSelect={false}
