@@ -11,13 +11,14 @@ import React from "react";
 const Login = React.lazy(() => import("@/pages/auth/Login"));
 const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
 const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
-const PendingStories = React.lazy(() => import("@/pages/story/PendingStories"))
-const ReadStory = React.lazy(() => import("@/pages/story/ReadStory"))
-const PublishedStories = React.lazy(() => import("@/pages/story/PublishedStories"))
+const PendingStories = React.lazy(() => import("@/pages/story/PendingStories"));
+const ReadStory = React.lazy(() => import("@/pages/story/ReadStory"));
+const PublishedStories = React.lazy(() => import("@/pages/story/PublishedStories"));
 const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
 const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
+const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
 
 
 /** This route map serves the routes as well as is used to
@@ -111,6 +112,12 @@ const routeMap: CustomRouteElement[] = [
         element: <AllMembers />,
         permission: [],
         label: "All Members",
+      },
+      {
+        path: "add-member/",
+        element: <AddMember />,
+        permission: [],
+        label: "Add Member",
       }
     ]
   },

@@ -190,7 +190,7 @@ export default function NewRole({ update_page = false }) {
         <span className="ms-3 text-sm font-medium text-gray-900 ">Switch to {isUpdateMode ? "Create Role" : "Update Role"} Mode</span>
       </label>
 
-      <form className="space-y-6">
+      <form className="space-y-6 mt-4">
         <div className="flex flex-col">
           <label className="text-2xl font-medium leading-none mb-2" htmlFor="name">
             Name

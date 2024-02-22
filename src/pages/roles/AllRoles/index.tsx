@@ -40,7 +40,7 @@ export default function AllRoles() {
         setLoading(false);
         setError(error);
       });
-  }
+  };
 
   useEffect(() => {
     fetchRoles();
@@ -67,13 +67,13 @@ export default function AllRoles() {
                   </ol>
                 </h4>
                 <div className="flex justify-end">
-                    <button 
+                  <button 
                     onClick={() => handleDelete(role.role_id)}
                     type="button" 
                     className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 ">
-                      <DeleteIcon />
-                    </button>
-                  </div>
+                    <DeleteIcon />
+                  </button>
+                </div>
               </Collapsible>
             </div>
           ))}
