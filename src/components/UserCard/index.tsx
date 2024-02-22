@@ -10,7 +10,7 @@ export default function UserCard({ name, email, role, avatar }) {
             <div className="mb-3">
               <img
                 className="w-2/3 mx-auto rounded-full"
-                src={`${API.getUri()}/images/get/${avatar}?thumbnail=144`}
+                src={`${API.getUri()}/images/get-avatar/${avatar}?thumbnail=true`}
                 alt={name}
               />
             </div>
