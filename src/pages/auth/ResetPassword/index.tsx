@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import TimesLogo from "@/assets/dtutimesIcon";
 import { Spinner } from '@/components/Spinner';
 import API from '@/services/API';
 import { toast } from 'react-toastify';
+import { ErrorContext } from '@/contexts/error';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { setError } = useContext(ErrorContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,9 +39,9 @@ export default function ResetPassword() {
       setLoading(false);
       toast.success('Password reset successfully. You can now log in with your new password.');
       navigate('/login'); // Redirect the user to the login page
-    } catch (error: any) {
+    } catch (e: any) {
       setLoading(false);
-      toast.error(error.response?.data?.message || 'An error occurred while resetting the password.');
+      setError(e);
     }
   };
 

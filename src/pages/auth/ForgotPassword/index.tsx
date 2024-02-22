@@ -1,12 +1,14 @@
 import TimesLogo from "@/assets/dtutimesIcon";
 import { Spinner } from '@/components/Spinner';
 import API from '@/services/API';
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { toast } from 'react-toastify';
+import { ErrorContext } from "@/contexts/error";
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
+  const { setError } = useContext(ErrorContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,10 +27,10 @@ export default function ForgotPassword() {
         await API.post('/auth/forgotPassword', { email });
         setLoading(false);
         toast.success('Password reset email sent successfully. Check your inbox!');
-    } catch (error: any) {
+    } catch (e: any) {
         setLoading(false);
-        toast.error(error?.response?.data?.message || 'An error occurred while sending the password reset email.');
-    }
+        setError(e);
+    } 
   };
 
   return (
