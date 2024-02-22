@@ -88,9 +88,15 @@ const routeMap: CustomRouteElement[] = [
       },
       {
         path: "new-role/",
-        element: <NewRole />,
+        element: <NewRole key="new-role" />,
         label: "New Role",
         permission: [Permission.CreateRole],
+      },
+      {
+        path: "update-role/",
+        element: <NewRole update_page={true} key="update-role" />,
+        label: "Update Role",
+        permission: [Permission.UpdateRole],
       },
     ]
   },
