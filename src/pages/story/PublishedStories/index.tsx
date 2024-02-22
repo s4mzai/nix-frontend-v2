@@ -1,26 +1,25 @@
-import { useContext, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
-
-import API from "@/services/API";
-
-import { ErrorContext } from "@/contexts/error";
-
+import { TagIcon } from "@/assets/TagIcon";
+import MoreMenu from "@/components/MoreMenu";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
-
-import { TagIcon } from "@/assets/TagIcon";
+import { ErrorContext } from "@/contexts/error";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
+import API from "@/services/API";
+import { useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Blog } from "@/types/blog";
+import Permission from "@/types/permissions";
 
-interface PendingStoriesState {
-    blogs: Blog[];
-    searchTerm: string;
-    loading: boolean;
+interface PublishedStoriesState {
+  blogs: Blog[];
+  searchTerm: string;
+  loading: boolean;
 }
 
-const initialState: PendingStoriesState = {
+const initialState: PublishedStoriesState = {
   blogs: [],
   searchTerm: "",
   loading: true,
@@ -32,9 +31,7 @@ const enum ActionType {
   SetLoading,
 }
 
-const blogEndpoint = "/blog";
-
-const reducer = (state: PendingStoriesState, action: { type: ActionType, payload }) => {
+const reducer = (state: PublishedStoriesState, action: {type: ActionType, payload }) => {
   const updatedData = { ...state };
   switch (action.type) {
   case ActionType.SetBlogs:
@@ -53,37 +50,65 @@ const reducer = (state: PendingStoriesState, action: { type: ActionType, payload
 };
 
 const getFilteredBlogs = (blogs, searchTerm) => {
-  return blogs.filter((blog) => 
+  return blogs.filter((blog) =>
     blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 };
 
-const tableHeaders = ["Last Updated", "Author", "Title", "Category", "Status"];
+const tableHeaders = ["Last Published", "Author", "Title", "Category", "Status"];
 
-export default function PendingStories() {
+const blogEndpoint = "/blog";
+
+export default function PublishedStories() {
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
-    blogs, 
+    blogs,
     searchTerm,
     loading,
   } = state;
 
-  const handleRead = (blogId) => {
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate(`/story/pending-stories/${blogId}`, { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
+  const handleDelete = (blogId) => {
+    const choice = window.confirm(
+      "Are you sure you want to delete this story?"
+    );
+    if (choice) {
+      const deleteEndPoint = `/blog/delete-blog/${blogId}`;
+
+      API.delete(deleteEndPoint)
+        .then(() => {
+          toast.success("Successfully deleted");
+          fetchBlogs();
+        })
+        .catch((e) => setError(e));
+      console.log("story deleted");
+    }
+  };
+
+  const handleArchive = (blogId) => {
+    //archive is same as takedown dw
+    const choice = window.confirm(
+      "Are you sure you want to archive this story?"
+    );
+    if (choice) {
+      const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
+
+      API.put(archiveEndPoint)
+        .then(() => {
+          toast.success("Successfully archived");
+          fetchBlogs();
+        })
+        .catch((e) => setError(e));
+      console.log("story archived");
+    }
   };
 
   const fetchBlogs = () => {
     API.get(blogEndpoint)
       .then((blogResponse) => {
-        dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data.filter((blog) => blog.status == BlogStatus.Pending) });
+        dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data.filter((blog) => blog.status == BlogStatus.Published) });
         dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
@@ -91,16 +116,17 @@ export default function PendingStories() {
         dispatch({ type: ActionType.SetLoading, payload: false });
       });
   };
-    
+
   useEffect(() => {
     fetchBlogs();
   }, []);
 
+
   if (loading) return <div className="flex justify-center items-center"><Spinner /></div>;
-    
+
   return (
     <div className="max-w-4xl mx-auto py-12">
-      <h1 className="text-4xl font-semibold text-center">Pending Stories</h1>
+      <h1 className="text-4xl font-semibold text-center">Published Stories</h1>
       <div className="px-3 mt-4">
         <SearchBar
           searchTerm={searchTerm}
@@ -111,7 +137,7 @@ export default function PendingStories() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, searchTerm).map(blog => [
-            new Date(blog.updatedAt).toLocaleDateString(),
+            new Date(blog.published_at).toLocaleDateString(),
             blog.user.name,
             blog.title,
             BlogCategory[blog.category_id],
@@ -125,15 +151,14 @@ export default function PendingStories() {
               <TagIcon className="w-4 h-4 inline-block mr-1" />
               {BlogStatus[blog.status]}
             </span>,
-            <div key={`${blog._id}-button`}>
-              <button
-                onClick={() => handleRead(blog._id)}
-                type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-              >
-                        Read Story
-              </button>
-            </div>
+            <MoreMenu
+              options={[
+                {label: "Delete", handler: handleDelete, show:true, permissions:[Permission.DeleteBlog]},
+                {label: "Archive", handler: handleArchive, show:true, permissions:[Permission.DeleteBlog]},
+              ]}
+              blogId={blog._id}
+              key={blog._id}
+            />
           ])}
         />
       </main>

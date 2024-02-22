@@ -10,29 +10,43 @@ import API from "@/services/API";
 import { useContext, useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Blog } from "@/types/blog";
+import Permission from "@/types/permissions";
 
-const initialState = {
+interface YourStoriesState {
+  blogs: Blog[];
+  searchTerm: string;
+  statusFilters: number[];
+  loading: boolean;
+}
+
+const initialState: YourStoriesState = {
   blogs: [],
   searchTerm: "",
   statusFilters: Object.keys(BlogStatus).map((v) => Number(v)).filter((v) => !isNaN(v)),
   loading: true,
-  error: null,
 };
 
 const blogEndpoint = "/blog";
 
+const enum ActionType {
+  SetBlogs,
+  SetSearchTerm,
+  SetStatusFilers,
+  SetLoading,
+}
 
 const reducer = (state, action) => {
   const updatedData = { ...state };
   const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
-  case "set_blogs":
+  case ActionType.SetBlogs:
     updatedData.blogs = action.payload;
     break;
-  case "set_search_term":
+  case ActionType.SetSearchTerm:
     updatedData.searchTerm = action.payload;
     break;
-  case "toggle_status_filter":
+  case ActionType.SetStatusFilers:
     //also spread operator creates only a shallow copy so mutable data structures like arrays still
     //refer to their originals. so we need to spread it out again
     //if present in filter, remove. Else, add
@@ -45,11 +59,8 @@ const reducer = (state, action) => {
     }
     updatedData.statusFilters = newStatusFilters;
     break;
-  case "set_loading":
+  case ActionType.SetLoading:
     updatedData.loading = action.payload;
-    break;
-  case "set_error":
-    updatedData.error = action.payload;
     break;
   default:
     return updatedData;
@@ -116,6 +127,7 @@ export default function AllStory() {
 
   const handleEdit = (blogId) => {
     //TODO edit blog, should open the blog on the new blog view
+    console.log(blogId);
     API.get(`/blog/get-blog/${blogId}`)
       .then((blogResponse) => {
         const blogDetails = blogResponse.data.data;
@@ -143,12 +155,12 @@ export default function AllStory() {
   const fetchBlogs = () => {
     API.get(blogEndpoint, { data: { userOnly: true } })
       .then((blogResponse) => {
-        dispatch({ type: "set_blogs", payload: blogResponse.data.data });
-        dispatch({ type: "set_loading", payload: false });
+        dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data });
+        dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
         setError(error);
-        dispatch({ type: "set_loading", payload: false });
+        dispatch({ type: ActionType.SetLoading, payload: false });
       });
   };
 
@@ -165,7 +177,7 @@ export default function AllStory() {
       <div className="px-3 mt-4">
         <SearchBar
           searchTerm={searchTerm}
-          onSearch={(value) => dispatch({ type: "set_search_term", payload: value })}
+          onSearch={(value) => dispatch({ type: ActionType.SetSearchTerm, payload: value })}
         />
         <div className="flex mt-4 space-x-8">
           {
@@ -178,7 +190,7 @@ export default function AllStory() {
                     className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                     type="checkbox"
                     checked={statusFilters.includes(id)}
-                    onChange={() => dispatch({ type: "toggle_status_filter", payload: id })}
+                    onChange={() => dispatch({ type: ActionType.SetStatusFilers, payload: id })}
                   />
                   {status}
                 </label>
@@ -204,14 +216,14 @@ export default function AllStory() {
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
-              onDelete={handleDelete}
-              onArchive={handleArchive}
-              onEdit={handleEdit}
-              onSubmit={handleSubmit}
+              options={[
+                {label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions:[Permission.DeleteBlog]},
+                {label: "Archive", handler: handleArchive, show: true, permissions:[Permission.ReadBlog]},
+                {label: "Edit", handler: handleEdit, show: blog.status == BlogStatus.Draft || blog.status == BlogStatus.Pending, permissions:[Permission.ReadBlog]},
+                {label: "Submit", handler: handleSubmit, show: blog.status == BlogStatus.Draft, permissions: []}
+              ]}
               blogId={blog._id}
-              key={blog._id}
-              status={blog.status}
-            />
+              key={blog._id}            />
           ])}
         />
       </main>
