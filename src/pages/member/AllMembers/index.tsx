@@ -1,36 +1,43 @@
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import UserCard from "@/components/UserCard";
+import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { useEffect, useReducer } from "react";
+import Member from "@/types/member";
+import React from "react";
+import { useEffect } from "react";
 
+const categories = ["Name", "Role", "Email"];
 
 const initialState = {
-  membersList: [],
+  membersList: [] as Member[],
   searchTerm: "",
-  selectedCategory: "name",
+  selectedCategory: categories[0].toLowerCase(),
   loading: true,
-  error: null,
 };
 
-const reducer = (state, action) => {
+const enum ActionType {
+  SetMemberList,
+  SetSearchTerm,
+  SetSelectedCategory,
+  SetLoading,
+}
+
+const reducer = (state: typeof initialState, action: { type: ActionType, payload }) => {
   const updatedData = { ...state };
   switch (action.type) {
   //underscore convention from react docs
-  case "set_members_list":
+  case ActionType.SetMemberList:
     updatedData.membersList = action.payload;
     break;
-  case "set_search_term":
+  case ActionType.SetSearchTerm:
     updatedData.searchTerm = action.payload;
     break;
-  case "set_selected_category":
+  case ActionType.SetSelectedCategory:
     updatedData.selectedCategory = action.payload;
     break;
-  case "set_loading":
+  case ActionType.SetLoading:
     updatedData.loading = action.payload;
-    break;
-  case "set_error":
-    updatedData.error = action.payload;
     break;
   default:
     return updatedData;
@@ -39,29 +46,28 @@ const reducer = (state, action) => {
 };
 
 export default function AllMembers() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const { setError } = React.useContext(ErrorContext);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const {
     membersList,
     searchTerm,
     selectedCategory,
     loading,
-    error,
   } = state;
 
-  const categories = ["Name", "Role", "Email"];
 
   useEffect(() => {
     const membersEndpoint = "/user";
 
     API.get(membersEndpoint)
       .then((membersResponse) => {
-        dispatch({ type: "set_members_list", payload: membersResponse.data.data });
-        dispatch({ type: "set_loading", payload: false });
+        dispatch({ type: ActionType.SetMemberList, payload: membersResponse.data.data });
+        dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
-        dispatch({ type: "set_error", payload: error });
-        dispatch({ type: "set_loading", payload: false });
+        setError(error);
+        dispatch({ type: ActionType.SetLoading, payload: false });
       });
   }, []);
 
@@ -72,7 +78,6 @@ export default function AllMembers() {
   });
 
   if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
-  if (error) return <p>Error: {error.message} </p>;
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -83,10 +88,10 @@ export default function AllMembers() {
       <div className="px-3">
         <SearchBar
           searchTerm={searchTerm}
-          onSearch={(value) => dispatch({ type: "set_search_term", payload: value })}
+          onSearch={(value) => dispatch({ type: ActionType.SetSearchTerm, payload: value })}
           categories={categories}
           selectedCategory={selectedCategory}
-          onCategoryChange={(value) => dispatch({ type: "set_selected_category", payload: value })}
+          onCategoryChange={(value) => dispatch({ type: ActionType.SetSelectedCategory, payload: value })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">

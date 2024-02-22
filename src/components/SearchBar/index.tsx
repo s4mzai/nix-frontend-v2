@@ -22,7 +22,7 @@ const SearchBar = ({searchTerm, onSearch, categories=null, selectedCategory=null
         {categories && (
           <select 
             id="select-category"
-            className="flex bg-blue-500 py-3 px-4 rounded-lg text-gray-900 font-semibold cursor-pointer"
+            className="flex bg-blue-500 py-3 px-4 rounded-lg text-gray-900 font-semibold cursor-pointer border-r-4 border-transparent"
             onChange={(e) => onCategoryChange(e.target.value)}
             value={selectedCategory}
           >
