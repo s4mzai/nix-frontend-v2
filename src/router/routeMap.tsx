@@ -18,6 +18,7 @@ const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
 const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
+const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
 
 
 /** This route map serves the routes as well as is used to
@@ -111,6 +112,12 @@ const routeMap: CustomRouteElement[] = [
         element: <AllMembers />,
         permission: [],
         label: "All Members",
+      },
+      {
+        path: "add-member/",
+        element: <AddMember />,
+        permission: [],
+        label: "Add Member",
       }
     ]
   },

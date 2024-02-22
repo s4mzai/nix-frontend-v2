@@ -36,7 +36,7 @@ const enum ActionType {
   SetLoading,
 }
 
-const reducer = (state, action) => {
+const reducer = (state: YourStoriesState, action: { type: ActionType, payload }) => {
   const updatedData = { ...state };
   const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
@@ -217,13 +217,13 @@ export default function AllStory() {
             </span>,
             <MoreMenu
               options={[
-                {label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions:[Permission.DeleteBlog]},
-                {label: "Archive", handler: handleArchive, show: true, permissions:[Permission.ReadBlog]},
-                {label: "Edit", handler: handleEdit, show: blog.status == BlogStatus.Draft || blog.status == BlogStatus.Pending, permissions:[Permission.ReadBlog]},
-                {label: "Submit", handler: handleSubmit, show: blog.status == BlogStatus.Draft, permissions: []}
+                { label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions: [Permission.DeleteBlog] },
+                { label: "Archive", handler: handleArchive, show: true, permissions: [Permission.ReadBlog] },
+                { label: "Edit", handler: handleEdit, show: blog.status == BlogStatus.Draft || blog.status == BlogStatus.Pending, permissions: [Permission.ReadBlog] },
+                { label: "Submit", handler: handleSubmit, show: blog.status == BlogStatus.Draft, permissions: [] }
               ]}
               blogId={blog._id}
-              key={blog._id}            />
+              key={blog._id} />
           ])}
         />
       </main>
