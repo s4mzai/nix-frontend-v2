@@ -5,7 +5,7 @@ import React, { ReactNode } from "react";
 import { Spinner } from "../Spinner";
 
 interface PermissionProtectorProps {
-  children: ReactNode;
+  children?: ReactNode;
   permission?: Permissions[];
   silent?: boolean;
 }
