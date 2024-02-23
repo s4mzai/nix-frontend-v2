@@ -1,6 +1,6 @@
 
 import { Spinner } from "@/components/Spinner";
-import { getTokenFromStorage, getUserFromJSON, getUserFromStorage } from "@/services/localStorageParser";
+import { getTokenFromStorage, getUserFromStorage } from "@/services/localStorageParser";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

@@ -1,4 +1,5 @@
 import Login from "@/pages/auth/Login/index.js";
+import ForgotPassword from "@/pages/auth/ForgotPassword/index.js";
 import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute.js";
 import ErrorCtxProvider from "@/contexts/error.js";
@@ -13,6 +14,7 @@ const AppRoute = () => {
         <CurrUserCtxProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/*" element={<ProtectedRoute />} />
           </Routes >
