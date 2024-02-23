@@ -6,6 +6,7 @@ import Layout from "@/pages/Layout";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
+import { PermissionProtector } from "@/components/PermissionProtector";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -116,18 +117,29 @@ const routeMap: CustomRouteElement[] = [
       {
         path: "add-member/",
         element: <AddMember />,
-        permission: [],
+        permission: [Permission.CreateProfile],
         label: "Add Member",
       }
     ]
   },
 ];
 
+const make_protected = (routes: CustomRouteElement[]) => {
+  return routes.map((route) => {
+    if (route.children) {
+      route.children = make_protected(route.children);
+    } else {
+      route.element = <PermissionProtector permission={route.permission}>{route.element}</PermissionProtector>;
+    }
+    return route;
+  });
+};
+
 export const protectedRoutes = [
   {
     path: "/",
     element: <Layout><Outlet /> </Layout>,
     errorElement: <ErrorPage />,
-    children: routeMap
+    children: make_protected(routeMap)
   },
 ];
