@@ -180,7 +180,6 @@ export default function NewRole({ update_page = false }) {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-      {isUpdateMode ? <PermissionProtector permission={[Permission.ReadRole, Permission.UpdateRole]} /> : <PermissionProtector permission={[Permission.ReadRole, Permission.CreateRole]} />}
       <h1 className="text-4xl font-bold mb-4">
         {isUpdateMode ? "Update" : "Create"} Roles</h1>
       <p className="text-lg mb-8">Change current roles in the organization</p>

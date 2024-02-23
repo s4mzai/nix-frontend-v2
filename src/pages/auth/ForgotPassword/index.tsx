@@ -1,13 +1,13 @@
 import TimesLogo from "@/assets/dtutimesIcon";
-import { Spinner } from '@/components/Spinner';
-import API from '@/services/API';
+import { Spinner } from "@/components/Spinner";
+import API from "@/services/API";
 import { useState, useContext } from "react";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { ErrorContext } from "@/contexts/error";
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const { setError } = useContext(ErrorContext);
 
   const handleSubmit = async (e) => {
@@ -22,21 +22,20 @@ export default function ForgotPassword() {
 
     setLoading(true);
 
-    try {
-        // Make a request to the backend API to initiate the forgot password process
-        await API.post('/auth/forgotPassword', { email });
-        setLoading(false);
-        toast.success('Password reset email sent successfully. Check your inbox!');
-    } catch (e: any) {
-        setLoading(false);
-        setError(e);
-    } 
+    // Make a request to the backend API to initiate the forgot password process
+    await API.post("/auth/forgotPassword", { email }).then(() => {
+      setLoading(false);
+      toast.success("Password reset email sent successfully. Check your inbox!");
+    }).catch((e) => {
+      setLoading(false);
+      setError(e);
+    });
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <TimesLogo className="mx-auto h-20 w-auto" />
+        <TimesLogo className="mx-auto h-20 w-auto bg-black" />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Forgot Your Password?
         </h2>
@@ -67,7 +66,7 @@ export default function ForgotPassword() {
               type="submit"
               className="flex w-full justify-center rounded-md bg-gray-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              {loading ? <Spinner /> : 'Send Reset Email'}
+              {loading ? <Spinner /> : "Send Reset Email"}
             </button>
           </div>
         </form>

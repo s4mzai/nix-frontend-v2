@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --fix",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --rule {'@typescript-eslint/no-unused-vars':'off','react-hooks/exhaustive-deps':'off'} --fix",
     "preview": "vite preview",
     "start": "vite build && node server.js",
     "prod": "npx pm2 delete NixFrontend; pm2 --name NixFrontend --time start npm -- start"

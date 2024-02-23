@@ -1,5 +1,7 @@
 import { protectedRoutes } from "@/router/routeMap";
 import SidebarItem from "./sideNavItems.jsx";
+import { Link } from "react-router-dom";
+import TimesLogo from "@/assets/dtutimesIcon.js";
 
 function Sidebar() {
   const items = protectedRoutes[0].children;
@@ -7,19 +9,14 @@ function Sidebar() {
     <div className="min-h-[100vh] bg-[#252525] text-white w-[280px]">
       <div className="flex flex-col p-4">
         <div className="m-4 p-4">
-          <a
-            href="https://nix.dtutimes.com"
+          <Link
+            to="/"
             className="flex justify-center items-center"
           >
-            <img
-              className="h-20 pr-4"
-              src="https://nix.dtutimes.com/logo-light.png"
-              alt="dtutimesIcon"
-            />
-          </a>
+            <TimesLogo className="h-20" />
+          </Link>
           <div className="p-2 ml-auto text-center text-xs">
-            <span>DTU Times</span>
-            <span>2024</span>
+            <span>DTU Times {new Date().getFullYear()}</span>
             <ul className="flex justify-center">
               {/*
               {socialLinks.map((link, index) => (

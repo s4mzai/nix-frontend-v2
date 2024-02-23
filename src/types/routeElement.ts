@@ -1,6 +1,6 @@
 import Permission from "./permissions";
 
-export default interface RouteElement {
+interface RouteElement {
     path: string;
     element: React.ReactNode;
     permission: Permission[];
@@ -8,3 +8,5 @@ export default interface RouteElement {
     hide?: true;
     children?: RouteElement[];
 }
+
+export default RouteElement;
