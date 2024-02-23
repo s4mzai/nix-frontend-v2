@@ -22,21 +22,21 @@ export default function ForgotPassword() {
 
     setLoading(true);
 
-    try {
-      // Make a request to the backend API to initiate the forgot password process
-      await API.post("/auth/forgotPassword", { email });
+
+    // Make a request to the backend API to initiate the forgot password process
+    await API.post("/auth/forgotPassword", { email }).then(() => {
       setLoading(false);
       toast.success("Password reset email sent successfully. Check your inbox!");
-    } catch (e: any) {
+    }).catch((e) => {
       setLoading(false);
       setError(e);
-    } 
+    });
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <TimesLogo className="mx-auto h-20 w-auto" />
+        <TimesLogo className="mx-auto h-20 w-auto bg-black" />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Forgot Your Password?
         </h2>

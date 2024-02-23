@@ -1,7 +1,9 @@
+import { PermissionProtector } from "@/components/PermissionProtector";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import Member from "@/types/member";
+import Permission from "@/types/permissions";
 import React from "react";
 import { toast } from "react-toastify";
 

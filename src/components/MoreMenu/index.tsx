@@ -1,6 +1,6 @@
 import MoreVerticalIcon from "@/assets/MoreIcon";
 import BlogStatus from "@/types/blogStatus";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PermissionProtector } from "../PermissionProtector";
 import Permission from "@/types/permissions";
 
@@ -17,10 +17,10 @@ interface MoreMenuProps {
 }
 
 //please stick to passing options/function which do something tangible for user because the moremenu needs to close
-//after one click on it 
+//after one click on it
 export default function MoreMenu({ options, blogId }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  //let menuRef = useRef(null);
+  const menuRef = useRef(null);
 
   const handleOptionFunction = (handler) => {
     console.log(blogId);
@@ -28,7 +28,7 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
     setIsOpen(false);
   };
 
-  // const handleEdit = () => { 
+  // const handleEdit = () => {
   //   // these checks will actually make use feel ui isn't working, as it shows nothing if onEdit is not passed
   //   // better would be to let the global error handler handle and "post a toast"
   //   // if (onEdit) {
@@ -38,23 +38,25 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
   // };
 
   useEffect(() => {
-    // let handler = (e) => {
-    //   if (menuRef.current && !menuRef.current.contains(e.target)) {
-    //     setIsOpen(false);
-    //   }
-    // };
+    //function to handle clicks
+    function handleOutsideClicks(e: MouseEvent) {
+      //menuref should be initialized ofc and then checking for any click outside more menu , if so close it
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
 
-    // document.addEventListener("mousedown", handler);
-
-    // return() => {
-    //   document.removeEventListener("mousedown", handler);
-    // }
-  });
-
+    //adding event listener on component mount
+    document.addEventListener("mousedown", handleOutsideClicks);
+    return () => {
+      // removing the listener once the component unmounts
+      document.removeEventListener("mousedown", handleOutsideClicks);
+    };
+  }, []);
 
   return (
-    <div className="relative text-left">
-      {/* <div ref={menuRef}> */}
+    // attaching the ref
+    <div className="relative text-left" ref={menuRef}>
       <div>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -66,17 +68,22 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
       </div>
       {isOpen && (
         <div className="z-10 origin-top-right absolute  bg-gray-200 rounded-md shadow-md">
-          {options.filter(option => option.show).map((option, index) => (
-            <PermissionProtector key={index} silent={true} permission={option.permissions}>
-              <button
-                className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                onClick={() => handleOptionFunction(option.handler)}
+          {options
+            .filter((option) => option.show)
+            .map((option, index) => (
+              <PermissionProtector
+                key={index}
+                silent={true}
+                permission={option.permissions}
               >
-                {option.label}
-              </button>
-            </PermissionProtector>
-            
-          ))}
+                <button
+                  className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  onClick={() => handleOptionFunction(option.handler)}
+                >
+                  {option.label}
+                </button>
+              </PermissionProtector>
+            ))}
           {/* {!(status == BlogStatus.Published || status == BlogStatus.Approved) && (
             <button
               className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -115,7 +122,7 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
                 Submit
               </button> : <></>
           }*/}
-        </div> 
+        </div>
       )}
     </div>
   );

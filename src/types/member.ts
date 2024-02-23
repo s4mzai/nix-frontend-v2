@@ -1,6 +1,6 @@
 import Permission from "./permissions";
 
-export default interface Member {
+interface Member {
     id: string;
     name: string;
     email: string;
@@ -9,3 +9,5 @@ export default interface Member {
     bio: string;
     permission: Permission[];
 }
+
+export default Member;
