@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import TimesLogo from "@/assets/dtutimesIcon";
 import { Spinner } from "@/components/Spinner";
 import API from "@/services/API";
@@ -14,19 +14,16 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { setError } = useContext(ErrorContext);
 
+  const token = new URLSearchParams(location.search).get("token");
+  if (!token) {
+    navigate("/forgot-password"); // send the user back to the forgot password page if the token is not given
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
-      return;
-    }
-
-    const token = new URLSearchParams(location.search).get("token");
-
-    if (!token) {
-      toast.error("Invalid or expired reset token");
-      navigate("/forgot-password"); // send the user back to the forgot password page if the token is invalid or expired
       return;
     }
 
@@ -47,7 +44,7 @@ export default function ResetPassword() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <TimesLogo className="mx-auto h-20 w-auto" />
+        <TimesLogo className="mx-auto h-20 w-auto bg-black" />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Reset Your Password
         </h2>

@@ -6,6 +6,7 @@ import ErrorCtxProvider from "@/contexts/error.js";
 import PermErrCtxProvider from "@/contexts/permission_error.js";
 import CurrUserCtxProvider from "@/contexts/current_user.js";
 import HomePage from "@/pages/HomePage.js";
+import ResetPassword from "@/pages/auth/ResetPassword/index.js";
 
 const AppRoute = () => {
   return (
@@ -15,6 +16,7 @@ const AppRoute = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/*" element={<ProtectedRoute />} />
           </Routes >
