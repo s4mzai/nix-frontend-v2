@@ -1,8 +1,35 @@
-# React + Vite
+# Start using remote backend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Clone the repo and move to the cloned directory and install dependencies.
 
-Currently, two official plugins are available:
+```bash
+git clone https://github.com/dtutimes/frontend_rm_v2.git nix_frontend
+cd nix_frontend
+npm i # or yarn or pnpm whatever u like
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Copy `.env` file to `.env.local` file in the root of the repo
+
+```bash
+cp .env .env.local
+```
+
+- Edit this file and change the env variable to `VITE_NIX_BACKEND="http://134.209.159.97:8080/api/v1"`
+- Start dev mode `npm run dev`
+
+---
+
+# Start using localhost backend
+
+- Clone the repo and move to the cloned directory and install dependencies.
+
+```bash
+git clone https://github.com/dtutimes/frontend_rm_v2.git nix_frontend
+cd nix_frontend
+npm i
+```
+
+- Clone and [initialise the backend repo](https://github.com/dtutimes/Backend_v2/)
+- Start dev mode `npm run dev`
+
+---
