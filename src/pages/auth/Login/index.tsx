@@ -15,14 +15,13 @@ export default function Login() {
   const [params, setParams] = useSearchParams();
   const forcedLogout = params.get("forcedLogout");
   const sessionExpired = params.get("sessionExpired");
-  setParams();
 
   useEffect(() => {
     if (ready) {
+      setParams();
       const forced_logout = forcedLogout === "true";
       const session_expired = sessionExpired === "true";
 
-      console.log(forcedLogout, sessionExpired);
       /** in case this causes some bad bad stuff then refer to previous commit
        * https://github.com/dtutimes/frontend_rm_v2/tree/c32b9aa09b70875f7b670a268e0abda25594163c
        * this forced_logout thingy was outside the if-ready block for some reasons i can't recall
@@ -73,10 +72,10 @@ export default function Login() {
     }
   }, [ready]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (e.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
     setLoading(true);
     await API.post("/auth/login", { email, password })
