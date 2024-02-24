@@ -3,6 +3,7 @@ import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import BlogCategory from "@/types/blogCategory";
+import BlogStatus from "@/types/blogStatus";
 import { useContext, useEffect, useReducer, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -154,7 +155,7 @@ export default function NewStory() {
     }
   }, []);
 
-  const handleSubmit = (e, saveAsDraft) => {
+  const handleSubmit = (e, saveAsDraft: boolean) => {
     console.log(saveAsDraft);
     e.preventDefault();
 
@@ -172,7 +173,7 @@ export default function NewStory() {
       meta_title: metaTitle,
       meta_description: metaDescription,
       user_id: user.id,
-      saveAsDraft: saveAsDraft,
+      status: saveAsDraft ? BlogStatus.Draft : BlogStatus.Pending,
       cover: blogImage,
     };
 
