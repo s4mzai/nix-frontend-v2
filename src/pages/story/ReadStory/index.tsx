@@ -16,16 +16,16 @@ import BlogStatus from "@/types/blogStatus";
 import { BlogDetails } from "@/types/blog";
 
 interface ReadStoryState {
-    showDTPicker: boolean;
-    selectedDateTime: string;
-    image: string;
-    loading: boolean;
+  showDTPicker: boolean;
+  selectedDateTime: string;
+  image: string;
+  loading: boolean;
 }
 
 //https://stackoverflow.com/questions/28760254/assign-javascript-date-to-html5-datetime-local-input
 const getLocalDateTime = () => {
   const d = new Date();
-  const dateTimeLocalValue = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0,-5);
+  const dateTimeLocalValue = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0, -5);
   return dateTimeLocalValue;
 };
 
@@ -43,13 +43,13 @@ const initialState: ReadStoryState = {
 };
 
 const enum ActionType {
-    SetShowDTPicker,
-    SetSelectedDateTime,
-    SetImage,
-    SetLoading,
+  SetShowDTPicker,
+  SetSelectedDateTime,
+  SetImage,
+  SetLoading,
 }
 
-const reducer = (state: ReadStoryState, action: {type: ActionType, payload}) => {
+const reducer = (state: ReadStoryState, action: { type: ActionType, payload }) => {
   const updatedData = { ...state };
   switch (action.type) {
   case ActionType.SetShowDTPicker:
@@ -113,7 +113,7 @@ export default function ReadStory() {
       const request = {
         time: formatLocalDateTime(selectedDateTime)
       };
-  
+
       API.put(publishLaterEndPoint, request)
         .then(() => {
           toast.success("Successfully set publish time");
@@ -124,9 +124,19 @@ export default function ReadStory() {
   };
 
   const handleSaveToDraft = () => {
-    //TODO: there should be an option to convert pending blogs to drafts
-    //console.log(image);
-    console.log("Save to draft not impl in backend rn");
+    const choice = window.confirm(
+      "Are you sure you want to save back to draft?"
+    );
+    if (choice) {
+      const publishEndPoint = `/blog/take-down-blog/${blog._id}`;
+
+      API.put(publishEndPoint)
+        .then(() => {
+          toast.success("Saved back to drafts!");
+          navigate("/story/pending-stories");
+        })
+        .catch((e) => setError(e));
+    }
   };
 
   const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,6 +144,10 @@ export default function ReadStory() {
   };
 
   const fetchImage = () => {
+    if (!blog.cover) {
+      dispatch({ type: ActionType.SetLoading, payload: false });
+      return;
+    }
     const imageEndPoint = `/images/get/${blog.cover}`;
     API.get(imageEndPoint, { responseType: "arraybuffer" })
       .then((response) => {
@@ -170,12 +184,12 @@ export default function ReadStory() {
         {BlogStatus[blog.status]}
       </span>d
       <div className="m-2 mt-5 break-words">
-        <div> <img src={image} alt="Cover Image" /> </div>
-        <div className="mt-2 mb-2 text-gray-500"> {blog.byliner} </div>  
+        <div>  {blog.cover ? <img className="object-contain h-3/6 w-3/6" src={image} alt="Cover Image" /> : <>Cover image not uploaded!</>} </div>
+        <div className="mt-2 mb-2 text-gray-500"> {blog.byliner} </div>
         <div className="text-gray-900 leading-relaxed"> {parse(blog.body)} </div>
       </div>
 
-      {blog.status === BlogStatus.Pending && (  
+      {blog.status === BlogStatus.Pending && (
         <div>
           <button
             onClick={handlePublishNow}
@@ -198,18 +212,18 @@ export default function ReadStory() {
           >
             Save Back to Draft
           </button>
-          
+
           {showDTPicker && (
             <div className="m-2">
-              <label 
+              <label
                 htmlFor="datetime"
                 className="text-md font-medium text-gray-900 "
               >
-                Choose when to publish : 
+                Choose when to publish :
               </label>
-              <input 
-                type="datetime-local" 
-                id="datetime" 
+              <input
+                type="datetime-local"
+                id="datetime"
                 placeholder="YYYY-MM-DD"
                 value={selectedDateTime}
                 min={getLocalDateTime()}
