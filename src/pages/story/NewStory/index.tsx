@@ -158,7 +158,6 @@ export default function NewStory() {
   const handleSubmit = (e, saveAsDraft: boolean) => {
     console.log(saveAsDraft);
     e.preventDefault();
-
     if (!title || !byliner || !metaDescription || !metaTitle || !slug) {
       toast.error("Please fill out all the required fields.");
       return;
