@@ -63,7 +63,7 @@ const routeMap: CustomRouteElement[] = [
         permission: [Permission.PublishBlog],
       },
       {
-        path: "pending-stories/:blogId",
+        path: ":blogId",
         element: <ReadStory />,
         label: "Read Story",
         permission: [Permission.ReadBlog, Permission.PublishBlog],
