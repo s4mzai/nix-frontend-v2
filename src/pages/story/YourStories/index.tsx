@@ -27,7 +27,7 @@ const initialState: YourStoriesState = {
   loading: true,
 };
 
-const blogEndpoint = "/blog";
+const myBlogsEndpoint = "/blog/my-blogs";
 
 const enum ActionType {
   SetBlogs,
@@ -162,7 +162,7 @@ export default function AllStory() {
   };
 
   const fetchBlogs = () => {
-    API.get(blogEndpoint, { data: { userOnly: true } })
+    API.get(myBlogsEndpoint, { data: { userOnly: true } })
       .then((blogResponse) => {
         dispatch({ type: ActionType.SetBlogs, payload: blogResponse.data.data });
         dispatch({ type: ActionType.SetLoading, payload: false });
