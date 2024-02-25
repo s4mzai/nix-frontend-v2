@@ -21,6 +21,8 @@ const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
 const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
 const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
+const MemberProfile = React.lazy(() => import("@/pages/member/MemberProfile"));
+const EditMember = React.lazy(() => import("@/pages/member/EditMember"));
 
 
 /** This route map serves the routes as well as is used to
@@ -120,9 +122,22 @@ const routeMap: CustomRouteElement[] = [
         element: <AddMember />,
         permission: [Permission.CreateProfile],
         label: "Add Member",
-      }
+      },
+      {
+        path: ":memberId/edit-details/",
+        element: <EditMember />,
+        permission: [Permission.UpdateProfile],
+        label: "Edit Details",
+        hide: true
+      },
     ]
   },
+  {
+    path: "profile/",
+    element: <MemberProfile />,
+    permission: [],
+    label: "Profile",
+  }
 ];
 
 const make_protected = (routes: CustomRouteElement[]) => {

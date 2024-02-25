@@ -1,18 +1,19 @@
 import { CurrUserCtx } from "@/contexts/current_user";
 import API from "@/services/API";
 import React from "react";
+import TimesLogo from "@/assets/dtutimesIcon";
+import { Spinner } from "@/components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const AvatarImage = ({ src, alt, className }) => {
   return <img className={`rounded-full ${className}`} src={src} alt={alt} />;
 };
 
-import TimesLogo from "@/assets/dtutimesIcon";
-import { Spinner } from "@/components/Spinner";
-
 const uri = API.getUri();
 
 export default function Dashbboard() {
   const { ready, user } = React.useContext(CurrUserCtx);
+  const navigate = useNavigate();
   if (!ready) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
   return (
     <div className="flex justify-start flex-col xl:flex-row">
@@ -49,6 +50,7 @@ export default function Dashbboard() {
         <p className="text-lg mb-4">Welcome to DTU Times!</p>
         <p>Well done on your role as {user.role}!</p>
         <p className="text-sm my-4">This is your Dashboard where you can update your details shared with us! Make sure they are up-to-date as these are your official record available to DTU Times.</p>
+        <button className="bg-blue-500 text-white p-2 rounded hover:bg-green-500" onClick={() => navigate(`/member/${user.id}/edit-details`)}>Edit Details</button>
       </div>
     </div>
   );

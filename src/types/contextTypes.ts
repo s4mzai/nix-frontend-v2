@@ -31,4 +31,5 @@ export interface IUser {
     role: string;
     permission: Permission[];
     is_superuser: boolean;
+    date_joined: string;
 }
