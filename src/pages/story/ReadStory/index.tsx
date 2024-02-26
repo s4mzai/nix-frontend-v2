@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import API from "@/services/API";
 import { toast } from "react-toastify";
-
 import { ErrorContext } from "@/contexts/error";
 
 import parse from "html-react-parser";
@@ -14,6 +13,7 @@ import { TagIcon } from "@/assets/TagIcon";
 
 import BlogStatus from "@/types/blogStatus";
 import { BlogDetails } from "@/types/blog";
+import "./index.css";
 
 interface ReadStoryState {
   showDTPicker: boolean;
