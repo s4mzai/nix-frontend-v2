@@ -7,6 +7,7 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    "plugin:prettier/recommended",
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
@@ -17,10 +18,6 @@ module.exports = {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
-    ],
-    "indent": [
-      "warn",
-      "2"
     ],
     "linebreak-style": [
       "warn",
@@ -40,6 +37,12 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": [
       "warn",
       { "argsIgnorePattern": "^_" }
+    ],
+    "prettier/prettier": [
+      "warn",
+      {
+        "tab-width": 4,
+      }
     ],
   },
 }
