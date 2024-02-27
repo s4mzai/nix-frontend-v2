@@ -74,7 +74,7 @@ export default function AllMembers() {
   //filter members based on search term
   const filteredMembers = membersList.filter((member) => {
     const category = member[selectedCategory.toLowerCase()];
-    const categoryValue = category ? category.toString().toLowerCase() : '';
+    const categoryValue = category ? category.toString().toLowerCase() : "";
     return categoryValue.includes(searchTerm.toLowerCase());
   });
 

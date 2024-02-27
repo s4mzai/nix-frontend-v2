@@ -228,8 +228,8 @@ export default function AllStory() {
               options={[
                 { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog]},
                 { label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions: [Permission.ReadBlog] }, // i dont think a user should need perm to delete their draft
-              // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
-              //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },
+                // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
+                //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },
                 { label: "Edit", handler: handleEdit, show: blog.status == BlogStatus.Draft, permissions: [Permission.ReadBlog] },
                 { label: "Submit", handler: handleSubmit, show: blog.status == BlogStatus.Draft, permissions: [] }
               ]}
