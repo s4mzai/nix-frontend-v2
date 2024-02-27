@@ -51,7 +51,7 @@ const reducer = (state: YourStoriesState, action: { type: ActionType, payload })
     //refer to their originals. so we need to spread it out again
     //if present in filter, remove. Else, add
     if (newStatusFilters.includes(action.payload)) {
-      console.log(newStatusFilters, action.payload);
+      console.debug(newStatusFilters, action.payload);
       newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
       console.debug(newStatusFilters);
     } else {
@@ -112,7 +112,7 @@ export default function AllStory() {
           fetchBlogs();
         })
         .catch((e) => setError(e));
-      console.log("story deleted");
+      console.debug("story deleted");
     }
   };
 
@@ -130,20 +130,20 @@ export default function AllStory() {
           fetchBlogs();
         })
         .catch((e) => setError(e));
-      console.log("story archived");
+      console.debug("story archived");
     }
   };
 
   const handleEdit = (blogId) => {
     //TODO edit blog, should open the blog on the new blog view
-    console.log(blogId);
+    console.debug(blogId);
     API.get(`/blog/get-blog/${blogId}`)
       .then((blogResponse) => {
         const blogDetails = blogResponse.data.data;
         navigate("/story/new-story", { state: { key: blogDetails } });
       })
       .catch((e) => setError(e));
-    console.log("story edited");
+    console.debug("story edited");
   };
 
   const handleSubmit = (blogId) => {
@@ -157,7 +157,7 @@ export default function AllStory() {
           fetchBlogs();
         })
         .catch((e) => setError(e));
-      console.log("story submitted");
+      console.debug("story submitted");
     }
   };
 

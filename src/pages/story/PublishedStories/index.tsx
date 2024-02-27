@@ -92,7 +92,7 @@ export default function PublishedStories() {
           fetchBlogs();
         })
         .catch((e) => setError(e));
-      console.log("story deleted");
+      console.debug("story deleted");
     }
   };
 
@@ -110,7 +110,7 @@ export default function PublishedStories() {
           fetchBlogs();
         })
         .catch((e) => setError(e));
-      console.log("story archived");
+      console.debug("story archived");
     }
   };
 
