@@ -178,7 +178,7 @@ export default function AllStory() {
   }, []);
 
 
-  if (loading) return <div className="flex justify-center items-center"><Spinner /></div>;
+  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
 
   return (
     <div className="max-w-4xl mx-auto py-12">

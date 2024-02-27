@@ -64,7 +64,7 @@ export default function AddMember() {
       .finally(() => setLoading(false));
   };
 
-  if (loading) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
