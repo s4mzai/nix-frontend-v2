@@ -5,8 +5,15 @@ import RouteElement from "@/types/routeElement";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function SidebarItem({ items }: { items: RouteElement }) {
-  const [open, setOpen] = useState(false);
+function SidebarItem({ items, is_expanded = false, menu_open }: { items: RouteElement, is_expanded?: boolean, menu_open?: () => void }) {
+  const [subopen, setsubOpen] = useState(null);
+  const openerFn = (index) => {
+    if (index === open) {
+      setsubOpen(null);
+    } else {
+      setsubOpen(index);
+    }
+  };
 
   if (items.hide) { return null; }
 
@@ -16,22 +23,25 @@ function SidebarItem({ items }: { items: RouteElement }) {
         <div className="flex flex-col">
           <div
             className="flex items-center justify-between text-white p-2 cursor-pointer"
-            onClick={() => setOpen(!open)}
+            onClick={menu_open}
           >
             <div className="flex items-center">
               <span>{items.label}</span>
             </div>
-            <div>{open ? <UpArrow /> : <DownArrow />}</div>
+            <div>{is_expanded ? <UpArrow /> : <DownArrow />}</div>
           </div>
-          {open ? <div className="pl-4">
+          {is_expanded ? <div className="pl-4">
             {items.children.map((item, index) => (
               <PermissionProtector key={`nested-${item.label}.${index}`} permission={item.permission} silent={true}>
-                <SidebarItem items={
-                  {
-                    ...item,
-                    path: `${items.path}${item.path}`,
+                <SidebarItem
+                  items={
+                    {
+                      ...item,
+                      path: `${items.path}${item.path}`,
+                    }
                   }
-                }
+                  is_expanded={subopen === index}
+                  menu_open={() => openerFn(index)}
                 />
               </PermissionProtector>
             ))}
