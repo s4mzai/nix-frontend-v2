@@ -24,7 +24,7 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
   const menuRef = useRef(null);
 
   const handleOptionFunction = (handler) => {
-    console.log(blogId);
+    console.debug(blogId);
     handler(blogId);
     setIsOpen(false);
   };
