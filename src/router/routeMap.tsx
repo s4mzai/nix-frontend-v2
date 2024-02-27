@@ -14,14 +14,17 @@ const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
 const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
 const PendingStories = React.lazy(() => import("@/pages/story/PendingStories"));
 const ReadStory = React.lazy(() => import("@/pages/story/ReadStory"));
-const PublishedStories = React.lazy(() => import("@/pages/story/PublishedStories"));
-const ApprovedStories = React.lazy(() => import("@/pages/story/ApprovedStories"));
+const PublishedStories = React.lazy(
+  () => import("@/pages/story/PublishedStories"),
+);
+const ApprovedStories = React.lazy(
+  () => import("@/pages/story/ApprovedStories"),
+);
 const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
 const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
 const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
-
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -36,11 +39,15 @@ const routeMap: CustomRouteElement[] = [
     path: "login?forcedLogout=true",
     element: <Login />,
     permission: [],
-    label: "Logout"
+    label: "Logout",
   },
   {
     path: "story/",
-    element: <><Outlet /></>,
+    element: (
+      <>
+        <Outlet />
+      </>
+    ),
     label: "Story",
     permission: [Permission.ReadBlog],
     children: [
@@ -67,7 +74,7 @@ const routeMap: CustomRouteElement[] = [
         element: <ReadStory />,
         label: "Read Story",
         permission: [Permission.ReadBlog, Permission.PublishBlog],
-        hide: true
+        hide: true,
       },
       {
         path: "approved-stories/",
@@ -80,14 +87,18 @@ const routeMap: CustomRouteElement[] = [
         element: <PublishedStories />,
         label: "Published Stories",
         permission: [Permission.PublishBlog],
-      }
-    ]
+      },
+    ],
   },
   {
     path: "role/",
     label: "Role",
     permission: [Permission.ReadRole],
-    element: <><Outlet /></>,
+    element: (
+      <>
+        <Outlet />
+      </>
+    ),
     children: [
       {
         path: "all-roles/",
@@ -107,11 +118,15 @@ const routeMap: CustomRouteElement[] = [
         label: "Update Role",
         permission: [Permission.UpdateRole],
       },
-    ]
+    ],
   },
   {
     path: "member/",
-    element: <><Outlet /></>,
+    element: (
+      <>
+        <Outlet />
+      </>
+    ),
     permission: [],
     label: "Member",
     children: [
@@ -127,7 +142,7 @@ const routeMap: CustomRouteElement[] = [
         permission: [],
         label: "All Members",
       },
-    ]
+    ],
   },
 ];
 
@@ -136,7 +151,11 @@ const make_protected = (routes: CustomRouteElement[]) => {
     if (route.children) {
       route.children = make_protected(route.children);
     } else {
-      route.element = <PermissionProtector permission={route.permission}>{route.element}</PermissionProtector>;
+      route.element = (
+        <PermissionProtector permission={route.permission}>
+          {route.element}
+        </PermissionProtector>
+      );
     }
     return route;
   });
@@ -147,6 +166,6 @@ export const protectedRoutes = [
     path: "/",
     element: <Outlet />,
     errorElement: <ErrorPage />,
-    children: make_protected(routeMap)
+    children: make_protected(routeMap),
   },
 ];

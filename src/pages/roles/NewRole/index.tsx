@@ -33,33 +33,33 @@ const enum ActionType {
 
 const reducer = (
   state: NewRoleState,
-  action: { type: ActionType; payload }
+  action: { type: ActionType; payload },
 ) => {
   //console.debug(action); (good way to keep track of state)
   const updatedData = { ...state };
   switch (action.type) {
-  //underscore convention from react docs
-  case ActionType.setRoleName:
-    //TODO check for role name constraints here
-    updatedData.roleName = action.payload;
-    break;
-  case ActionType.setSelectedPermissions:
-    updatedData.selectedPermissions = action.payload;
-    break;
-  case ActionType.setRoleId:
-    updatedData.roleId = action.payload;
-    break;
-  case ActionType.setIsUpdateMode:
-    updatedData.isUpdateMode = action.payload;
-    break;
-  case ActionType.setRolesList:
-    updatedData.rolesList = action.payload;
-    break;
-  case ActionType.setLoading:
-    updatedData.loading = action.payload;
-    break;
-  default:
-    return updatedData;
+    //underscore convention from react docs
+    case ActionType.setRoleName:
+      //TODO check for role name constraints here
+      updatedData.roleName = action.payload;
+      break;
+    case ActionType.setSelectedPermissions:
+      updatedData.selectedPermissions = action.payload;
+      break;
+    case ActionType.setRoleId:
+      updatedData.roleId = action.payload;
+      break;
+    case ActionType.setIsUpdateMode:
+      updatedData.isUpdateMode = action.payload;
+      break;
+    case ActionType.setRolesList:
+      updatedData.rolesList = action.payload;
+      break;
+    case ActionType.setLoading:
+      updatedData.loading = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 };
@@ -183,7 +183,12 @@ export default function NewRole({ update_page = false }) {
     //useEffect runs when value of isUpdateMode changes
   }, [isUpdateMode]);
 
-  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex flex-grow w-full h-full justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">

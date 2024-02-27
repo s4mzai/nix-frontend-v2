@@ -33,28 +33,28 @@ const enum ActionType {
 
 const reducer = (
   state: PublishedStoriesState,
-  action: { type: ActionType; payload }
+  action: { type: ActionType; payload },
 ) => {
   const updatedData = { ...state };
   switch (action.type) {
-  case ActionType.SetBlogs:
-    updatedData.blogs = action.payload;
-    break;
-  case ActionType.SetSearchTerm:
-    updatedData.searchTerm = action.payload;
-    break;
-  case ActionType.SetLoading:
-    updatedData.loading = action.payload;
-    break;
-  default:
-    return updatedData;
+    case ActionType.SetBlogs:
+      updatedData.blogs = action.payload;
+      break;
+    case ActionType.SetSearchTerm:
+      updatedData.searchTerm = action.payload;
+      break;
+    case ActionType.SetLoading:
+      updatedData.loading = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 };
 
 const getFilteredBlogs = (blogs, searchTerm) => {
   return blogs.filter((blog) =>
-    blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
+    blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
 
@@ -80,7 +80,7 @@ export default function PublishedStories() {
 
   const handleDelete = (blogId) => {
     const choice = window.confirm(
-      "Are you sure you want to delete this story?"
+      "Are you sure you want to delete this story?",
     );
     if (choice) {
       const deleteEndPoint = `/blog/delete-blog/${blogId}`;
@@ -98,7 +98,7 @@ export default function PublishedStories() {
   const handleArchive = (blogId) => {
     //archive is same as takedown dw
     const choice = window.confirm(
-      "Are you sure you want to archive this story?"
+      "Are you sure you want to archive this story?",
     );
     if (choice) {
       const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
@@ -119,7 +119,7 @@ export default function PublishedStories() {
         dispatch({
           type: ActionType.SetBlogs,
           payload: blogResponse.data.data.filter(
-            (blog) => blog.status == BlogStatus.Published
+            (blog) => blog.status == BlogStatus.Published,
           ),
         });
         dispatch({ type: ActionType.SetLoading, payload: false });
@@ -134,7 +134,12 @@ export default function PublishedStories() {
     fetchBlogs();
   }, []);
 
-  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex flex-grow w-full h-full justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto py-12">

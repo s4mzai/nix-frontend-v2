@@ -40,35 +40,35 @@ const enum ActionType {
 
 const reducer = (
   state: YourStoriesState,
-  action: { type: ActionType; payload }
+  action: { type: ActionType; payload },
 ) => {
   const updatedData = { ...state };
   const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
-  case ActionType.SetBlogs:
-    updatedData.blogs = action.payload;
-    break;
-  case ActionType.SetSearchTerm:
-    updatedData.searchTerm = action.payload;
-    break;
-  case ActionType.SetStatusFilers:
-    //also spread operator creates only a shallow copy so mutable data structures like arrays still
-    //refer to their originals. so we need to spread it out again
-    //if present in filter, remove. Else, add
-    if (newStatusFilters.includes(action.payload)) {
-      console.debug(newStatusFilters, action.payload);
-      newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
-      console.debug(newStatusFilters);
-    } else {
-      newStatusFilters.push(action.payload);
-    }
-    updatedData.statusFilters = newStatusFilters;
-    break;
-  case ActionType.SetLoading:
-    updatedData.loading = action.payload;
-    break;
-  default:
-    return updatedData;
+    case ActionType.SetBlogs:
+      updatedData.blogs = action.payload;
+      break;
+    case ActionType.SetSearchTerm:
+      updatedData.searchTerm = action.payload;
+      break;
+    case ActionType.SetStatusFilers:
+      //also spread operator creates only a shallow copy so mutable data structures like arrays still
+      //refer to their originals. so we need to spread it out again
+      //if present in filter, remove. Else, add
+      if (newStatusFilters.includes(action.payload)) {
+        console.debug(newStatusFilters, action.payload);
+        newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
+        console.debug(newStatusFilters);
+      } else {
+        newStatusFilters.push(action.payload);
+      }
+      updatedData.statusFilters = newStatusFilters;
+      break;
+    case ActionType.SetLoading:
+      updatedData.loading = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 };
@@ -76,12 +76,12 @@ const reducer = (
 const getFilteredBlogs = (
   blogs: Blog[],
   statusFilters: BlogStatus[],
-  searchTerm: string
+  searchTerm: string,
 ) => {
   return blogs.filter(
     (blog) =>
       statusFilters.includes(blog.status) &&
-      blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
+      blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
 
@@ -105,7 +105,7 @@ export default function AllStory() {
 
   const handleDelete = (blogId) => {
     const choice = window.confirm(
-      "Are you sure you want to delete this story?"
+      "Are you sure you want to delete this story?",
     );
     if (choice) {
       const deleteEndPoint = `/blog/delete-blog/${blogId}`;
@@ -123,7 +123,7 @@ export default function AllStory() {
   const handleArchive = (blogId) => {
     //archive is same as takedown dw
     const choice = window.confirm(
-      "Are you sure you want to archive this story?"
+      "Are you sure you want to archive this story?",
     );
     if (choice) {
       const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
@@ -152,7 +152,7 @@ export default function AllStory() {
 
   const handleSubmit = (blogId) => {
     const choice = window.confirm(
-      "Are you sure you want to submit this story for approval?"
+      "Are you sure you want to submit this story for approval?",
     );
     if (choice) {
       API.put(`/blog/submit-for-approval/${blogId}`)
@@ -184,7 +184,12 @@ export default function AllStory() {
     fetchBlogs();
   }, []);
 
-  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex flex-grow w-full h-full justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -274,7 +279,7 @@ export default function AllStory() {
                 blogId={blog._id}
                 key={blog._id}
               />,
-            ]
+            ],
           )}
         />
       </main>

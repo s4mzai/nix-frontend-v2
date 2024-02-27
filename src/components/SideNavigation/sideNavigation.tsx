@@ -20,10 +20,7 @@ function Sidebar() {
     <div className="min-h-[100vh] bg-[#252525] text-white w-[280px]">
       <div className="flex flex-col p-4">
         <div className="m-4 p-4">
-          <Link
-            to="/"
-            className="flex justify-center items-center"
-          >
+          <Link to="/" className="flex justify-center items-center">
             <TimesLogo className="h-20" />
           </Link>
           <div className="p-2 ml-auto text-center text-xs">
