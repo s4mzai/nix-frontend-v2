@@ -16,7 +16,7 @@ import Permission from "@/types/permissions";
 interface YourStoriesState {
   blogs: Blog[];
   searchTerm: string;
-  statusFilters: number[];
+  statusFilters: BlogStatus[];
   loading: boolean;
 }
 
@@ -68,7 +68,7 @@ const reducer = (state: YourStoriesState, action: { type: ActionType, payload })
   return updatedData;
 };
 
-const getFilteredBlogs = (blogs, statusFilters, searchTerm) => {
+const getFilteredBlogs = (blogs: Blog[], statusFilters: BlogStatus[], searchTerm: string) => {
   return blogs.filter((blog) =>
     statusFilters.includes(blog.status) &&
     blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -211,22 +211,22 @@ export default function AllStory() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
-            new Date(blog.updatedAt).toLocaleDateString(),
+            <div key={blog._id} className="max-w-24">{new Date(blog.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</div>,
             blog.title,
             BlogCategory[blog.category_id],
             <span
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
               // alternative fix is to re-export these class names in index.css
               // i'm lazy, so i just did this impl instead
-              className={`px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
+              className={`px-2 py-1 inline-block rounded-md ${BlogStatus[blog.status]}`}
               key={blog.category_id}
             >
-              <TagIcon className="w-4 h-4 inline-block mr-1" />
+              <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min" />
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
               options={[
-                { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog]},
+                { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog] },
                 { label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions: [Permission.ReadBlog] }, // i dont think a user should need perm to delete their draft
                 // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
                 //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },
