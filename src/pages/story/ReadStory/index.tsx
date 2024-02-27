@@ -159,8 +159,9 @@ export default function ReadStory() {
         };
         reader.readAsDataURL(imageBlob);
       })
-      .catch((error) => {
-        setError(error);
+      .catch(() => {
+        const err = Error("Error fetching the image!");
+        setError(err);
       });
   };
   useEffect(() => {

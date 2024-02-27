@@ -4,6 +4,9 @@ import { getTokenFromStorage } from "./localStorageParser";
 const API = axios.create({
   baseURL: import.meta.env.VITE_NIX_BACKEND,
   withCredentials: true,
+  headers: {
+    "Origin": process.env.APP_URL || "http://localhost:5173",
+  }
 });
 
 API.interceptors.request.use((req) => {
