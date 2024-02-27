@@ -1,5 +1,5 @@
 import { useContext, useReducer, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import API from "@/services/API";
 import { toast } from "react-toastify";
@@ -76,6 +76,11 @@ const reducer = (
 export default function ReadStory() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { blogId } = useParams();
+  if (!blogId) {
+    navigate("/story/your-stories");
+  }
+  // todo: make this page pure
   const blog: BlogDetails = location.state?.key;
   const [state, dispatch] = useReducer(reducer, initialState);
   const { setError } = useContext(ErrorContext);
@@ -158,21 +163,25 @@ export default function ReadStory() {
         setError(error);
       });
   };
-
   useEffect(() => {
-    fetchImage();
-  }, []);
+    if (!blog) {
+      API.get(`/blog/get-blog/${blogId}`)
+        .then((blogResponse) => {
+          const blogDetails = blogResponse.data.data;
+          navigate(`/story/${blogId}`, { state: { key: blogDetails }, replace: true });
+        })
+        .catch((e) => setError(e));
+    } else {
+      fetchImage();
+    }
+  }, [blog]);
 
+  if (!blog) { return <div className="flex flex-grow justify-center items-center"><Spinner /></div>; }
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 bg-white shadow round">
       <h1 className="mb-10">{blog.title}</h1>
-      <h4 className="m-2 font-semibold text-gray-500">
-        Created By {blog.user.name}, Last Updated on{" "}
-        {new Date(blog.updatedAt).toLocaleString(undefined, {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}{" "}
-      </h4>
+      <h4 className="m-2 font-semibold text-gray-500">Created By {blog.user.name}<br />
+        Last Updated on {new Date(blog.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })} </h4>
       <span
         className={`px-2 py-1 inline-block rounded-md ${
           BlogStatus[blog.status]
