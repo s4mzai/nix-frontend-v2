@@ -14,6 +14,7 @@ const TextEditor = ({ value, onChange }) => {
         ],
       },
       placeholder: "Type your content here.",
+
       ui: {
         poweredBy: {
           position: "inside",
