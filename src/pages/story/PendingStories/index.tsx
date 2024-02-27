@@ -111,7 +111,7 @@ export default function PendingStories() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, searchTerm).map(blog => [
-            new Date(blog.updatedAt).toLocaleDateString(),
+            new Date(blog.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }),
             blog.user.name,
             blog.title,
             BlogCategory[blog.category_id],

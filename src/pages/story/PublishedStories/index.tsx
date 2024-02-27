@@ -146,7 +146,7 @@ export default function PublishedStories() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, searchTerm).map(blog => [
-            new Date(blog.published_at).toLocaleDateString(),
+            new Date(blog.published_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }),
             blog.user.name,
             blog.title,
             BlogCategory[blog.category_id],

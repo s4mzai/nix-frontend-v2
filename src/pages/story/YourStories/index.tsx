@@ -211,7 +211,7 @@ export default function AllStory() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(blog => [
-            new Date(blog.updatedAt).toLocaleDateString(),
+            new Date(blog.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }),
             blog.title,
             BlogCategory[blog.category_id],
             <span
@@ -226,7 +226,7 @@ export default function AllStory() {
             </span>,
             <MoreMenu
               options={[
-                { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog]},
+                { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog] },
                 { label: "Delete", handler: handleDelete, show: blog.status == BlogStatus.Draft, permissions: [Permission.ReadBlog] }, // i dont think a user should need perm to delete their draft
                 // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
                 //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },

@@ -129,7 +129,7 @@ export default function ApprovedStories() {
         <Table
           headers={tableHeaders}
           content={getFilteredBlogs(blogs, searchTerm).map(blog => [
-            new Date(blog.published_at).toLocaleString(),
+            new Date(blog.published_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }),
             blog.user.name,
             blog.title,
             BlogCategory[blog.category_id],
@@ -145,8 +145,8 @@ export default function ApprovedStories() {
             </span>,
             <MoreMenu
               options={[
-                {label: "Read", handler: handleRead, show: true, permissions:[Permission.ReadBlog]},
-                {label: "Archive", handler: handleArchive, show:true, permissions:[Permission.DeleteBlog]},
+                { label: "Read", handler: handleRead, show: true, permissions: [Permission.ReadBlog] },
+                { label: "Archive", handler: handleArchive, show: true, permissions: [Permission.DeleteBlog] },
               ]}
               blogId={blog._id}
               key={blog._id}
