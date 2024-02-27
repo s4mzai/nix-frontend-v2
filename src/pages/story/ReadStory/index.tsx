@@ -165,10 +165,10 @@ export default function ReadStory() {
       <h1 className="mb-10 text-4xl font-semibold text-center">{blog.title}</h1>
       <h4 className="m-2 font-semibold text-gray-500">Created By {blog.user.name}, Last Updated on {new Date(blog.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })} </h4>
       <span
-        className={`m-2 px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
+        className={`px-2 py-1 inline-block rounded-md ${BlogStatus[blog.status]}`}
         key={blog.category_id}
       >
-        <TagIcon className="w-4 h-4 inline-block mr-1" />
+        <TagIcon className="w-4 h-4 inline mr-1 size-min "/>
         {BlogStatus[blog.status]}
       </span>
       <div className="m-2 mt-5 break-words">

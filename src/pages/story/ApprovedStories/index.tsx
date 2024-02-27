@@ -137,10 +137,10 @@ export default function ApprovedStories() {
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
               // alternative fix is to re-export these class names in index.css
               // i'm lazy, so i just did this impl instead
-              className={`px-2 py-1 rounded-md ${BlogStatus[blog.status]}`}
+              className={`px-2 py-1 inline-block rounded-md ${BlogStatus[blog.status]}`}
               key={blog.category_id}
             >
-              <TagIcon className="w-4 h-4 inline-block mr-1" />
+              <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min " />
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
