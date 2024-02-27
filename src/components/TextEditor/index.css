@@ -17,8 +17,3 @@
 .ck-content ol{
     padding-left: 20px;
 }
-a:-webkit-any-link {
-    color: -webkit-link;
-    cursor: pointer;
-    text-decoration: underline;
-}
