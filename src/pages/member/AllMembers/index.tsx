@@ -25,25 +25,25 @@ const enum ActionType {
 
 const reducer = (
   state: typeof initialState,
-  action: { type: ActionType; payload }
+  action: { type: ActionType; payload },
 ) => {
   const updatedData = { ...state };
   switch (action.type) {
-  //underscore convention from react docs
-  case ActionType.SetMemberList:
-    updatedData.membersList = action.payload;
-    break;
-  case ActionType.SetSearchTerm:
-    updatedData.searchTerm = action.payload;
-    break;
-  case ActionType.SetSelectedCategory:
-    updatedData.selectedCategory = action.payload;
-    break;
-  case ActionType.SetLoading:
-    updatedData.loading = action.payload;
-    break;
-  default:
-    return updatedData;
+    //underscore convention from react docs
+    case ActionType.SetMemberList:
+      updatedData.membersList = action.payload;
+      break;
+    case ActionType.SetSearchTerm:
+      updatedData.searchTerm = action.payload;
+      break;
+    case ActionType.SetSelectedCategory:
+      updatedData.selectedCategory = action.payload;
+      break;
+    case ActionType.SetLoading:
+      updatedData.loading = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 };
@@ -78,7 +78,12 @@ export default function AllMembers() {
     return categoryValue.includes(searchTerm.toLowerCase());
   });
 
-  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex flex-grow w-full h-full justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto py-12">

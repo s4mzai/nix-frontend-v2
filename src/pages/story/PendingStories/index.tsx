@@ -36,28 +36,28 @@ const blogEndpoint = "/blog";
 
 const reducer = (
   state: PendingStoriesState,
-  action: { type: ActionType; payload }
+  action: { type: ActionType; payload },
 ) => {
   const updatedData = { ...state };
   switch (action.type) {
-  case ActionType.SetBlogs:
-    updatedData.blogs = action.payload;
-    break;
-  case ActionType.SetSearchTerm:
-    updatedData.searchTerm = action.payload;
-    break;
-  case ActionType.SetLoading:
-    updatedData.loading = action.payload;
-    break;
-  default:
-    return updatedData;
+    case ActionType.SetBlogs:
+      updatedData.blogs = action.payload;
+      break;
+    case ActionType.SetSearchTerm:
+      updatedData.searchTerm = action.payload;
+      break;
+    case ActionType.SetLoading:
+      updatedData.loading = action.payload;
+      break;
+    default:
+      return updatedData;
   }
   return updatedData;
 };
 
 const getFilteredBlogs = (blogs, searchTerm) => {
   return blogs.filter((blog) =>
-    blog?.title.toLowerCase().includes(searchTerm.toLowerCase())
+    blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
 
@@ -85,7 +85,7 @@ export default function PendingStories() {
         dispatch({
           type: ActionType.SetBlogs,
           payload: blogResponse.data.data.filter(
-            (blog) => blog.status == BlogStatus.Pending
+            (blog) => blog.status == BlogStatus.Pending,
           ),
         });
         dispatch({ type: ActionType.SetLoading, payload: false });
@@ -100,8 +100,13 @@ export default function PendingStories() {
     fetchBlogs();
   }, []);
 
-  if (loading) return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>;
-    
+  if (loading)
+    return (
+      <div className="flex flex-grow w-full h-full justify-center items-center">
+        <Spinner />
+      </div>
+    );
+
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1>Pending Stories</h1>

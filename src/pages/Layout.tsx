@@ -2,7 +2,6 @@ import SideNavigation from "@/components/SideNavigation/sideNavigation";
 import { Spinner } from "@/components/Spinner";
 import { Suspense } from "react";
 
-
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-row w-screen">

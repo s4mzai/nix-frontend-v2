@@ -5,7 +5,15 @@ import RouteElement from "@/types/routeElement";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function SidebarItem({ items, is_expanded = false, menu_open }: { items: RouteElement, is_expanded?: boolean, menu_open?: () => void }) {
+function SidebarItem({
+  items,
+  is_expanded = false,
+  menu_open,
+}: {
+  items: RouteElement;
+  is_expanded?: boolean;
+  menu_open?: () => void;
+}) {
   const [subopen, setsubOpen] = useState(null);
   const openerFn = (index) => {
     if (index === open) {
@@ -15,7 +23,9 @@ function SidebarItem({ items, is_expanded = false, menu_open }: { items: RouteEl
     }
   };
 
-  if (items.hide) { return null; }
+  if (items.hide) {
+    return null;
+  }
 
   if (items.children) {
     return (
@@ -30,23 +40,28 @@ function SidebarItem({ items, is_expanded = false, menu_open }: { items: RouteEl
             </div>
             <div>{is_expanded ? <UpArrow /> : <DownArrow />}</div>
           </div>
-          {is_expanded ? <div className="pl-4">
-            {items.children.map((item, index) => (
-              <PermissionProtector key={`nested-${item.label}.${index}`} permission={item.permission} silent={true}>
-                <SidebarItem
-                  items={
-                    {
+          {is_expanded ? (
+            <div className="pl-4">
+              {items.children.map((item, index) => (
+                <PermissionProtector
+                  key={`nested-${item.label}.${index}`}
+                  permission={item.permission}
+                  silent={true}
+                >
+                  <SidebarItem
+                    items={{
                       ...item,
                       path: `${items.path}${item.path}`,
-                    }
-                  }
-                  is_expanded={subopen === index}
-                  menu_open={() => openerFn(index)}
-                />
-              </PermissionProtector>
-            ))}
-          </div> : <></>
-          }
+                    }}
+                    is_expanded={subopen === index}
+                    menu_open={() => openerFn(index)}
+                  />
+                </PermissionProtector>
+              ))}
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </PermissionProtector>
     );

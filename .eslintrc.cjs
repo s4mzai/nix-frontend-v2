@@ -32,7 +32,6 @@ module.exports = {
       "always"
     ],
     "react/prop-types": 0,
-    "indent": ["warn", 2],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
@@ -41,7 +40,8 @@ module.exports = {
     "prettier/prettier": [
       "warn",
       {
-        "tab-width": 4,
+        "tab-width": 2,
+        "useTabs": false
       }
     ],
   },

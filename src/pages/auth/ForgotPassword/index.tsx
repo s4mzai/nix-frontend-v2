@@ -21,16 +21,18 @@ export default function ForgotPassword() {
 
     setLoading(true);
 
-
     // Make a request to the backend API to initiate the forgot password process
     const toast_id = toast.loading("Sending reset email!");
-    await API.post("/auth/forgotPassword", { email }).then(() => {
-      setLoading(false);
-      toast.success("Password reset email sent");
-    }).catch((e) => {
-      setLoading(false);
-      setError(e);
-    }).finally(() => toast.done(toast_id));
+    await API.post("/auth/forgotPassword", { email })
+      .then(() => {
+        setLoading(false);
+        toast.success("Password reset email sent");
+      })
+      .catch((e) => {
+        setLoading(false);
+        setError(e);
+      })
+      .finally(() => toast.done(toast_id));
   };
 
   return (
@@ -45,7 +47,10 @@ export default function ForgotPassword() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
               Email address
             </label>
             <div className="mt-2">
