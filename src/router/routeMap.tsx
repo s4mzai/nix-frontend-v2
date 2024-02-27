@@ -25,6 +25,8 @@ const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
 const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
 const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
 const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
+const NewEdition = React.lazy(() => import("@/pages/edition/NewEdition"));
+const AllEditions = React.lazy(() => import("@/pages/edition/AllEditions"));
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -87,6 +89,37 @@ const routeMap: CustomRouteElement[] = [
         element: <PublishedStories />,
         label: "Published Stories",
         permission: [Permission.PublishBlog],
+      },
+    ],
+  },
+  {
+    path: "edition/",
+    label: "Edition",
+    permission: [],
+    element: (
+      <>
+        <Outlet />
+      </>
+    ),
+    children: [
+      {
+        path: "new-edition/",
+        element: <NewEdition key="new-edition" />,
+        label: "New Edition",
+        permission: [Permission.CreateEdition],
+      },
+      {
+        path: "update-edition/:id",
+        element: <NewEdition key="update-edition" />,
+        label: "Update Edition",
+        permission: [Permission.UpdateEdition],
+        hide: true,
+      },
+      {
+        path: "all-editions/",
+        element: <AllEditions  />,
+        label: "All Editions",
+        permission: [],
       },
     ],
   },
