@@ -80,7 +80,7 @@ export default function AllMembers() {
 
   if (loading)
     return (
-      <div className="flex flex-grow w-full h-full justify-center items-center">
+      <div className="flex flex-grow w-full h-screen justify-center items-center">
         <Spinner />
       </div>
     );

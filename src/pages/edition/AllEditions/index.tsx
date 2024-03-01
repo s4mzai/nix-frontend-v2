@@ -24,7 +24,7 @@ export default function AllEditions() {
 
   if (editions === null) {
     return (
-      <div className="flex w-full h-full justify-center items-center">
+      <div className="flex w-full h-screen justify-center items-center">
         <Spinner />
       </div>
     );

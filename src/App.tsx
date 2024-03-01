@@ -9,7 +9,7 @@ function App() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center w-screen h-screen">
-          <Spinner size="xl" />
+          <Spinner size="md" />
         </div>
       }
     >

@@ -28,14 +28,14 @@ const ProtectedRoute = () => {
 
   const element = useRoutes([...protectedRoutes]);
 
-  // if (loading) { return <div className="flex flex-grow w-full h-full justify-center items-center"><Spinner /></div>; }
+  // if (loading) { return <div className="flex flex-grow w-full h-screen justify-center items-center"><Spinner /></div>; }
   if (ready && !user) {
     return <Navigate to="/login" />;
   }
   return (
     <Layout>
       {loading ? (
-        <div className="flex flex-grow w-full h-full justify-center items-center">
+        <div className="flex flex-grow w-full h-screen justify-center items-center">
           <Spinner />
         </div>
       ) : failedPermissions !== null && failedPermissions.length > 0 ? (
