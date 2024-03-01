@@ -5,12 +5,12 @@ import { Suspense } from "react";
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-row w-screen">
-      <SideNavigation />
+      <div className="mr-[60px] z-40 "><SideNavigation /></div>
       <main className="flex-grow bg-[var(--bg-color)] p-4">
         <Suspense
           fallback={
             <div className="flex items-center justify-center h-screen">
-              <Spinner size="xl" />
+              <Spinner size="md" />
             </div>
           }
         >
