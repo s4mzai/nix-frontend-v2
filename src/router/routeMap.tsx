@@ -7,6 +7,11 @@ import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
 import { PermissionProtector } from "@/components/PermissionProtector";
+import DashIcon from "@/assets/DashIcon";
+import StoryIcon from "@/assets/StoryIcon";
+import LogOutIcon from "@/assets/LogOutIcon";
+import MemberIcon from "@/assets/MemberIcon";
+import RoleIcon from "@/assets/RoleIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -36,21 +41,13 @@ const routeMap: CustomRouteElement[] = [
     element: <Dashbboard />,
     permission: [],
     label: "Dashboard",
-  },
-  {
-    path: "login?forcedLogout=true",
-    element: <Login />,
-    permission: [],
-    label: "Logout",
+    icon: <DashIcon/>,
   },
   {
     path: "story/",
-    element: (
-      <>
-        <Outlet />
-      </>
-    ),
+    element: <><Outlet /></>,
     label: "Story",
+    icon: <StoryIcon/>,
     permission: [Permission.ReadBlog],
     children: [
       {
@@ -76,7 +73,7 @@ const routeMap: CustomRouteElement[] = [
         element: <ReadStory />,
         label: "Read Story",
         permission: [Permission.ReadBlog, Permission.PublishBlog],
-        hide: true,
+        hide: true
       },
       {
         path: "approved-stories/",
@@ -89,12 +86,13 @@ const routeMap: CustomRouteElement[] = [
         element: <PublishedStories />,
         label: "Published Stories",
         permission: [Permission.PublishBlog],
-      },
-    ],
+      }
+    ]
   },
   {
     path: "edition/",
     label: "Edition",
+    icon:<RoleIcon/>, //todo:change icon 
     permission: [],
     element: (
       <>
@@ -126,12 +124,9 @@ const routeMap: CustomRouteElement[] = [
   {
     path: "role/",
     label: "Role",
+    icon: <RoleIcon/>,
     permission: [Permission.ReadRole],
-    element: (
-      <>
-        <Outlet />
-      </>
-    ),
+    element: <><Outlet /></>,
     children: [
       {
         path: "all-roles/",
@@ -151,31 +146,36 @@ const routeMap: CustomRouteElement[] = [
         label: "Update Role",
         permission: [Permission.UpdateRole],
       },
-    ],
+    ]
   },
   {
     path: "member/",
-    element: (
-      <>
-        <Outlet />
-      </>
-    ),
+    element: <><Outlet /></>,
     permission: [],
     label: "Member",
+    icon: <MemberIcon/>,
     children: [
-      {
-        path: "add-member/",
-        element: <AddMember />,
-        permission: [Permission.CreateProfile],
-        label: "Add Member",
-      },
       {
         path: "all-members/",
         element: <AllMembers />,
         permission: [],
         label: "All Members",
       },
-    ],
+      {
+        path: "add-member/",
+        element: <AddMember />,
+        permission: [Permission.CreateProfile],
+        label: "Add Member",
+      }
+    ]
+  },
+  {
+    path: "login?forcedLogout=true",
+    element: <Login />,
+    permission: [],
+    label: "Logout",
+    customClass:'logout-label',
+    icon: <LogOutIcon/>,
   },
 ];
 

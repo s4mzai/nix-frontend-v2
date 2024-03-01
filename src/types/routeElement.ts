@@ -5,8 +5,10 @@ interface RouteElement {
   element: React.ReactNode;
   permission: Permission[];
   label: string;
+  icon?: React.SVGProps<SVGSVGElement>;
   hide?: true;
   children?: RouteElement[];
+  customClass?: string;
 }
 
 export default RouteElement;
