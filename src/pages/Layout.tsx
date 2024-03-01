@@ -5,7 +5,9 @@ import { Suspense } from "react";
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-row w-screen">
-      <div className="mr-[60px] z-40 "><SideNavigation /></div>
+      <div className="mr-[60px] z-40 ">
+        <SideNavigation />
+      </div>
       <main className="flex-grow bg-[var(--bg-color)] p-4">
         <Suspense
           fallback={
