@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function TrashIcon(props) {
   return (
     <svg
@@ -20,3 +18,4 @@ export default function TrashIcon(props) {
     </svg>
   );
 }
+  
