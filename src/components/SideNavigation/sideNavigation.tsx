@@ -35,7 +35,12 @@ function Sidebar() {
   const items = protectedRoutes[0].children;
 
   return (
-    <div ref={menuRef}>
+    <div
+      onMouseOver={() => setIsSidebarOpen(true)}
+      // todo: maybe add some delay to this on leave event and then close the sidebar, ensuring it doesn't overrides if mouse comes back
+      // onMouseLeave={() => setIsSidebarOpen(false)}
+      ref={menuRef}
+    >
       <MenuBar
         className={"fixed left-[20px] top-2 cursor-pointer z-20"}
         onClick={(e) => handleMenu(e)}
