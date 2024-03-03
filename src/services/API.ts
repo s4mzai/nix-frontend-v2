@@ -34,16 +34,16 @@ API.interceptors.response.use(
   },
 );
 
-const refresh = async () => {
+const refresh = async (): Promise<string | null> => {
   try {
     const response = await API.get("/auth/refresh", {
       withCredentials: true,
     });
     localStorage.setItem("token", response?.data?.data?.accessToken);
-    return response.data.data.accessToken;
+    return (response?.data?.data?.accessToken as string) || null;
   } catch (err) {
     console.debug(err);
-    return "";
+    return null;
   }
 };
 
