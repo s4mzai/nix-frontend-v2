@@ -20,7 +20,7 @@ API.interceptors.response.use(
     const prevRequest = error?.config;
     if (error?.response?.status === 403 && !prevRequest?.sent) {
       prevRequest.sent = true;
-      const newAccessToken = await refresh();
+      const newAccessToken = await refreshAuthToken();
       prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
       return API(prevRequest);
     }
@@ -34,7 +34,7 @@ API.interceptors.response.use(
   },
 );
 
-const refresh = async (): Promise<string | null> => {
+export const refreshAuthToken = async (): Promise<string | null> => {
   try {
     const response = await API.get("/auth/refresh", {
       withCredentials: true,
