@@ -26,7 +26,7 @@ API.interceptors.response.use(
     }
     // Redirect to login page or other error handling for different types of errors
     if (error?.response?.status === 401 || error?.response?.status === 403) {
-      window.location.href = "/login";
+      window.location.href = "/login?sessionExpired=true";
       localStorage.removeItem("token");
     }
 
