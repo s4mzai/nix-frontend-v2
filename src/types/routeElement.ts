@@ -8,7 +8,6 @@ interface RouteElement {
   icon?: React.SVGProps<SVGSVGElement>;
   hide?: true;
   children?: RouteElement[];
-  customClass?: string;
 }
 
 export default RouteElement;
