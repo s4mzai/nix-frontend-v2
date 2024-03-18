@@ -101,7 +101,7 @@ function SidebarItem({
     return (
       <>
         <PermissionProtector permission={items.permission} silent={true}>
-          <div className="flex flex-row" id={items.customClass}>
+          <div className="flex flex-row" id={`${items.label}-label`}>
             <Link to={items.path}>
               <div
                 className={`flex items-center w-[220px] h-[45px]  p-2 cursor-pointer   ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}

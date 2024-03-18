@@ -1,17 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
+import DashIcon from "@/assets/DashIcon";
+import LogOutIcon from "@/assets/LogOutIcon";
+import MemberIcon from "@/assets/MemberIcon";
+import RoleIcon from "@/assets/RoleIcon";
+import StoryIcon from "@/assets/StoryIcon";
+import { PermissionProtector } from "@/components/PermissionProtector";
 import ErrorPage from "@/error-page";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
-import { PermissionProtector } from "@/components/PermissionProtector";
-import DashIcon from "@/assets/DashIcon";
-import StoryIcon from "@/assets/StoryIcon";
-import LogOutIcon from "@/assets/LogOutIcon";
-import MemberIcon from "@/assets/MemberIcon";
-import RoleIcon from "@/assets/RoleIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -186,8 +186,26 @@ const routeMap: CustomRouteElement[] = [
     element: <Login />,
     permission: [],
     label: "Logout",
-    customClass: "logout-label",
     icon: <LogOutIcon />,
+  },
+  {
+    path: "terminal/",
+    element: (
+      <h1 className="h-screen items-center justify-center flex">
+        <Link to={"https://nginx.dtutimes.com/#/terminal"} target="_blank">
+          Click here to redirect to terminal of DTU Times server
+        </Link>
+      </h1>
+    ),
+    permission: [Permission.AccessLogs],
+    label: "Terminal",
+    icon: <LogOutIcon />, // todo: change icon
+  },
+  {
+    path: "logs/",
+    element: <>Not implemented</>,
+    permission: [Permission.AccessLogs],
+    label: "Logs",
   },
 ];
 

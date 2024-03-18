@@ -20,14 +20,13 @@ API.interceptors.response.use(
     const prevRequest = error?.config;
     if (error?.response?.status === 403 && !prevRequest?.sent) {
       prevRequest.sent = true;
-      const newAccessToken = await refresh();
+      const newAccessToken = await refreshAuthToken();
       prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
       return API(prevRequest);
     }
     // Redirect to login page or other error handling for different types of errors
     if (error?.response?.status === 401 || error?.response?.status === 403) {
-      window.location.href = "/login";
-      localStorage.removeItem("token");
+      window.location.href = "/login?sessionExpired=true";
     }
 
     //here redirect to login page
@@ -35,16 +34,16 @@ API.interceptors.response.use(
   },
 );
 
-const refresh = async () => {
+export const refreshAuthToken = async (): Promise<string | null> => {
   try {
     const response = await API.get("/auth/refresh", {
       withCredentials: true,
     });
     localStorage.setItem("token", response?.data?.data?.accessToken);
-    return response.data.data.accessToken;
+    return (response?.data?.data?.accessToken as string) || null;
   } catch (err) {
     console.debug(err);
-    return "";
+    return null;
   }
 };
 

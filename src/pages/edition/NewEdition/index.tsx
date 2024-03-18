@@ -1,8 +1,8 @@
 import { ErrorContext } from "@/contexts/error";
-import API from "@/services/API";
+import API, { refreshAuthToken } from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { FormEvent } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -50,6 +50,11 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
         setError(error);
       });
   };
+
+  useEffect(() => {
+    // never ever expire while writing blog, its frustrating
+    refreshAuthToken().catch((e) => setError(e));
+  });
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
