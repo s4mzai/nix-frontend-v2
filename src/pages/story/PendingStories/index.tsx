@@ -1,5 +1,5 @@
 import { useContext, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import API from "@/services/API";
 
@@ -129,7 +129,13 @@ export default function PendingStories() {
               })}
             </div>,
             blog.user.name,
-            blog.title,
+            <Link
+                key={`read-${blog._id}`}
+                to={`/story/${blog._id}`}
+                state={{ blog: blog}}
+            >
+                {blog.title}
+            </Link>,
             BlogCategory[blog.category_id],
             <span
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names

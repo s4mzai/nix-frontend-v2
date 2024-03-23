@@ -8,7 +8,7 @@ import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import API from "@/services/API";
 import { useContext, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Blog } from "@/types/blog";
 import Permission from "@/types/permissions";
@@ -144,7 +144,13 @@ export default function ApprovedStories() {
               timeStyle: "short",
             }),
             blog.user.name,
-            blog.title,
+            <Link
+                key={`read-${blog._id}`}
+                to={`/story/${blog._id}`}
+                state={{ blog: blog}}
+            >
+                {blog.title}
+            </Link>,
             BlogCategory[blog.category_id],
             <span
               // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
