@@ -3,7 +3,7 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { FormEvent, useContext, useEffect, useReducer, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -23,6 +23,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   const { setError } = useContext(ErrorContext);
   const { id } = useParams<{ id: string }>();
   const [edition, setEdition] = useState<Edition>(null);
+  const toastId = useRef(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,20 +53,63 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       }),
     );
 
+    const image_file = document.getElementById(
+      "edition-cover",
+    ) as HTMLInputElement;
+
+    if (image_file.files.length === 0) {
+      toast.error("Please upload an image");
+      return;
+    }
+    const image = image_file.files[0] as File;
+    const imageForm = new FormData();
+    imageForm.append("image", image);
+    toastId.current = toast.info("Uploading 0%", { autoClose: false });
+    const image_promise = API.post(
+      `/images/edition-image/${edition.edition_id}`,
+      imageForm,
+      {
+        onUploadProgress: (progressEvent) => {
+          const progress = progressEvent.loaded / progressEvent.total;
+          const percentCompleted = Math.round(progress * 100);
+          console.debug(progress);
+          toast.update(toastId.current, {
+            render: `Uploading ${percentCompleted}%`,
+            type: "info",
+            progress: progress,
+          });
+        },
+      },
+    )
+      .then(() => {
+        toast.update(toastId.current, {
+          render: "Uploading complete!",
+          type: "info",
+          progress: 1,
+        });
+        toast.done(toastId.current);
+        toast.success("Image uploaded successfully");
+      })
+      .catch((e) => {
+        toast.done(toastId.current);
+        setError(e);
+      })
+      .finally(() => (toastId.current = null));
+
     const requestMethod = id ? "PUT" : "POST";
 
-    API({
+    const data_promise = API({
       method: requestMethod,
       url: endpoint,
       data: data,
-    })
-      .then(() => {
-        toast.success("Edition saved successfully");
-        navigate("/edition/all-editions");
-      })
-      .catch((error) => {
-        setError(error);
-      });
+    }).catch((error) => {
+      setError(error);
+    });
+
+    Promise.all([image_promise, data_promise]).then(() => {
+      toast.success("Edition saved successfully");
+      navigate("/edition/all-editions");
+    });
   };
 
   useEffect(() => {
@@ -148,6 +192,13 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
               defaultValue={edition.edition_link}
               title="Only numeric edition id allowed"
               required
+            />
+
+            <input
+              type="file"
+              id="edition-cover"
+              required
+              accept="image/png, image/jpeg, image/jpg"
             />
           </div>
 
