@@ -236,11 +236,11 @@ export default function AllStory() {
               <Link
                 key={`read-${blog._id}`}
                 to={`/story/${blog._id}`}
-                state={{ blog: blog}}
-            >
+                state={{ blog: blog }}
+              >
                 {blog.title}
               </Link>,
-              
+
               BlogCategory[blog.category_id],
               <span
                 // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
