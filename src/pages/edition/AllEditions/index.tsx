@@ -10,23 +10,28 @@ import Table from "@/components/Table";
 
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-
+import EditionCard from "@/components/EditionCard";
 
 interface AllEditionsState {
   editions: Edition[];
   searchTerm: string;
+  statusFilters: EditionStatus[];
   loading: boolean;
 }
 
 const initialState: AllEditionsState = {
   editions: [],
-  searchTerm : "",
+  searchTerm: "",
+  statusFilters: Object.keys(EditionStatus)
+    .map((v) => Number(v))
+    .filter((v) => !isNaN(v)),
   loading: true,
-}
+};
 
 const enum ActionType {
   SetEditions,
   SetSearchTerm,
+  SetStatusFilers,
   SetLoading,
 }
 
@@ -35,12 +40,21 @@ const reducer = (
   action: { type: ActionType; payload },
 ) => {
   const updatedData = { ...state };
+  const newStatusFilters = [...updatedData.statusFilters];
   switch (action.type) {
     case ActionType.SetEditions:
       updatedData.editions = action.payload;
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      break;
+    case ActionType.SetStatusFilers:
+      if (newStatusFilters.includes(action.payload)) {
+        newStatusFilters.splice(newStatusFilters.indexOf(action.payload), 1);
+      } else {
+        newStatusFilters.push(action.payload);
+      }
+      updatedData.statusFilters = newStatusFilters;
       break;
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
@@ -51,9 +65,16 @@ const reducer = (
   return updatedData;
 };
 
-const getFilteredEditions = (editions, searchTerm) => {
-  return editions.filter((edition) =>
-    edition?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+const getFilteredEditions = (
+  editions: Edition[],
+  statusFilters: EditionStatus[],
+  searchTerm: string,
+) => {
+  return editions.filter(
+    (edition) =>
+      statusFilters.includes(edition.status) &&
+      (edition?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(edition?.edition_id).includes(searchTerm)),
   );
 };
 
@@ -61,17 +82,17 @@ const editionEndpoint = "/edition";
 
 export default function AllEditions() {
   const { setError } = React.useContext(ErrorContext);
-  // umm reducer with a single state is just use state!? 
+  // umm reducer with a single state is just use state!?
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { editions, searchTerm, loading } = state;
+  const { editions, searchTerm, statusFilters, loading } = state;
 
   const fetchEditions = () => {
     API.get(editionEndpoint)
       .then((editionResponse) => {
         dispatch({
           type: ActionType.SetEditions,
-          payload: editionResponse.data.data
+          payload: editionResponse.data.data,
         });
         dispatch({ type: ActionType.SetLoading, payload: false });
       })
@@ -85,22 +106,18 @@ export default function AllEditions() {
     fetchEditions();
   }, []);
 
+  const filteredEditions = getFilteredEditions(
+    editions,
+    statusFilters,
+    searchTerm,
+  );
 
-  // if (editions === null) {
-  //   return (
-  //     <div className="flex w-full h-screen justify-center items-center">
-  //       <Spinner />
-  //     </div>
-  //   );
-  // }
-
-  const headers = ["Edition Number", "Name", "Status", "Published/Updated At"];
   if (loading)
     return (
       <div className="flex flex-grow w-full h-screen justify-center items-center">
         <Spinner />
       </div>
-  );
+    );
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -115,25 +132,53 @@ export default function AllEditions() {
             dispatch({ type: ActionType.SetSearchTerm, payload: value })
           }
         />
+        <div className="flex mt-4 space-x-8">
+          {Object.keys(EditionStatus)
+            .filter((v) => isNaN(Number(v)))
+            .map((status) => {
+              return { status, id: EditionStatus[status] };
+            })
+            .map(({ status, id }) => (
+              <label key={id} className="ms-2  text-md text-gray-900">
+                <input
+                  id={id}
+                  className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                  type="checkbox"
+                  checked={statusFilters.includes(id)}
+                  onChange={() =>
+                    dispatch({ type: ActionType.SetStatusFilers, payload: id })
+                  }
+                />
+                {status}
+              </label>
+            ))}
+        </div>
       </div>
 
-    <Table
-      headers={headers}
-      content={getFilteredEditions(editions, searchTerm).map((edition) => [
-        edition.edition_id,       
-        <Link
-          key={`update-${edition._id}`}
-          to={`/edition/update-edition/${edition._id}`}
-          state={{ edition: edition }}
-        >
-          {edition.name}
-        </Link>,
-        EditionStatus[edition.status],
-        edition.published_at
-          ? new Date(edition.published_at).toDateString()
-          : new Date(edition.updatedAt).toDateString(),
-      ])}
-    />
+      {filteredEditions.length === 0 ? (
+        <h3 className="text-center p-3 mt-8 text-gray-900">
+          No editions found.
+        </h3>
+      ) : (
+        <div className="w-full my-5 gap-2 flex-wrap flex justify-right items-center">
+          {filteredEditions.map((edition) => (
+            <div key={edition._id}>
+              <EditionCard
+                _id={edition._id}
+                edition_num={edition.edition_id}
+                edition_date={
+                  edition.published_at
+                    ? new Date(edition.published_at).toDateString()
+                    : new Date(edition.updatedAt).toDateString()
+                }
+                cover={12}
+                edition_name={edition.name}
+                status={edition.status}
+              />
+            </div>
+          ))}
         </div>
+      )}
+    </div>
   );
 }
