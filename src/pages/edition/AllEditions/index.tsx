@@ -1,16 +1,14 @@
 import React, { useEffect, useReducer } from "react";
-import { Link } from "react-router-dom";
 
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
-import Table from "@/components/Table";
 
+import EditionCard from "@/components/EditionCard";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import EditionCard from "@/components/EditionCard";
 
 interface AllEditionsState {
   editions: Edition[];
@@ -163,18 +161,7 @@ export default function AllEditions() {
         <div className="w-full my-5 gap-2 flex-wrap flex justify-right items-center">
           {filteredEditions.map((edition) => (
             <div key={edition._id}>
-              <EditionCard
-                _id={edition._id}
-                edition_num={edition.edition_id}
-                edition_date={
-                  edition.published_at
-                    ? new Date(edition.published_at).toDateString()
-                    : new Date(edition.updatedAt).toDateString()
-                }
-                cover={12}
-                edition_name={edition.name}
-                status={edition.status}
-              />
+              <EditionCard edition={edition} />
             </div>
           ))}
         </div>
