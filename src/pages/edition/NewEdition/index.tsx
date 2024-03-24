@@ -65,18 +65,22 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
     const imageForm = new FormData();
     imageForm.append("image", image);
     toastId.current = toast.info("Uploading 0%", { autoClose: false });
-    API.post(`/images/edition-image/${edition.edition_id}`, imageForm, {
-      onUploadProgress: (progressEvent) => {
-        const progress = progressEvent.loaded / progressEvent.total;
-        const percentCompleted = Math.round(progress * 100);
-        console.debug(progress);
-        toast.update(toastId.current, {
-          render: `Uploading ${percentCompleted}%`,
-          type: "info",
-          progress: progress,
-        });
+    const image_promise = API.post(
+      `/images/edition-image/${edition.edition_id}`,
+      imageForm,
+      {
+        onUploadProgress: (progressEvent) => {
+          const progress = progressEvent.loaded / progressEvent.total;
+          const percentCompleted = Math.round(progress * 100);
+          console.debug(progress);
+          toast.update(toastId.current, {
+            render: `Uploading ${percentCompleted}%`,
+            type: "info",
+            progress: progress,
+          });
+        },
       },
-    })
+    )
       .then(() => {
         toast.update(toastId.current, {
           render: "Uploading complete!",
@@ -94,18 +98,18 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
 
     const requestMethod = id ? "PUT" : "POST";
 
-    API({
+    const data_promise = API({
       method: requestMethod,
       url: endpoint,
       data: data,
-    })
-      .then(() => {
-        toast.success("Edition saved successfully");
-        navigate("/edition/all-editions");
-      })
-      .catch((error) => {
-        setError(error);
-      });
+    }).catch((error) => {
+      setError(error);
+    });
+
+    Promise.all([image_promise, data_promise]).then(() => {
+      toast.success("Edition saved successfully");
+      navigate("/edition/all-editions");
+    });
   };
 
   useEffect(() => {
