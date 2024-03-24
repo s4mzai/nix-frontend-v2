@@ -3,7 +3,7 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useReducer, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -35,7 +35,23 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
     if (id) {
       formData.append("_id", id);
     }
-    const data = Object.fromEntries(formData.entries());
+
+    formData.append(
+      "status",
+      EditionStatus[
+        (e.nativeEvent as SubmitEvent).submitter.attributes.getNamedItem(
+          "value",
+        ).value
+      ],
+    );
+
+    const data = Object.fromEntries(
+      Array.from(formData.entries()).map(([key, value]) => {
+        const n = Number(value);
+        return isNaN(n) ? [key, value] : [key, n];
+      }),
+    );
+
     const requestMethod = id ? "PUT" : "POST";
 
     API({
@@ -138,12 +154,14 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
           <div className="flex space-x-4">
             <button
               type="submit"
+              value={EditionStatus[EditionStatus.Draft]}
               className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
             >
               {id ? "Update" : "Create"}
             </button>
             <button
               type="submit"
+              value={EditionStatus[EditionStatus.Published]}
               className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500"
             >
               {id ? "Update" : "Create"} & Publish
