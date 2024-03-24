@@ -1,9 +1,9 @@
+import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
-import API, { refreshAuthToken } from "@/services/API";
+import API from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { useContext, useEffect } from "react";
-import { FormEvent } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -21,8 +21,9 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);
-  const edition = _ed || location.state?.edition || initial_state;
   const { id } = useParams<{ id: string }>();
+  const [edition, setEdition] = useState<Edition>(null);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -52,9 +53,20 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   };
 
   useEffect(() => {
-    // never ever expire while writing blog, its frustrating
-    refreshAuthToken().catch((e) => setError(e));
-  });
+    const given_state: Edition = _ed || location.state?.edition;
+    if (!given_state && id) {
+      console.error("Edition not found");
+      API.get(`/edition/get-edition/${id}`)
+        .then((res) => {
+          setEdition(res.data.data);
+        })
+        .catch((e) => {
+          setError(e);
+        });
+    } else {
+      setEdition(given_state || initial_state);
+    }
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
@@ -62,79 +74,83 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       <p className="text-lg font-semibold mt-4 mb-8">
         Editions are the essence of DTU Times! Keep them up-to-date
       </p>
-      <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col">
-          <label
-            className="text-xl font-medium leading-none mb-2"
-            htmlFor="name"
-          >
-            Name
-          </label>
-          <input
-            className="name border p-2 rounded mb-4"
-            type="text"
-            id="edition_name"
-            placeholder="Enter edition name"
-            name="edition_name"
-            aria-placeholder="Edition 23"
-            defaultValue={edition.name}
-            pattern="[A-Za-z 0-9]+"
-            title="Only alphabetical-numeric edition names are allowed"
-            required
-          />
+      {edition === null ? (
+        <Spinner />
+      ) : (
+        <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
+          <div className="flex flex-col">
+            <label
+              className="text-xl font-medium leading-none mb-2"
+              htmlFor="name"
+            >
+              Name
+            </label>
+            <input
+              className="name border p-2 rounded mb-4"
+              type="text"
+              id="edition_name"
+              placeholder="Enter edition name"
+              name="edition_name"
+              aria-placeholder="Edition 23"
+              defaultValue={edition.name}
+              pattern="[A-Za-z 0-9]+"
+              title="Only alphabetical-numeric edition names are allowed"
+              required
+            />
 
-          <label
-            className="text-xl font-medium leading-none mb-2"
-            htmlFor="edition_id"
-          >
-            Edition ID
-          </label>
-          <input
-            className="name border p-2 rounded mb-4"
-            type="number"
-            id="edition_id"
-            placeholder="Enter edition id/number"
-            name="edition_id"
-            aria-placeholder="23"
-            defaultValue={edition.edition_id}
-            title="Only numeric edition id allowed"
-            required
-          />
+            <label
+              className="text-xl font-medium leading-none mb-2"
+              htmlFor="edition_id"
+            >
+              Edition ID
+            </label>
+            <input
+              className="name border p-2 rounded mb-4"
+              type="number"
+              id="edition_id"
+              placeholder="Enter edition id/number"
+              name="edition_id"
+              aria-placeholder="23"
+              defaultValue={edition.edition_id}
+              title="Only numeric edition id allowed"
+              required
+            />
 
-          <label
-            className="text-xl font-medium leading-none mb-2"
-            htmlFor="edition_link"
-          >
-            Edition Link
-          </label>
-          <input
-            className="name border p-2 rounded mb-4"
-            type="url"
-            id="edition_link"
-            placeholder="Enter edition url"
-            name="edition_link"
-            aria-placeholder="https://dtutimes.com/edition/edition-23.pdf"
-            defaultValue={edition.edition_link}
-            title="Only numeric edition id allowed"
-            required
-          />
-        </div>
+            <label
+              className="text-xl font-medium leading-none mb-2"
+              htmlFor="edition_link"
+            >
+              Edition Link
+            </label>
+            <input
+              className="name border p-2 rounded mb-4"
+              type="url"
+              id="edition_link"
+              placeholder="Enter edition url"
+              name="edition_link"
+              aria-placeholder="https://dtutimes.com/edition/edition-23.pdf"
+              defaultValue={edition.edition_link}
+              title="Only numeric edition id allowed"
+              required
+            />
+          </div>
 
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
-          >
-            {id ? "Update" : "Create"}
-          </button>
-          <button
-            type="submit"
-            className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500"
-          >
-            {id ? "Update" : "Create"} & Publish
-          </button>
-        </div>
-      </form>
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
+            >
+              {id ? "Update" : "Create"}
+            </button>
+            <button
+              type="submit"
+              className="bg-green-500 text-white p-2 rounded hover:bg-indigo-500"
+            >
+              {id ? "Update" : "Create"} & Publish
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
