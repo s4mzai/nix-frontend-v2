@@ -22,7 +22,7 @@ export default function Logs() {
     });
   };
 
-  if (!stdout || !stderr) return <Spinner />;
+  if (stdout === null || stderr === null) return <Spinner />;
 
   return (
     <div className="p-6">
