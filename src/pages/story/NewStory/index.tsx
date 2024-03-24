@@ -1,7 +1,7 @@
 import TextEditor from "@/components/TextEditor";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
-import API from "@/services/API";
+import API, { refreshAuthToken } from "@/services/API";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import { useContext, useEffect, useReducer, useRef } from "react";
@@ -152,6 +152,9 @@ export default function NewStory() {
   } = state;
 
   useEffect(() => {
+    // never ever expire while writing blog, its frustrating
+    refreshAuthToken().catch((e) => setError(e));
+
     if (draftBlog) {
       dispatch({ type: ActionType.SetTitle, payload: draftBlog.title });
       dispatch({ type: ActionType.SetByliner, payload: draftBlog.byliner });
