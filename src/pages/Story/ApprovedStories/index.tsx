@@ -145,11 +145,11 @@ export default function ApprovedStories() {
             }),
             blog.user.name,
             <Link
-                key={`read-${blog._id}`}
-                to={`/story/${blog._id}`}
-                state={{ blog: blog}}
+              key={`read-${blog._id}`}
+              to={`/story/${blog._id}`}
+              state={{ blog: blog }}
             >
-                {blog.title}
+              {blog.title}
             </Link>,
             BlogCategory[blog.category_id],
             <span

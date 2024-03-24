@@ -1,12 +1,19 @@
-import Login from "@/pages/auth/Login/index.js";
-import ForgotPassword from "@/pages/auth/ForgotPassword/index.js";
 import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./ProtectedRoute.js";
 import ErrorCtxProvider from "@/contexts/error.js";
 import PermErrCtxProvider from "@/contexts/permission_error.js";
 import CurrUserCtxProvider from "@/contexts/current_user.js";
-import HomePage from "@/pages/HomePage.js";
-import ResetPassword from "@/pages/auth/ResetPassword/index.js";
+import React from "react";
+
+//lazy imports
+const Login = React.lazy(() => import("@/pages/auth/Login/index.js"));
+const ForgotPassword = React.lazy(
+  () => import("@/pages/auth/ForgotPassword/index.js"),
+);
+const ResetPassword = React.lazy(
+  () => import("@/pages/auth/ResetPassword/index.js"),
+);
+const HomePage = React.lazy(() => import("@/pages/HomePage.js"));
+const ProtectedRoute = React.lazy(() => import("./ProtectedRoute.js"));
 
 const AppRoute = () => {
   return (
