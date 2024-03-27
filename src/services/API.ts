@@ -18,14 +18,14 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const prevRequest = error?.config;
-    if (error?.response?.status === 403 && !prevRequest?.sent) {
+    if (error?.response?.status === 401 && !prevRequest?.sent) {
       prevRequest.sent = true;
       const newAccessToken = await refreshAuthToken();
       prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
       return API(prevRequest);
     }
     // Redirect to login page or other error handling for different types of errors
-    if (error?.response?.status === 401 || error?.response?.status === 403) {
+    if (error?.response?.status === 401) {
       window.location.href = "/login?sessionExpired=true";
     }
 
