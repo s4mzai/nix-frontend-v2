@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import API from "@/services/API";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { toast } from "react-toastify";
+import showPassIcon from "@/assets/show-password.png";
 
 export default function EditMember() {
   const navigate = useNavigate();
   const uri = API.getUri();
   const { user } = useContext(CurrUserCtx);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
@@ -16,10 +19,19 @@ export default function EditMember() {
     website: "",
     facebook: "",
     instagram: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
     username: "",
     profilePicture: `${uri}/images/get-avatar/${user.id}`,
   });
+
+  const setShowPassHandler = () => {
+    setShowPass(!showPass);
+  };
+
+const setShowConfirmPassHandler = () => {
+  setShowConfirmPass(!showConfirmPass);
+};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -157,8 +169,8 @@ export default function EditMember() {
 
     <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
     {/* Profile pic */}
-    <div className="text-center">
-      <label className="text-sm mr-20">Profile picture</label>
+    <div>
+      <label className="text-sm mr-8">Profile picture</label>
       <input
         type="file"
         accept="image/*"
@@ -170,21 +182,53 @@ export default function EditMember() {
     <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
     {/* Password */}
     <div className="relative">
-      <label className="block text-sm mb-2">Password</label>
-      <div className="relative">
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          placeholder="Password"
-          className="border p-2 rounded w-full"
-        />
-      </div>
-      <small className="block text-xs mt-2 text-slate-500">
-        You can enter the same password or update your password.
-      </small>
+    <h1 className="text-2xl mb-4">Update Password</h1>
+  <div className="relative">
+    <label className="text-sm mr-8">New Password</label>
+    <input
+      type={showPass ? "text" : "password"}
+      name="newPassword"
+      value={formData.newPassword}
+      onChange={handleInputChange}
+      placeholder="New Password"
+      className="border p-2 rounded w-full mb-2"
+    />
+    <div
+      className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
+      onClick={setShowPassHandler}
+    >
+      <img
+        src={showPassIcon}
+        alt="toggle password visibility"
+        className="w-6 h-6"
+      />
     </div>
+  </div>
+  <div className="relative">
+    <label className="text-sm mr-8">Confirm Password</label>
+    <input
+      type={showConfirmPass ? "text" : "password"}
+      name="confirmPassword"
+      value={formData.confirmPassword}
+      onChange={handleInputChange}
+      placeholder="Confirm Password"
+      className="border p-2 rounded w-full"
+    />
+    <div
+      className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
+      onClick={setShowConfirmPassHandler}
+    >
+      <img
+        src={showPassIcon}
+        alt="toggle password visibility"
+        className="w-6 h-6"
+      />
+    </div>
+  </div>
+  <small className="block text-xs mt-2 text-slate-500">
+    You can enter the same password or update your password.
+  </small>
+</div>
 
     <button
       type="submit"
