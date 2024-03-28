@@ -1,4 +1,4 @@
-import API from "@/services/API";
+import { AvatarImage } from "../AvatarImage";
 import { Spinner } from "../Spinner";
 import UserCard from "../UserCard";
 
@@ -21,11 +21,12 @@ function Leaderboard({ topUsers }) {
                     <div className="font-semibold">#{index + 1}</div>
                   </div>
                   <div className="flex items-center w-15 mr-4">
-                    <img
+                    <AvatarImage
                       alt="User avatar"
                       className="rounded-full"
                       height="50"
-                      src={`${API.getUri()}/images/get-avatar/${user._id}?thumbnail=true`}
+                      user_id={user._id}
+                      thumbnail={true}
                       style={{
                         aspectRatio: "50/50",
                         objectFit: "cover",
@@ -55,7 +56,9 @@ function Leaderboard({ topUsers }) {
       <div className="w-full max-w-3xl lg:w-1/3 flex justify-center lg:justify-start mt-4 ml-4 lg:mt-0">
         {topUsers.length > 0 && (
           <div>
-            <h3 className="text-lg text-center font-semibold mb-2">Top Columnist</h3>
+            <h3 className="text-lg text-center font-semibold mb-2">
+              Top Columnist
+            </h3>
             <UserCard
               name={topUsers[0].userDetails.name}
               email={topUsers[0].userDetails.email}

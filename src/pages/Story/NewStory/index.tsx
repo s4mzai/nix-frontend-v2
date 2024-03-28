@@ -1,3 +1,4 @@
+import { NixImage } from "@/components/NixImage";
 import TextEditor from "@/components/TextEditor";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
@@ -331,9 +332,11 @@ export default function NewStory() {
       </div>
       {blogImage}
       {blogImage ? (
-        <img
+        <NixImage
           className="max-w-md max-h-md"
-          src={`${API.getUri()}/images/get/${blogImage}?thumbnail=256&t=${new Date().getTime()}`}
+          image_id={blogImage}
+          thumbnail={true} // 256
+          force_refresh={true}
           alt={blogImage}
         />
       ) : (

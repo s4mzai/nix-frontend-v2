@@ -1,26 +1,10 @@
 import { TagIcon } from "@/assets/TagIcon";
-import API from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Spinner } from "../Spinner";
+import { NixImage } from "../NixImage";
 
 export default function EditionCard({ edition }: { edition: Edition }) {
-  const [image, setImage] = useState<ArrayBuffer | string>(null);
-  useEffect(() => {
-    const imageEndPoint = `/images/get/edition-${edition.edition_id}?thumbnail=512`;
-    API.get(imageEndPoint, { responseType: "arraybuffer" }).then((response) => {
-      const imageBlob = new Blob([response.data], { type: "image/png" });
-      const reader = new FileReader();
-      reader.onload = () => {
-        const imageDataUrl = reader.result;
-        setImage(imageDataUrl);
-      };
-      reader.readAsDataURL(imageBlob);
-    });
-    // todo: handle error possibly by adding a red cross?
-  });
   // edition cover will be dervied from edition._id only, so no need to pass it as prop
   return (
     <Link
@@ -34,23 +18,20 @@ export default function EditionCard({ edition }: { edition: Edition }) {
       >
         <div className="flex flex-col sm:flex-row">
           <div className="p-2">
-            {image === null ? (
-              <div className="w-[600px] h-[400px]">
-                <Spinner />
-              </div>
-            ) : (
-              <img
+            {
+              <NixImage
                 alt={`Edition ${edition.edition_id} Cover`}
                 className="w-full h-64 object-cover object-center rounded-lg"
                 height="400"
-                src={image as string}
+                image_id={`edition-${edition.edition_id}`}
+                thumbnail={512}
                 style={{
                   aspectRatio: "600/400",
                   objectFit: "cover",
                 }}
                 width="600"
               />
-            )}
+            }
             <h3 className="text-xl font-bold mb-2 mt-4">
               Edition {edition.edition_id} : {edition.name}
             </h3>

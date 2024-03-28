@@ -1,4 +1,4 @@
-import API from "@/services/API";
+import { AvatarImage } from "../AvatarImage";
 
 export default function UserCard({ name, email, role, avatar }) {
   return (
@@ -7,9 +7,10 @@ export default function UserCard({ name, email, role, avatar }) {
         <div className="p-2">
           <div className="w-60 hover:shadow-xl bg-white px-10 py-8 rounded-lg shadow text-center">
             <div className="mb-3">
-              <img
+              <AvatarImage
                 className="w-2/3 mx-auto rounded-full object-cover"
-                src={`${API.getUri()}/images/get-avatar/${avatar}?thumbnail=true`}
+                user_id={avatar}
+                thumbnail={true}
                 alt={name}
               />
             </div>

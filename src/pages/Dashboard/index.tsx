@@ -1,18 +1,11 @@
 import { CurrUserCtx } from "@/contexts/current_user";
 import API from "@/services/API";
 import React from "react";
-
-const AvatarImage = ({ src, alt, className }) => {
-  return <img className={`rounded-full ${className}`} src={src} alt={alt} />;
-};
-
 import TimesLogo from "@/assets/dtutimesIcon";
 import { Spinner } from "@/components/Spinner";
-
 import { ErrorContext } from "@/contexts/error";
 import Leaderboard from "@/components/Leaderboard";
-
-const uri = API.getUri();
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface TopUserData {
   _id: string;
@@ -90,7 +83,6 @@ export default function Dashbboard() {
       });
   }, []);
 
-
   if (!ready)
     return (
       <div className="flex w-full h-full justify-center items-center">
@@ -115,7 +107,8 @@ export default function Dashbboard() {
                 <AvatarImage
                   alt={user.name}
                   className="h-36 w-36"
-                  src={`${uri}/images/get-avatar/${user.id}?thumbnail=true`}
+                  user_id={user.id}
+                  thumbnail={true}
                 />
               </div>
             </div>
