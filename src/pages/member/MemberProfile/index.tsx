@@ -42,7 +42,7 @@ export default function Profile() {
             </span>
           </li>
           <li className="mb-2">
-            <span className="text-gray-600">You joined on</span> 
+            <span className="text-gray-600">Joined on</span> 
             <span className="text-gray-600 ml-1">{user.date_joined || "01-01-2024"}</span>
           </li>
         </ul>
