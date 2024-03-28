@@ -1,4 +1,4 @@
-import { AvatarImage } from "@/pages/Dashboard";
+import { AvatarImage } from "../AvatarImage";
 
 export default function UserCard({ name, email, role, avatar }) {
   return (

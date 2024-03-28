@@ -2,7 +2,7 @@ import { TagIcon } from "@/assets/TagIcon";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
 import { Link } from "react-router-dom";
-import { NixImage } from "../Image";
+import { NixImage } from "../NixImage";
 
 export default function EditionCard({ edition }: { edition: Edition }) {
   // edition cover will be dervied from edition._id only, so no need to pass it as prop

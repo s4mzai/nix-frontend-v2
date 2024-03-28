@@ -14,7 +14,7 @@ import { TagIcon } from "@/assets/TagIcon";
 import BlogStatus from "@/types/blogStatus";
 import { BlogDetails } from "@/types/blog";
 import "./index.css";
-import { NixImage } from "@/components/Image";
+import { NixImage } from "@/components/NixImage";
 
 interface ReadStoryState {
   showDTPicker: boolean;

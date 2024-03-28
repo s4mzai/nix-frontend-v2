@@ -1,21 +1,11 @@
 import { CurrUserCtx } from "@/contexts/current_user";
 import API from "@/services/API";
-import AvatarImageProps from "@/types/avatarImageProps";
 import React from "react";
 import TimesLogo from "@/assets/dtutimesIcon";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import Leaderboard from "@/components/Leaderboard";
-
-export const AvatarImage = ({ user_id, ...props }: AvatarImageProps) => {
-  const uri = API.getUri();
-  const image_uri = `${uri}/images/get-avatar/${user_id}`;
-  if (props.thumbnail) {
-    image_uri.concat(`?thumbnail=${props.thumbnail}`);
-  }
-
-  return <img src={image_uri} {...props} />;
-};
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface TopUserData {
   _id: string;

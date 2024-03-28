@@ -1,4 +1,4 @@
-import { NixImage } from "@/components/Image";
+import { NixImage } from "@/components/NixImage";
 import TextEditor from "@/components/TextEditor";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";

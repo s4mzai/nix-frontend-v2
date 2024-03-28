@@ -1,7 +1,6 @@
-import API from "@/services/API";
+import { AvatarImage } from "../AvatarImage";
 import { Spinner } from "../Spinner";
 import UserCard from "../UserCard";
-import { AvatarImage } from "@/pages/Dashboard";
 
 function Leaderboard({ topUsers }) {
   return (
@@ -57,7 +56,9 @@ function Leaderboard({ topUsers }) {
       <div className="w-full max-w-3xl lg:w-1/3 flex justify-center lg:justify-start mt-4 ml-4 lg:mt-0">
         {topUsers.length > 0 && (
           <div>
-            <h3 className="text-lg text-center font-semibold mb-2">Top Columnist</h3>
+            <h3 className="text-lg text-center font-semibold mb-2">
+              Top Columnist
+            </h3>
             <UserCard
               name={topUsers[0].userDetails.name}
               email={topUsers[0].userDetails.email}
