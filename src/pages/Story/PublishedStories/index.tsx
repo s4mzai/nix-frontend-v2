@@ -166,7 +166,7 @@ export default function PublishedStories() {
             <Link
               key={`read-${blog._id}`}
               to={`/story/${blog._id}`}
-              state={{ blog: blog}}
+              state={{ blog: blog }}
             >
               {blog.title}
             </Link>,

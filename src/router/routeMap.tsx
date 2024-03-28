@@ -12,26 +12,30 @@ import ErrorPage from "@/error-page";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
+import LogsIcon from "@/assets/LogsIcon";
+import TerminalIcon from "@/assets/TerminalIcon";
+import EditionIcon from "@/assets/EditionIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
-const NewStory = React.lazy(() => import("@/pages/story/NewStory"));
-const YourStories = React.lazy(() => import("@/pages/story/YourStories"));
-const PendingStories = React.lazy(() => import("@/pages/story/PendingStories"));
-const ReadStory = React.lazy(() => import("@/pages/story/ReadStory"));
+const NewStory = React.lazy(() => import("@/pages/Story/NewStory"));
+const YourStories = React.lazy(() => import("@/pages/Story/YourStories"));
+const PendingStories = React.lazy(() => import("@/pages/Story/PendingStories"));
+const ReadStory = React.lazy(() => import("@/pages/Story/ReadStory"));
 const PublishedStories = React.lazy(
-  () => import("@/pages/story/PublishedStories"),
+  () => import("@/pages/Story/PublishedStories"),
 );
 const ApprovedStories = React.lazy(
-  () => import("@/pages/story/ApprovedStories"),
+  () => import("@/pages/Story/ApprovedStories"),
 );
-const AllRoles = React.lazy(() => import("@/pages/roles/AllRoles"));
-const NewRole = React.lazy(() => import("@/pages/roles/NewRole"));
-const AllMembers = React.lazy(() => import("@/pages/member/AllMembers"));
-const Dashbboard = React.lazy(() => import("@/pages/dashboard"));
-const AddMember = React.lazy(() => import("@/pages/member/AddMember"));
-const NewEdition = React.lazy(() => import("@/pages/edition/NewEdition"));
-const AllEditions = React.lazy(() => import("@/pages/edition/AllEditions"));
+const AllRoles = React.lazy(() => import("@/pages/Roles/AllRoles"));
+const NewRole = React.lazy(() => import("@/pages/Roles/NewRole"));
+const AllMembers = React.lazy(() => import("@/pages/Member/AllMembers"));
+const Dashbboard = React.lazy(() => import("@/pages/Dashboard"));
+const AddMember = React.lazy(() => import("@/pages/Member/AddMember"));
+const NewEdition = React.lazy(() => import("@/pages/Edition/NewEdition"));
+const AllEditions = React.lazy(() => import("@/pages/Edition/AllEditions"));
+const Logs = React.lazy(() => import("@/pages/Logs"));
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -96,7 +100,7 @@ const routeMap: CustomRouteElement[] = [
   {
     path: "edition/",
     label: "Edition",
-    icon: <RoleIcon />, //todo:change icon
+    icon: <EditionIcon />, //todo:change icon
     permission: [],
     element: (
       <>
@@ -199,11 +203,12 @@ const routeMap: CustomRouteElement[] = [
     ),
     permission: [Permission.AccessLogs],
     label: "Terminal",
-    icon: <LogOutIcon />, // todo: change icon
+    icon: <TerminalIcon />, // todo: change icon
   },
   {
     path: "logs/",
-    element: <>Not implemented</>,
+    element: <Logs />,
+    icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
   },

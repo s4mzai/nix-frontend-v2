@@ -14,7 +14,7 @@ interface SidebarItemProps {
 }
 
 function SvgWrapper({ children }) {
-  return <>{children}</>;
+  return <div className="w-18 h-18">{children}</div>;
 }
 function SidebarItem({
   items,
