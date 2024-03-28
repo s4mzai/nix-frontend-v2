@@ -14,11 +14,11 @@ import { TagIcon } from "@/assets/TagIcon";
 import BlogStatus from "@/types/blogStatus";
 import { BlogDetails } from "@/types/blog";
 import "./index.css";
+import { NixImage } from "@/components/Image";
 
 interface ReadStoryState {
   showDTPicker: boolean;
   selectedDateTime: string;
-  image: string;
 }
 
 //https://stackoverflow.com/questions/28760254/assign-javascript-date-to-html5-datetime-local-input
@@ -43,7 +43,6 @@ const formatLocalDateTime = (localDateTime) => {
 const initialState: ReadStoryState = {
   showDTPicker: false,
   selectedDateTime: getLocalDateTime(),
-  image: "",
 };
 
 const enum ActionType {
@@ -64,9 +63,6 @@ const reducer = (
     case ActionType.SetSelectedDateTime:
       updatedData.selectedDateTime = action.payload;
       break;
-    case ActionType.SetImage:
-      updatedData.image = action.payload;
-      break;
     default:
       return updatedData;
   }
@@ -85,7 +81,7 @@ export default function ReadStory() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { setError } = useContext(ErrorContext);
 
-  const { showDTPicker, selectedDateTime, image } = state;
+  const { showDTPicker, selectedDateTime } = state;
 
   const handlePublishNow = () => {
     const choice = window.confirm(
@@ -144,26 +140,6 @@ export default function ReadStory() {
     dispatch({ type: ActionType.SetSelectedDateTime, payload: e.target.value });
   };
 
-  const fetchImage = () => {
-    if (!blog.cover) {
-      return;
-    }
-    const imageEndPoint = `/images/get/${blog.cover}?thumbnail=1024`;
-    API.get(imageEndPoint, { responseType: "arraybuffer" })
-      .then((response) => {
-        const imageBlob = new Blob([response.data], { type: "image/png" });
-        const reader = new FileReader();
-        reader.onload = () => {
-          const imageDataUrl = reader.result;
-          dispatch({ type: ActionType.SetImage, payload: imageDataUrl });
-        };
-        reader.readAsDataURL(imageBlob);
-      })
-      .catch(() => {
-        const err = Error("Error fetching the image!");
-        setError(err);
-      });
-  };
   useEffect(() => {
     if (!blog) {
       API.get(`/blog/get-blog/${blogId}`)
@@ -175,8 +151,6 @@ export default function ReadStory() {
           });
         })
         .catch((e) => setError(e));
-    } else {
-      fetchImage();
     }
   }, [blog]);
 
@@ -212,18 +186,12 @@ export default function ReadStory() {
         <div>
           {" "}
           {blog.cover ? (
-            image === "" ? (
-              <center>
-                <Spinner className="flex justify-center items-center" /> Loading
-                Image
-              </center>
-            ) : (
-              <img
-                className="object-contain h-3/6 w-3/6"
-                src={image}
-                alt="Cover Image"
-              />
-            )
+            <NixImage
+              className="object-contain h-3/6 w-3/6"
+              image_id={blog.cover}
+              thumbnail={1024}
+              alt="Blog Cover Image"
+            />
           ) : (
             <>Cover image not uploaded!</>
           )}

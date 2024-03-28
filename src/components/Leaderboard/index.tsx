@@ -1,6 +1,7 @@
 import API from "@/services/API";
 import { Spinner } from "../Spinner";
 import UserCard from "../UserCard";
+import { AvatarImage } from "@/pages/Dashboard";
 
 function Leaderboard({ topUsers }) {
   return (
@@ -21,11 +22,12 @@ function Leaderboard({ topUsers }) {
                     <div className="font-semibold">#{index + 1}</div>
                   </div>
                   <div className="flex items-center w-15 mr-4">
-                    <img
+                    <AvatarImage
                       alt="User avatar"
                       className="rounded-full"
                       height="50"
-                      src={`${API.getUri()}/images/get-avatar/${user._id}?thumbnail=true`}
+                      user_id={user._id}
+                      thumbnail={true}
                       style={{
                         aspectRatio: "50/50",
                         objectFit: "cover",
