@@ -8,15 +8,15 @@ export const NixImage: React.FC<NixImageProps> = ({ image_id, ...props }) => {
   const [image, setImage] = React.useState<string | ArrayBuffer>(null);
 
   useEffect(() => {
-    const image_endpoint = `images/get/${image_id}`;
+    let image_endpoint = `images/get/${image_id}`;
     if (props?.thumbnail) {
-      image_endpoint.concat(`?thumbnail=${props.thumbnail}`);
+      image_endpoint = image_endpoint.concat(`?thumbnail=${props.thumbnail}`);
       if (props?.force_refresh) {
-        image_endpoint.concat(`&t=${new Date().getTime()}`);
+        image_endpoint = image_endpoint.concat(`&t=${new Date().getTime()}`);
       }
     } else {
       if (props?.force_refresh) {
-        image_endpoint.concat(`?t=${new Date().getTime()}`);
+        image_endpoint = image_endpoint.concat(`?t=${new Date().getTime()}`);
       }
     }
     API.get(image_endpoint, { responseType: "arraybuffer" })

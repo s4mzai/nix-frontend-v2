@@ -106,7 +106,7 @@ export default function Dashbboard() {
               <div className="flex mt-16 justify-center">
                 <AvatarImage
                   alt={user.name}
-                  className="h-36 w-36"
+                  className="h-36 w-36 rounded-full"
                   user_id={user.id}
                   thumbnail={true}
                 />
