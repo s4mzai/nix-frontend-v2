@@ -189,7 +189,7 @@ export default function ReadStory() {
             <NixImage
               className="object-contain h-3/6 w-3/6"
               image_id={blog.cover}
-              thumbnail={1024}
+              thumbnail={true}
               alt="Blog Cover Image"
             />
           ) : (
