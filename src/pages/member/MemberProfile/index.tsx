@@ -4,6 +4,7 @@ import { CurrUserCtx } from "@/contexts/current_user";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "@/components/Spinner";
 
+
 const AvatarImage = ({ src, alt, className }) => {
   return <img className={`rounded-full ${className}`} src={src} alt={alt} />;
 };
@@ -11,7 +12,6 @@ const AvatarImage = ({ src, alt, className }) => {
 const uri = API.getUri();
 
 export default function Profile() {
-  // const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
   const { ready, user } = useContext(CurrUserCtx);
   if (!ready) return <div className="flex w-full h-full justify-center items-center"><Spinner /></div>;
@@ -21,7 +21,7 @@ export default function Profile() {
         <div className="flex flex-col">
           <div className="flex items-center">
             <div className="w-36 h-36 bg-gray-200 rounded-full overflow-hidden">
-              <AvatarImage alt={user.name} className="h-36 w-36" src={`${uri}/images/get-avatar/${user.id}?thumbnail=true`} />
+              <AvatarImage alt={user.name} className="h-36 w-36" src={`${API.getUri()}/images/get-avatar/${user.id}?thumbnail=true`} />
             </div>
             <div className="ms-4">
               <h1 className="text-3xl font-semibold text-gray-800 font-sans">{user.name}</h1>
