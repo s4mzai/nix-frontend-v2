@@ -218,6 +218,7 @@ export default function EditMember() {
               />
             </div> */}
           </div>
+
           <div>
             <label className="block text-sm mb-2">Email Address</label>
             <input
@@ -241,8 +242,6 @@ export default function EditMember() {
           </div>
         </div>
 
-        <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
-        Social info
         <div className="space-y-2">
           {/* <h1 className="text-2xl mb-4">Social Info</h1>
           <div>
@@ -291,7 +290,7 @@ export default function EditMember() {
           />
         </div> */}
 
-        <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
+        {/* <hr className="border-t border-gray-300 mt-6 mb-6 w-full" /> */}
         {/* Password */}
         <div className="relative">
           <h1 className="text-2xl mb-4">Update Password</h1>
