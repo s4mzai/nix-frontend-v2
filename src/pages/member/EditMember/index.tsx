@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import API from "@/services/API";
 import { CurrUserCtx } from "@/contexts/current_user";
@@ -18,13 +18,11 @@ interface EditMemberState {
   newPassword: string,
   confirmPassword: string,
   // username: string,
-  // profilePicture: `${uri}/images/get-avatar/${user.id}`,
+  profilePicture: string | null,
   showPassword: boolean;
   showConfirmPassword: boolean;
 
 }
-
-
 
 enum ActionType {
   ToggleShowPassword,
@@ -39,72 +37,18 @@ enum ActionType {
   // UpdateInstagram,
   UpdatePassword,
   UpdateConfirmPassword,
-  UpdateProfilePicture,
+  UpdateProfilePictureLink,
+  SetProfilePicture,
 }
 
-const reducer = (
-  state: EditMemberState,
-  action: {type: ActionType; payload }
-) => {
-  const updatedData = { ...state };
-  switch (action.type) {
-  case ActionType.ToggleShowConfirmPassword:
-    updatedData.showConfirmPassword = action.payload;
-    break;
-  case ActionType.ToggleShowPassword:
-    updatedData.showPassword = action.payload;
-    break;
-  case ActionType.UpdateName:
-    updatedData.name = action.payload;
-    break;
-  case ActionType.UpdateEmail:
-    updatedData.email = action.payload;
-    break;    
-  case ActionType.UpdateBio:
-    updatedData.bio = action.payload;
-    break;
-  // case ActionType.UpdateLinkedin:
-  //   updatedData.linkedin = action.payload;
-  //   break;
-  // case ActionType.UpdateWebsite:
-  //   updatedData.website = action.payload;
-  //   break;
-  // case ActionType.UpdateFacebook:
-  //   updatedData.facebook = action.payload;
-  //   break;
 
-  // case ActionType.UpdateInstagram:
-  //   updatedData.instagram = action.payload;
-  //   break;
-
-  case ActionType.UpdatePassword:
-    updatedData.newPassword = action.payload;
-    break;
-
-  case ActionType.UpdateConfirmPassword:
-    updatedData.confirmPassword = action.payload;
-    break;
-
-  // case ActionType.UpdateUsername:
-  //   updatedData.username = action.payload;
-  //   break;
-
-  // case ActionType.UpdateProfilePicture:
-  //   updatedData.profilePicture = action.payload;
-  //   break;
-
-
-  default:
-    return updatedData;
-  }
-  return updatedData;
-
-};
 
 export default function EditMember() {
   const navigate = useNavigate();
   const { user } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
+  const toastId = React.useRef(null);
+
 
   const initialState: EditMemberState = {
     name: user.name,
@@ -117,27 +61,112 @@ export default function EditMember() {
     newPassword: "",
     confirmPassword: "",
     // username: "",
-    // profilePicture: `${uri}/images/get-avatar/${user.id}`,
+    profilePicture: null,
     showPassword: false,
     showConfirmPassword: false,
+  };
+
+  const reducer = (
+    state: EditMemberState,
+    action: {type: ActionType; payload }
+  ) => {
+    const updatedData = { ...state };
+    switch (action.type) {
+    case ActionType.ToggleShowConfirmPassword:
+      updatedData.showConfirmPassword = action.payload;
+      break;
+    case ActionType.ToggleShowPassword:
+      updatedData.showPassword = action.payload;
+      break;
+    case ActionType.UpdateName:
+      updatedData.name = action.payload;
+      break;
+    case ActionType.UpdateEmail:
+      updatedData.email = action.payload;
+      break;    
+    case ActionType.UpdateBio:
+      updatedData.bio = action.payload;
+      break;
+    case ActionType.UpdatePassword:
+      updatedData.newPassword = action.payload;
+      break;
+  
+    case ActionType.UpdateConfirmPassword:
+      updatedData.confirmPassword = action.payload;
+      break;
+    case ActionType.UpdateProfilePictureLink:
+      updatedData.profilePicture = action.payload;
+      break;
+    case ActionType.SetProfilePicture:
+      {
+        const avatar = action.payload as File;
+        if (avatar) {
+          toastId.current = toast.info("Uploading 0%", { autoClose: false });
+          const form = new FormData();
+          form.append("avatar", avatar);
+          const endpoint = "/images/upload-avatar";
+          const requestMethod = "POST";
+
+          API({
+            method: requestMethod,
+            url: endpoint,
+            data: form,
+            onUploadProgress: (progressEvent) => {
+              const progress = progressEvent.loaded / progressEvent.total;
+              const percentCompleted = Math.round(progress * 100);
+              console.log(progress);
+              toast.update(toastId.current, {
+                render: `Uploading ${percentCompleted}%`,
+                type: "info",
+                progress: progress,
+              });
+            },
+          })
+            .then((res) => {
+              toast.update(toastId.current, {
+                render: "Uploading complete!",
+                type: "info",
+                progress: 1,
+              });
+              toast.done(toastId.current);
+              toast.success("Image uploaded successfully");
+              const image_name = res.data.data.name;
+              dispatch({
+                type: ActionType.UpdateProfilePictureLink,
+                payload: image_name,
+              });
+            })
+            .catch((e) => {
+              toast.done(toastId.current);
+              setError(e);
+            })
+            .finally(() => (toastId.current = null));
+        }
+      }
+      break;
+    default:
+      return updatedData;
+    }
+    return updatedData;
+  
   };
   
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const {
-  name,
-  email,
-  bio,
-  // linkedin,
-  // website,
-  // facebook,
-  // instagram,
-  newPassword,
-  confirmPassword,
-  // username,
-  // profilePicture,
-  showPassword,
-  showConfirmPassword,
+    name,
+    email,
+    bio,
+    // linkedin,
+    // website,
+    // facebook,
+    // instagram,
+    newPassword,
+    confirmPassword,
+    // username,
+    profilePicture,
+    showPassword,
+    showConfirmPassword,
   } = state;
 
   const setShowPassHandler = () => {
@@ -174,10 +203,7 @@ export default function EditMember() {
       user_id: user.id,
       target_user_id: user.id,
     };
-    
-
-    console.log(requestData);
-    
+        
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
@@ -279,16 +305,31 @@ export default function EditMember() {
           </div> */}
         </div>
 
-        {/* <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
         <div>
           <label className="text-sm mr-8">Profile picture</label>
           <input
             type="file"
-            accept="image/*"
-            onChange={handleFileChange}
+            id="blog-image"
+            accept="image/png, image/jpeg, image/jpg"
+            onChange={(e) =>
+              dispatch({
+                type: ActionType.SetProfilePicture,
+                payload: e.target.files[0],
+              })
+            }
             className="border p-2 rounded"
           />
-        </div> */}
+        </div>
+        {profilePicture}
+        {profilePicture ? (
+          <img
+            className="max-w-md max-h-md"
+            src={`${API.getUri()}/images/get/${profilePicture}?thumbnail=256&t=${new Date().getTime()}`}
+            alt={profilePicture}
+          />
+        ) : (
+          <>No image uploaded yet</>
+        )}
 
         {/* <hr className="border-t border-gray-300 mt-6 mb-6 w-full" /> */}
         {/* Password */}
