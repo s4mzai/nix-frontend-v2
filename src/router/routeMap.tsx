@@ -93,7 +93,7 @@ const routeMap: CustomRouteElement[] = [
         path: "published-stories/",
         element: <PublishedStories />,
         label: "Published Stories",
-        permission: [Permission.PublishBlog],
+        permission: [],
       },
     ],
   },
