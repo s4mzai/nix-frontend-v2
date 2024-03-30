@@ -57,10 +57,8 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       "edition-cover",
     ) as HTMLInputElement;
 
-    if (image_file.files.length === 0) {
-      toast.error("Please upload an image");
-      return;
-    }
+    if (image_file.files.length !== 0) {
+
     const image = image_file.files[0] as File;
     const imageForm = new FormData();
     imageForm.append("image", image);
@@ -110,7 +108,8 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       toast.success("Edition saved successfully");
       navigate("/edition/all-editions");
     });
-  };
+  }
+};
 
   useEffect(() => {
     const given_state: Edition = _ed || location.state?.edition;
@@ -197,7 +196,6 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
             <input
               type="file"
               id="edition-cover"
-              required
               accept="image/png, image/jpeg, image/jpg"
             />
           </div>
