@@ -80,7 +80,7 @@ const routeMap: CustomRouteElement[] = [
         path: ":blogId",
         element: <ReadStory />,
         label: "Read Story",
-        permission: [Permission.ReadBlog, Permission.PublishBlog],
+        permission: [Permission.ReadBlog],
         hide: true,
       },
       {
