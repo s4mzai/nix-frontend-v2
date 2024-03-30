@@ -60,7 +60,7 @@ const getFilteredBlogs = (blogs, searchTerm) => {
 
 const tableHeaders = ["Published On", "Author", "Title", "Category", "Status"];
 
-const blogEndpoint = "/blog";
+const blogEndpoint = "/blog/published-blogs";
 
 export default function PublishedStories() {
   const navigate = useNavigate();
@@ -118,9 +118,7 @@ export default function PublishedStories() {
       .then((blogResponse) => {
         dispatch({
           type: ActionType.SetBlogs,
-          payload: blogResponse.data.data.filter(
-            (blog) => blog.status == BlogStatus.Published,
-          ),
+          payload: blogResponse.data.data,
         });
         dispatch({ type: ActionType.SetLoading, payload: false });
       })
