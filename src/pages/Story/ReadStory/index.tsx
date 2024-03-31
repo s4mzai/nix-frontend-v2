@@ -15,6 +15,8 @@ import BlogStatus from "@/types/blogStatus";
 import { BlogDetails } from "@/types/blog";
 import "./index.css";
 import { NixImage } from "@/components/NixImage";
+import { PermissionProtector } from "@/components/PermissionProtector";
+import Permission from "@/types/permissions";
 
 interface ReadStoryState {
   showDTPicker: boolean;
@@ -203,60 +205,62 @@ export default function ReadStory() {
         </div>
       </div>
 
-      {blog.status === BlogStatus.Pending && (
-        <div>
-          <button
-            onClick={handlePublishNow}
-            type="button"
-            className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-          >
-            Publish Now
-          </button>
-          <button
-            onClick={() =>
-              dispatch({ type: ActionType.SetShowDTPicker, payload: true })
-            }
-            type="button"
-            className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-          >
-            Publish Later
-          </button>
-          <button
-            onClick={handleSaveToDraft}
-            type="button"
-            className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-          >
-            Save Back to Draft
-          </button>
+      <PermissionProtector permission={[Permission.PublishBlog]} silent={true}>
+        {blog.status === BlogStatus.Pending && (
+          <div>
+            <button
+              onClick={handlePublishNow}
+              type="button"
+              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+            >
+              Publish Now
+            </button>
+            <button
+              onClick={() =>
+                dispatch({ type: ActionType.SetShowDTPicker, payload: true })
+              }
+              type="button"
+              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+            >
+              Publish Later
+            </button>
+            <button
+              onClick={handleSaveToDraft}
+              type="button"
+              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+            >
+              Save Back to Draft
+            </button>
 
-          {showDTPicker && (
-            <div className="m-2">
-              <label
-                htmlFor="datetime"
-                className="text-md font-medium text-gray-900 "
-              >
-                Choose when to publish :
-              </label>
-              <input
-                type="datetime-local"
-                id="datetime"
-                placeholder="YYYY-MM-DD"
-                value={selectedDateTime}
-                min={getLocalDateTime()}
-                onChange={handleDateTimeChange}
-                className="m-2 border rounded-md px-2 py-1"
-              />
-              <button
-                onClick={handlePublishLater}
-                type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-              >
-                Confirm Choice
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+            {showDTPicker && (
+              <div className="m-2">
+                <label
+                  htmlFor="datetime"
+                  className="text-md font-medium text-gray-900 "
+                >
+                  Choose when to publish :
+                </label>
+                <input
+                  type="datetime-local"
+                  id="datetime"
+                  placeholder="YYYY-MM-DD"
+                  value={selectedDateTime}
+                  min={getLocalDateTime()}
+                  onChange={handleDateTimeChange}
+                  className="m-2 border rounded-md px-2 py-1"
+                />
+                <button
+                  onClick={handlePublishLater}
+                  type="button"
+                  className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                >
+                  Confirm Choice
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </PermissionProtector>
     </div>
   );
 }
