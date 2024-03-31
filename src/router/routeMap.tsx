@@ -36,6 +36,8 @@ const AddMember = React.lazy(() => import("@/pages/Member/AddMember"));
 const NewEdition = React.lazy(() => import("@/pages/Edition/NewEdition"));
 const AllEditions = React.lazy(() => import("@/pages/Edition/AllEditions"));
 const Logs = React.lazy(() => import("@/pages/Logs"));
+const MemberProfile = React.lazy(() => import("@/pages/Member/MemberProfile"));
+const EditMember = React.lazy(() => import("@/pages/Member/EditMember"));
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -183,6 +185,13 @@ const routeMap: CustomRouteElement[] = [
         permission: [Permission.CreateProfile],
         label: "Add Member",
       },
+      {
+        path: ":memberId/edit-details/",
+        element: <EditMember />,
+        permission: [Permission.UpdateProfile],
+        label: "Edit Details",
+        hide: true,
+      },
     ],
   },
   {
@@ -211,6 +220,12 @@ const routeMap: CustomRouteElement[] = [
     icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
+  },
+  {
+    path: "profile/",
+    element: <MemberProfile />,
+    permission: [],
+    label: "Profile",
   },
 ];
 
