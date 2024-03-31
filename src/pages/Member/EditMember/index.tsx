@@ -337,6 +337,7 @@ export default function EditMember() {
           <AvatarImage
             className="max-w-md max-h-md"
             user_id={profilePicture}
+            thumbnail={true}
             alt={profilePicture}
           />
         ) : (
