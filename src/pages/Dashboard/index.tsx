@@ -6,6 +6,7 @@ import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import Leaderboard from "@/components/Leaderboard";
 import { AvatarImage } from "@/components/AvatarImage";
+import { Link } from "react-router-dom";
 
 interface TopUserData {
   _id: string;
@@ -133,6 +134,12 @@ export default function Dashbboard() {
             us! Make sure they are up-to-date as these are your official record
             available to DTU Times.
           </p>
+          <Link
+            to={`/member/${user.id}/edit-details`}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
+          >
+            Edit Details
+          </Link>
         </div>
       </div>
 
