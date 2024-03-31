@@ -224,7 +224,7 @@ const routeMap: CustomRouteElement[] = [
   {
     path: "profile/",
     element: <MemberProfile />,
-    icon: <MemberIcon/>,
+    icon: <MemberIcon />,
     permission: [],
     label: "Profile",
   },

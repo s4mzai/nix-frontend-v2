@@ -16,10 +16,12 @@ export default function UserCard({ name, email, role, avatar }) {
             </div>
             <h2 className="text-xl font-medium text-gray-700">{name}</h2>
             <span className="text-blue-500 block ">{role}</span>
-            <div className="text-sm text-gray-500 block mb-5 break-words">{email}</div>
+            <div className="text-sm text-gray-500 block mb-5 break-words">
+              {email}
+            </div>
             {/** todo: add link to profile */}
             <a
-              href={`/profile`}
+              href={"/profile"}
               className="px-4 py-2 bg-blue-500 text-white rounded-full"
             >
               Profile
