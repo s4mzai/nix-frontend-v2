@@ -1,4 +1,4 @@
-import { useContext} from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "@/services/API";
 import { CurrUserCtx } from "@/contexts/current_user";
@@ -16,21 +16,20 @@ interface EditMemberState {
   // website: string;
   // facebook: string;
   // instagram: string,
-  newPassword: string,
-  confirmPassword: string,
+  newPassword: string;
+  confirmPassword: string;
   // username: string,
-  profilePicture: string | null,
+  profilePicture: string | null;
   showPassword: boolean;
   showConfirmPassword: boolean;
-
 }
 
 enum ActionType {
   ToggleShowPassword,
   ToggleShowConfirmPassword,
   UpdateName,
-  UpdateEmail, 
-  UpdateBio, 
+  UpdateEmail,
+  UpdateBio,
   // UpdateUsername,
   // UpdateLinkedin,
   // UpdateWebsite,
@@ -42,14 +41,11 @@ enum ActionType {
   SetProfilePicture,
 }
 
-
-
 export default function EditMember() {
   const navigate = useNavigate();
   const { user } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
   const toastId = React.useRef(null);
-
 
   const initialState: EditMemberState = {
     name: user.name,
@@ -69,89 +65,88 @@ export default function EditMember() {
 
   const reducer = (
     state: EditMemberState,
-    action: {type: ActionType; payload }
+    action: { type: ActionType; payload },
   ) => {
     const updatedData = { ...state };
     switch (action.type) {
-    case ActionType.ToggleShowConfirmPassword:
-      updatedData.showConfirmPassword = action.payload;
-      break;
-    case ActionType.ToggleShowPassword:
-      updatedData.showPassword = action.payload;
-      break;
-    case ActionType.UpdateName:
-      updatedData.name = action.payload;
-      break;
-    case ActionType.UpdateEmail:
-      updatedData.email = action.payload;
-      break;    
-    case ActionType.UpdateBio:
-      updatedData.bio = action.payload;
-      break;
-    case ActionType.UpdatePassword:
-      updatedData.newPassword = action.payload;
-      break;
-  
-    case ActionType.UpdateConfirmPassword:
-      updatedData.confirmPassword = action.payload;
-      break;
-    case ActionType.UpdateProfilePictureLink:
-      updatedData.profilePicture = action.payload;
-      break;
-    case ActionType.SetProfilePicture:
-      {
-        const avatar = action.payload as File;
-        if (avatar) {
-          toastId.current = toast.info("Uploading 0%", { autoClose: false });
-          const form = new FormData();
-          form.append("avatar", avatar);
-          const endpoint = "/images/upload-avatar";
-          const requestMethod = "POST";
+      case ActionType.ToggleShowConfirmPassword:
+        updatedData.showConfirmPassword = action.payload;
+        break;
+      case ActionType.ToggleShowPassword:
+        updatedData.showPassword = action.payload;
+        break;
+      case ActionType.UpdateName:
+        updatedData.name = action.payload;
+        break;
+      case ActionType.UpdateEmail:
+        updatedData.email = action.payload;
+        break;
+      case ActionType.UpdateBio:
+        updatedData.bio = action.payload;
+        break;
+      case ActionType.UpdatePassword:
+        updatedData.newPassword = action.payload;
+        break;
 
-          API({
-            method: requestMethod,
-            url: endpoint,
-            data: form,
-            onUploadProgress: (progressEvent) => {
-              const progress = progressEvent.loaded / progressEvent.total;
-              const percentCompleted = Math.round(progress * 100);
-              console.log(progress);
-              toast.update(toastId.current, {
-                render: `Uploading ${percentCompleted}%`,
-                type: "info",
-                progress: progress,
-              });
-            },
-          })
-            .then((res) => {
-              toast.update(toastId.current, {
-                render: "Uploading complete!",
-                type: "info",
-                progress: 1,
-              });
-              toast.done(toastId.current);
-              toast.success("Image uploaded successfully");
-              const image_name = res.data.data.name;
-              dispatch({
-                type: ActionType.UpdateProfilePictureLink,
-                payload: image_name,
-              });
+      case ActionType.UpdateConfirmPassword:
+        updatedData.confirmPassword = action.payload;
+        break;
+      case ActionType.UpdateProfilePictureLink:
+        updatedData.profilePicture = action.payload;
+        break;
+      case ActionType.SetProfilePicture:
+        {
+          const avatar = action.payload as File;
+          if (avatar) {
+            toastId.current = toast.info("Uploading 0%", { autoClose: false });
+            const form = new FormData();
+            form.append("avatar", avatar);
+            const endpoint = "/images/upload-avatar";
+            const requestMethod = "POST";
+
+            API({
+              method: requestMethod,
+              url: endpoint,
+              data: form,
+              onUploadProgress: (progressEvent) => {
+                const progress = progressEvent.loaded / progressEvent.total;
+                const percentCompleted = Math.round(progress * 100);
+                console.log(progress);
+                toast.update(toastId.current, {
+                  render: `Uploading ${percentCompleted}%`,
+                  type: "info",
+                  progress: progress,
+                });
+              },
             })
-            .catch((e) => {
-              toast.done(toastId.current);
-              setError(e);
-            })
-            .finally(() => (toastId.current = null));
+              .then((res) => {
+                toast.update(toastId.current, {
+                  render: "Uploading complete!",
+                  type: "info",
+                  progress: 1,
+                });
+                toast.done(toastId.current);
+                toast.success("Image uploaded successfully");
+                const image_name = res.data.data.name;
+                dispatch({
+                  type: ActionType.UpdateProfilePictureLink,
+                  payload: image_name,
+                });
+              })
+              .catch((e) => {
+                toast.done(toastId.current);
+                setError(e);
+              })
+              .finally(() => (toastId.current = null));
+          }
         }
-      }
-      break;
-    default:
-      return updatedData;
+        break;
+      default:
+        return updatedData;
     }
     return updatedData;
-  
   };
-  
+
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const {
@@ -181,7 +176,6 @@ export default function EditMember() {
     });
   };
 
-
   // const handleFileChange = (e) => {
   //   const file = e.target.files[0];
   //   // Update the state with the selected file
@@ -194,17 +188,20 @@ export default function EditMember() {
 
     const endPoint = "/user/update-user";
 
-    
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
 
     const requestData = {
       name: name,
       email: email,
       bio: bio,
-      password: newPassword,
+      password: newPassword === "" ? undefined : newPassword,
       user_id: user.id,
       target_user_id: user.id,
     };
-        
+
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
@@ -228,7 +225,12 @@ export default function EditMember() {
                 type="name"
                 name="name"
                 value={name}
-                onChange={(e) => dispatch({ type: ActionType.UpdateName, payload: e.target.value })}
+                onChange={(e) =>
+                  dispatch({
+                    type: ActionType.UpdateName,
+                    payload: e.target.value,
+                  })
+                }
                 placeholder="Name"
                 className="border p-2 rounded w-full"
               />
@@ -252,7 +254,12 @@ export default function EditMember() {
               type="email"
               name="email"
               value={email}
-              onChange={(e) => dispatch({ type: ActionType.UpdateEmail, payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.UpdateEmail,
+                  payload: e.target.value,
+                })
+              }
               placeholder="Email Address"
               className="border p-2 rounded w-full"
             />
@@ -262,7 +269,12 @@ export default function EditMember() {
             <textarea
               name="about"
               value={bio}
-              onChange={(e) => dispatch({ type: ActionType.UpdateBio, payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.UpdateBio,
+                  payload: e.target.value,
+                })
+              }
               placeholder="Tell us about yourself!"
               className="border p-2 rounded w-full"
             />
@@ -341,7 +353,12 @@ export default function EditMember() {
               type={showPassword ? "text" : "password"}
               name="newPassword"
               value={newPassword}
-              onChange={(e) => dispatch({ type: ActionType.UpdatePassword, payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.UpdatePassword,
+                  payload: e.target.value,
+                })
+              }
               placeholder="New Password"
               className="border p-2 rounded w-full mb-2"
             />
@@ -362,7 +379,12 @@ export default function EditMember() {
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               value={confirmPassword}
-              onChange={(e) => dispatch({ type: ActionType.UpdateConfirmPassword, payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.UpdateConfirmPassword,
+                  payload: e.target.value,
+                })
+              }
               placeholder="Confirm Password"
               className="border p-2 rounded w-full"
             />
@@ -378,7 +400,7 @@ export default function EditMember() {
             </div>
           </div>
           <small className="block text-xs mt-2 text-slate-500">
-    You can enter the same password or update your password.
+            You can enter the same password or update your password.
           </small>
         </div>
 
@@ -387,7 +409,7 @@ export default function EditMember() {
           className="bg-blue-500 text-white p-3 rounded hover:bg-green-500"
           onClick={handleSubmit}
         >
-      Update Info
+          Update Info
         </button>
       </form>
     </div>
