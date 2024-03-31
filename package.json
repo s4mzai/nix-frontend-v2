@@ -7,16 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --rule {'@typescript-eslint/no-unused-vars':'off','react-hooks/exhaustive-deps':'off'} --fix",
-    "preview": "vite preview",
-    "start": "vite build && node server.js",
-    "prod": "npx pm2 delete NixFrontend; pm2 --name NixFrontend --time start npm -- start"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^40.2.0",
     "@ckeditor/ckeditor5-heading": "^41.1.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
     "axios": "^1.6.5",
-    "express": "^4.18.2",
     "html-react-parser": "^5.1.6",
     "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
@@ -26,6 +23,7 @@
     "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {
+    "@types/node": "^20.12.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
@@ -37,7 +35,6 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "pm2": "^5.3.0",
     "postcss": "^8.4.33",
     "prettier": "3.2.5",
     "tailwindcss": "^3.4.0",
