@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import showPassIcon from "@/assets/show-password.png";
 import React from "react";
 import { ErrorContext } from "@/contexts/error";
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface EditMemberState {
   name: string;
@@ -322,16 +323,16 @@ export default function EditMember() {
         </div>
         {profilePicture}
         {profilePicture ? (
-          <img
+          <AvatarImage
             className="max-w-md max-h-md"
-            src={`${API.getUri()}/images/get/${profilePicture}?thumbnail=256&t=${new Date().getTime()}`}
+            user_id={profilePicture}
             alt={profilePicture}
           />
         ) : (
-          <>No image uploaded yet</>
+          <></>
         )}
 
-        {/* <hr className="border-t border-gray-300 mt-6 mb-6 w-full" /> */}
+        <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
         {/* Password */}
         <div className="relative">
           <h1 className="text-2xl mb-4">Update Password</h1>
