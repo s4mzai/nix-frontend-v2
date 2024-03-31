@@ -321,7 +321,6 @@ export default function EditMember() {
             className="border p-2 rounded"
           />
         </div>
-        {profilePicture}
         {profilePicture ? (
           <AvatarImage
             className="max-w-md max-h-md"
