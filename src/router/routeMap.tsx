@@ -186,7 +186,7 @@ const routeMap: CustomRouteElement[] = [
         label: "Add Member",
       },
       {
-        path: ":memberId/edit-details/",
+        path: "edit-details/:id",
         element: <EditMember />,
         permission: [Permission.UpdateProfile],
         label: "Edit Details",
