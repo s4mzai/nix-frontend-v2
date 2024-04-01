@@ -3,7 +3,7 @@ import { getTokenFromStorage } from "./localStorageParser";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_NIX_BACKEND,
-  // withCredentials: true,
+  withCredentials: true,
 });
 
 API.interceptors.request.use((req) => {
