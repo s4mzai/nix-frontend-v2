@@ -261,8 +261,8 @@ export default function EditMember() {
 
         if (new_user.id == user.id) {
           localStorage.setItem("user", JSON.stringify(new_user));
-          setUser(new_user);
           setGrantedPermissions(new_user.permission);
+          setUser(new_user);
         }
         navigate("/profile"); // todo update w pure url
       })
