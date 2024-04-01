@@ -5,19 +5,22 @@ export default function UserCard({ name, email, role, avatar }) {
     <div id="container" className="mx-auto ">
       <div className="flex flex-col sm:flex-row">
         <div className="p-2">
-          <div className="w-60 hover:shadow-xl bg-white px-10 py-8 rounded-lg shadow text-center">
+          <div className="w-60 flex flex-col justify-between h-[350px] hover:shadow-xl bg-white px-10 py-8 rounded-lg shadow text-center">
             <div className="mb-3">
               <AvatarImage
-                className="w-2/3 mx-auto rounded-full object-cover"
+                className="w-[105px] h-[105px] mx-auto rounded-full object-cover"
                 user_id={avatar}
                 thumbnail={true}
                 alt={name}
               />
             </div>
+            <div>
             <h2 className="text-xl font-medium text-gray-700">{name}</h2>
             <span className="text-blue-500 block ">{role}</span>
             <div className="text-sm text-gray-500 block mb-5 break-words">
               {email}
+            </div>
+
             </div>
             {/** todo: add link to profile */}
             <a
