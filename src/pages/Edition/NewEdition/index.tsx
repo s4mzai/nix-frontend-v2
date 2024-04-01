@@ -57,59 +57,57 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       "edition-cover",
     ) as HTMLInputElement;
 
-    if (image_file.files.length === 0) {
-      toast.error("Please upload an image");
-      return;
-    }
-    const image = image_file.files[0] as File;
-    const imageForm = new FormData();
-    imageForm.append("image", image);
-    toastId.current = toast.info("Uploading 0%", { autoClose: false });
-    const image_promise = API.post(
-      `/images/edition-image/${edition.edition_id}`,
-      imageForm,
-      {
-        onUploadProgress: (progressEvent) => {
-          const progress = progressEvent.loaded / progressEvent.total;
-          const percentCompleted = Math.round(progress * 100);
-          console.debug(progress);
-          toast.update(toastId.current, {
-            render: `Uploading ${percentCompleted}%`,
-            type: "info",
-            progress: progress,
-          });
+    if (image_file.files.length !== 0) {
+      const image = image_file.files[0] as File;
+      const imageForm = new FormData();
+      imageForm.append("image", image);
+      toastId.current = toast.info("Uploading 0%", { autoClose: false });
+      const image_promise = API.post(
+        `/images/edition-image/${edition.edition_id}`,
+        imageForm,
+        {
+          onUploadProgress: (progressEvent) => {
+            const progress = progressEvent.loaded / progressEvent.total;
+            const percentCompleted = Math.round(progress * 100);
+            console.debug(progress);
+            toast.update(toastId.current, {
+              render: `Uploading ${percentCompleted}%`,
+              type: "info",
+              progress: progress,
+            });
+          },
         },
-      },
-    )
-      .then(() => {
-        toast.update(toastId.current, {
-          render: "Uploading complete!",
-          type: "info",
-          progress: 1,
-        });
-        toast.done(toastId.current);
-        toast.success("Image uploaded successfully");
-      })
-      .catch((e) => {
-        toast.done(toastId.current);
-        setError(e);
-      })
-      .finally(() => (toastId.current = null));
+      )
+        .then(() => {
+          toast.update(toastId.current, {
+            render: "Uploading complete!",
+            type: "info",
+            progress: 1,
+          });
+          toast.done(toastId.current);
+          toast.success("Image uploaded successfully");
+        })
+        .catch((e) => {
+          toast.done(toastId.current);
+          setError(e);
+        })
+        .finally(() => (toastId.current = null));
 
-    const requestMethod = id ? "PUT" : "POST";
+      const requestMethod = id ? "PUT" : "POST";
 
-    const data_promise = API({
-      method: requestMethod,
-      url: endpoint,
-      data: data,
-    }).catch((error) => {
-      setError(error);
-    });
+      const data_promise = API({
+        method: requestMethod,
+        url: endpoint,
+        data: data,
+      }).catch((error) => {
+        setError(error);
+      });
 
-    Promise.all([image_promise, data_promise]).then(() => {
-      toast.success("Edition saved successfully");
-      navigate("/edition/all-editions");
-    });
+      Promise.all([image_promise, data_promise]).then(() => {
+        toast.success("Edition saved successfully");
+        navigate("/edition/all-editions");
+      });
+    }
   };
 
   useEffect(() => {
@@ -197,7 +195,6 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
             <input
               type="file"
               id="edition-cover"
-              required
               accept="image/png, image/jpeg, image/jpg"
             />
           </div>

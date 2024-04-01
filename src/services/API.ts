@@ -43,6 +43,7 @@ export const refreshAuthToken = async (): Promise<string | null> => {
     return (response?.data?.data?.accessToken as string) || null;
   } catch (err) {
     console.debug(err);
+    window.location.href = "/login?sessionExpired=true";
     return null;
   }
 };
