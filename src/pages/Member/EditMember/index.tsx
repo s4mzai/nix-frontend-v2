@@ -11,6 +11,7 @@ import { IUser } from "@/types/contextTypes";
 import MyMultiselect from "@/components/MultiSelect";
 import Permission from "@/types/permissions";
 import { Role } from "@/types/role";
+import { PermissionProtector } from "@/components/PermissionProtector";
 
 interface PermissionItem {
   name: string;
@@ -252,7 +253,6 @@ export default function EditMember() {
       permission: target_selectedPermissions.map((perm) => perm.id),
       role_id: target_roleId,
     };
-    console.log(requestData);
 
     API.put(endPoint, requestData)
       .then((response) => {
@@ -434,41 +434,43 @@ export default function EditMember() {
             You can enter the same password or update your password.
           </small>
         </div>
-        <div className="flex flex-col">
-          <h1 className="text-2xl text-left font-medium leading-none my-6">
-            Update Role and Permissions
-          </h1>
-          <div className="my-2"> 
-            <label className="block text-sm font-semibold mb-2">Role</label>
-            <div className="w-1/2">
-              <MyMultiselect
-                options={rolesList.map((role) => ({
-                  name: role.role_name,
-                  id: role.role_id,
-                  permissions: role.permissions,
-                }))}
-                selectedOptions={[target_user.role]}
-                onSelectionChange={handleRoleNameChange}
-                isSingleSelect={true}
-              />
+        <PermissionProtector permission={[Permission.UpdateRole]} silent={true}>
+          <div className="flex flex-col">
+            <h1 className="text-2xl text-left font-medium leading-none my-6">
+              Update Role and Permissions
+            </h1>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">Role</label>
+              <div className="w-1/2">
+                <MyMultiselect
+                  options={rolesList.map((role) => ({
+                    name: role.role_name,
+                    id: role.role_id,
+                    permissions: role.permissions,
+                  }))}
+                  selectedOptions={[target_user.role]}
+                  onSelectionChange={handleRoleNameChange}
+                  isSingleSelect={true}
+                />
+              </div>
+            </div>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">
+                Permissions
+              </label>
+              <fieldset className="flex flex-col">
+                <MyMultiselect
+                  options={Object.keys(Permission)
+                    .filter((perm) => !isNaN(Number(perm)))
+                    .map((key) => ({ name: Permission[key], id: key }))}
+                  selectedOptions={target_selectedPermissions}
+                  onSelectionChange={handlePermissionChange}
+                  isSingleSelect={false}
+                />
+              </fieldset>
             </div>
           </div>
-          <div className="my-2">
-            <label className="block text-sm font-semibold mb-2">
-              Permissions
-            </label>
-            <fieldset className="flex flex-col">
-              <MyMultiselect
-                options={Object.keys(Permission)
-                  .filter((perm) => !isNaN(Number(perm)))
-                  .map((key) => ({ name: Permission[key], id: key }))}
-                selectedOptions={target_selectedPermissions}
-                onSelectionChange={handlePermissionChange}
-                isSingleSelect={false}
-              />
-            </fieldset>
-          </div>
-        </div>
+        </PermissionProtector>
 
         <button
           type="submit"
