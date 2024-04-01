@@ -68,14 +68,14 @@ export default function AllMembers() {
 
   //filter members based on search term
   const getFilteredMembers = (memebers: Member[], searchTerm: string) => {
+    const search_term = searchTerm.toLowerCase();
     return membersList.filter(
       (member) =>
-        member?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member?.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member?.email.toLowerCase().includes(searchTerm.toLowerCase()),
+        member?.name.toLowerCase().includes(search_term) ||
+        member?.role.toLowerCase().includes(search_term) ||
+        member?.email.toLowerCase().includes(search_term),
     );
   };
-
 
   if (loading)
     return (

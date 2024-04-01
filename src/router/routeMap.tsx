@@ -50,6 +50,13 @@ const routeMap: CustomRouteElement[] = [
     icon: <DashIcon />,
   },
   {
+    path: "profile/",
+    element: <MemberProfile />,
+    icon: <MemberIcon />,
+    permission: [],
+    label: "Profile",
+  },
+  {
     path: "story/",
     element: (
       <>
@@ -220,13 +227,6 @@ const routeMap: CustomRouteElement[] = [
     icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
-  },
-  {
-    path: "profile/",
-    element: <MemberProfile />,
-    icon: <MemberIcon />,
-    permission: [],
-    label: "Profile",
   },
 ];
 

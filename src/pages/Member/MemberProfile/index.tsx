@@ -23,19 +23,29 @@ export default function Profile() {
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
       <div className="space-y-6 mt-4">
         <div className="flex flex-col">
-          <div className="flex items-center">
-            <div className="w-36 h-36 bg-gray-200 rounded-full overflow-hidden">
-              <AvatarImage
-                alt={user.name}
-                className="h-36 w-36"
-                src={`${API.getUri()}/images/get-avatar/${user.id}?thumbnail=true`}
-              />
+          <div className="flex justify-between">
+            <div className="flex gap-1 items-center">
+              <div className="w-36 h-36 bg-gray-200 rounded-full overflow-hidden">
+                <AvatarImage
+                  alt={user.name}
+                  className="h-36 w-36"
+                  src={`${API.getUri()}/images/get-avatar/${user.id}?thumbnail=true`}
+                />
+              </div>
+              <div className="ms-4">
+                <h1 className="text-3xl font-semibold text-gray-800 font-sans">
+                  {user.name}
+                </h1>
+                <span className="text-gray-600">{user.role}</span>
+              </div>
             </div>
-            <div className="ms-4">
-              <h1 className="text-3xl font-semibold text-gray-800 font-sans">
-                {user.name}
-              </h1>
-              <span className="text-gray-600">{user.role}</span>
+            <div>
+              <Link
+                to={`/member/${user.id}/edit-details`}
+                className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
+              >
+                Edit Info
+              </Link>
             </div>
           </div>
         </div>
