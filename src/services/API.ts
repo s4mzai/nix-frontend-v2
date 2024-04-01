@@ -31,7 +31,7 @@ API.interceptors.response.use(
 
     //here redirect to login page
     return Promise.reject(error);
-  },
+  }
 );
 
 export const refreshAuthToken = async (): Promise<string | null> => {
