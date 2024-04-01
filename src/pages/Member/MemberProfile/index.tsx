@@ -60,6 +60,15 @@ export default function Profile() {
             <span className="text-gray-600 ml-1">{user.email}</span>
           </li>
         </ul>
+
+        <div>
+          <Link
+            to={`/member/edit-details/${user.id}/`}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
+          >
+            Edit Info
+          </Link>
+        </div>
       </div>
     </div>
   );
