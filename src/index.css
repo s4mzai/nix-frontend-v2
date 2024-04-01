@@ -31,15 +31,19 @@
   @apply text-blue-800;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 h1 {
   font-size: 2.25rem;
   font-weight: 600;
   text-align: center;
 }
-#Logout-label{
+#Logout-label {
   position: absolute;
   top: 10px;
-  left:220px;
+  left: 220px;
   width: 40px;
   height: 35px;
   background: red;
@@ -48,22 +52,20 @@ h1 {
   align-items: center;
   padding: 0;
   margin: 0;
-  border-radius: 6px; 
+  border-radius: 6px;
 }
-#Logout-label span{
+#Logout-label span {
   background-color: red;
   width: 40px;
   padding: 10px;
   display: flex;
   justify-content: center;
   transform: translateX(-8px);
-  
 }
-#Logout-label span:hover{
+#Logout-label span:hover {
   background-color: red;
 }
-#Logout-label div:nth-child(2){
+#Logout-label div:nth-child(2) {
   background-color: red;
   display: none;
-  
 }
