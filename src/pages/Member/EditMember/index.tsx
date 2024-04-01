@@ -7,6 +7,7 @@ import showPassIcon from "@/assets/show-password.png";
 import React from "react";
 import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
+import { IUser } from "@/types/contextTypes";
 
 interface EditMemberState {
   target_name: string;
@@ -43,9 +44,10 @@ enum ActionType {
 
 export default function EditMember() {
   const navigate = useNavigate();
-  const { user } = useContext(CurrUserCtx);
+  const { user, setUser } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
   const toastId = React.useRef(null);
+  
 
   const initialState: EditMemberState = {
     target_name: user.name,
@@ -205,6 +207,9 @@ export default function EditMember() {
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
+        const new_user = response.data.data.user;
+        localStorage.setItem("user", JSON.stringify(new_user));
+        setUser(new_user as IUser);
         navigate("/profile");
       })
       .catch((e) => setError(e));
