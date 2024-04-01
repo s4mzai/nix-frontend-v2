@@ -77,7 +77,6 @@ export default function AllMembers() {
     );
   };
 
-
   if (loading)
     return (
       <div className="flex flex-grow w-full h-screen justify-center items-center">
