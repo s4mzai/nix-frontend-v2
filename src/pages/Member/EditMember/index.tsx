@@ -9,9 +9,9 @@ import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
 
 interface EditMemberState {
-  name: string;
-  email: string;
-  bio: string;
+  target_name: string;
+  target_email: string;
+  target_bio: string;
   // linkedin: string;
   // website: string;
   // facebook: string;
@@ -48,9 +48,9 @@ export default function EditMember() {
   const toastId = React.useRef(null);
 
   const initialState: EditMemberState = {
-    name: user.name,
-    email: user.email,
-    bio: user.bio || "",
+    target_name: user.name,
+    target_email: user.email,
+    target_bio: user.bio || "",
     // linkedin: "",
     // website: "",
     // facebook: "",
@@ -76,13 +76,13 @@ export default function EditMember() {
         updatedData.showPassword = action.payload;
         break;
       case ActionType.UpdateName:
-        updatedData.name = action.payload;
+        updatedData.target_name = action.payload;
         break;
       case ActionType.UpdateEmail:
-        updatedData.email = action.payload;
+        updatedData.target_email = action.payload;
         break;
       case ActionType.UpdateBio:
-        updatedData.bio = action.payload;
+        updatedData.target_bio = action.payload;
         break;
       case ActionType.UpdatePassword:
         updatedData.newPassword = action.payload;
@@ -150,9 +150,9 @@ export default function EditMember() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const {
-    name,
-    email,
-    bio,
+    target_name,
+    target_email,
+    target_bio,
     // linkedin,
     // website,
     // facebook,
@@ -194,9 +194,9 @@ export default function EditMember() {
     }
 
     const requestData = {
-      name: name,
-      email: email,
-      bio: bio,
+      target_name: target_name,
+      target_email: target_email,
+      target_bio: target_bio,
       password: newPassword === "" ? undefined : newPassword,
       user_id: user.id,
       target_user_id: user.id,
@@ -212,7 +212,7 @@ export default function EditMember() {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-      <h1 className="text-4xl font-light mb-4">Edit Info: {name}</h1>
+      <h1 className="text-4xl font-light mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
         {/* Primary info */}
@@ -224,7 +224,7 @@ export default function EditMember() {
               <input
                 type="name"
                 name="name"
-                value={name}
+                value={target_name}
                 onChange={(e) =>
                   dispatch({
                     type: ActionType.UpdateName,
@@ -253,7 +253,7 @@ export default function EditMember() {
             <input
               type="email"
               name="email"
-              value={email}
+              value={target_email}
               onChange={(e) =>
                 dispatch({
                   type: ActionType.UpdateEmail,
@@ -268,7 +268,7 @@ export default function EditMember() {
             <label className="block text-sm mb-2">About You</label>
             <textarea
               name="about"
-              value={bio}
+              value={target_bio}
               onChange={(e) =>
                 dispatch({
                   type: ActionType.UpdateBio,
