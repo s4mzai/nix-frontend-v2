@@ -207,7 +207,9 @@ export default function EditMember() {
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
-        setUser(response.data.data.user as IUser);
+        const new_user = response.data.data.user;
+        localStorage.setItem("user", JSON.stringify(new_user));
+        setUser(new_user as IUser);
         navigate("/profile");
       })
       .catch((e) => setError(e));
