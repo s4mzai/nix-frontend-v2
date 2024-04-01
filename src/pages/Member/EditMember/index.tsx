@@ -8,21 +8,29 @@ import React from "react";
 import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
 import { IUser } from "@/types/contextTypes";
+import MyMultiselect from "@/components/MultiSelect";
+import Permission from "@/types/permissions";
+import { Role } from "@/types/role";
+import { PermissionProtector } from "@/components/PermissionProtector";
+
+interface PermissionItem {
+  name: string;
+  id: Permission;
+}
 
 interface EditMemberState {
   target_name: string;
   target_email: string;
   target_bio: string;
-  // linkedin: string;
-  // website: string;
-  // facebook: string;
-  // instagram: string,
   newPassword: string;
   confirmPassword: string;
-  // username: string,
   profilePicture: string | null;
   showPassword: boolean;
   showConfirmPassword: boolean;
+  target_selectedPermissions: PermissionItem[];
+  rolesList: Role[];
+  target_roleId: string;
+  loading: boolean;
 }
 
 enum ActionType {
@@ -31,38 +39,63 @@ enum ActionType {
   UpdateName,
   UpdateEmail,
   UpdateBio,
-  // UpdateUsername,
-  // UpdateLinkedin,
-  // UpdateWebsite,
-  // UpdateFacebook,
-  // UpdateInstagram,
   UpdatePassword,
   UpdateConfirmPassword,
   UpdateProfilePictureLink,
   SetProfilePicture,
+  setSelectedPermissions,
+  setRoleId,
+  setRolesList,
+  setLoading,
 }
 
 export default function EditMember() {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(CurrUserCtx);
+  const { user, setUser, setGrantedPermissions } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
   const toastId = React.useRef(null);
-  
+
+  const target_user = user; //todo
 
   const initialState: EditMemberState = {
-    target_name: user.name,
-    target_email: user.email,
-    target_bio: user.bio || "",
-    // linkedin: "",
-    // website: "",
-    // facebook: "",
-    // instagram: "",
+    target_name: target_user.name,
+    target_email: target_user.email,
+    target_bio: target_user.bio || "",
     newPassword: "",
     confirmPassword: "",
-    // username: "",
     profilePicture: null,
     showPassword: false,
     showConfirmPassword: false,
+    target_selectedPermissions: target_user.permission.map((index) => ({
+      name: Permission[index],
+      id: index,
+    })),
+    target_roleId: "",
+    rolesList: [],
+    loading: true,
+  };
+
+  const handlePermissionChange = (selectedItems) => {
+    const selectedPermissionsWithIntIds = selectedItems.map((permission) => ({
+      ...permission,
+      id: parseInt(permission.id),
+    }));
+    dispatch({
+      type: ActionType.setSelectedPermissions,
+      payload: selectedPermissionsWithIntIds,
+    });
+  };
+
+  const handleRoleNameChange = (e) => {
+    const roleData = e[0];
+    dispatch({
+      type: ActionType.setSelectedPermissions,
+      payload: roleData.permissions.map((index) => ({
+        name: Permission[index],
+        id: index,
+      })),
+    });
+    dispatch({ type: ActionType.setRoleId, payload: roleData.id });
   };
 
   const reducer = (
@@ -143,6 +176,19 @@ export default function EditMember() {
           }
         }
         break;
+      case ActionType.setSelectedPermissions:
+        updatedData.target_selectedPermissions = action.payload;
+        break;
+      case ActionType.setRoleId:
+        updatedData.target_roleId = action.payload;
+        break;
+      case ActionType.setRolesList:
+        updatedData.rolesList = action.payload;
+        break;
+      case ActionType.setLoading:
+        updatedData.loading = action.payload;
+        break;
+
       default:
         return updatedData;
     }
@@ -165,24 +211,27 @@ export default function EditMember() {
     profilePicture,
     showPassword,
     showConfirmPassword,
+    rolesList,
+    target_roleId,
+    target_selectedPermissions,
   } = state;
 
-  const setShowPassHandler = () => {
-    dispatch({ type: ActionType.ToggleShowPassword, payload: !showPassword });
-  };
+  const fetchRoles = () => {
+    const rolesEndpoint = "/role";
 
-  const setShowConfirmPassHandler = () => {
-    dispatch({
-      type: ActionType.ToggleShowConfirmPassword,
-      payload: !showConfirmPassword,
-    });
+    API.get(rolesEndpoint)
+      .then((rolesResponse) => {
+        dispatch({
+          type: ActionType.setRolesList,
+          payload: rolesResponse.data.data,
+        });
+        dispatch({ type: ActionType.setLoading, payload: false });
+      })
+      .catch((error) => {
+        setError(error);
+        dispatch({ type: ActionType.setLoading, payload: false });
+      });
   };
-
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-  //   // Update the state with the selected file
-  //   setFormData((prevData) => ({ ...prevData, profilePicture: file }));
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -200,32 +249,39 @@ export default function EditMember() {
       target_email: target_email,
       target_bio: target_bio,
       password: newPassword === "" ? undefined : newPassword,
-      user_id: user.id,
-      target_user_id: user.id,
+      target_user_id: target_user.id,
+      permission: target_selectedPermissions.map((perm) => perm.id),
+      role_id: target_roleId,
     };
 
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
-        const new_user = response.data.data.user;
-        localStorage.setItem("user", JSON.stringify(new_user));
-        setUser(new_user as IUser);
-        navigate("/profile");
+        const new_user = response.data.data.user as IUser;
+
+        if (new_user.id == user.id) {
+          localStorage.setItem("user", JSON.stringify(new_user));
+          setGrantedPermissions(new_user.permission);
+          setUser(new_user);
+        }
+        navigate("/profile"); // todo update w pure url
       })
       .catch((e) => setError(e));
   };
 
+  React.useEffect(() => {
+    fetchRoles();
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-      <h1 className="text-4xl font-light mb-4">Edit Info: {target_name}</h1>
+      <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
-        {/* Primary info */}
         <div className="space-y-2">
-          <h1 className="text-2xl mb-4">Primary Info</h1>
           <div className="flex space-x-4">
             <div className="w-1/2">
-              <label className="block text-sm mb-2">Name</label>
+              <label className="block font-semibold text-sm mb-2 ">Name</label>
               <input
                 type="name"
                 name="name"
@@ -240,21 +296,12 @@ export default function EditMember() {
                 className="border p-2 rounded w-full"
               />
             </div>
-            {/* <div className="w-1/2">
-              <label className="block text-sm mb-2">Username</label>
-              <input
-                type="username"
-                name="username"
-                value={username}
-                onChange={(e) => dispatch({ type: ActionType.UpdateUsername, payload: e.target.value })}
-                placeholder="Username"
-                className="border p-2 rounded w-full"
-              />
-            </div> */}
           </div>
 
-          <div>
-            <label className="block text-sm mb-2">Email Address</label>
+          <div className="w-1/2">
+            <label className="block font-semibold text-sm mb-2">
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
@@ -270,7 +317,9 @@ export default function EditMember() {
             />
           </div>
           <div>
-            <label className="block text-sm mb-2">About You</label>
+            <label className="block text-sm font-semibold mb-2">
+              About You
+            </label>
             <textarea
               name="about"
               value={target_bio}
@@ -284,77 +333,41 @@ export default function EditMember() {
               className="border p-2 rounded w-full"
             />
           </div>
-        </div>
-
-        <div className="space-y-2">
-          {/* <h1 className="text-2xl mb-4">Social Info</h1>
           <div>
-            <label className="block text-sm mb-2">LinkedIn</label>
+            <label className="block text-sm font-semibold mb-2">
+              Profile picture
+            </label>
             <input
-              type="text"
-              name="linkedin"
-              value={linkedin}
-              onChange={handleInputChange}
-              placeholder="LinkedIn"
-              className="border p-2 rounded w-full"
+              type="file"
+              id="blog-image"
+              accept="image/png, image/jpeg, image/jpg"
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.SetProfilePicture,
+                  payload: e.target.files[0],
+                })
+              }
+              className="border p-2 rounded"
             />
           </div>
-          <div>
-            <label className="block text-sm mb-2">Instagram</label>
-            <input
-              type="text"
-              name="instagram"
-              value={instagram}
-              onChange={handleInputChange}
-              placeholder="Instagram"
-              className="border p-2 rounded w-full"
+          {profilePicture ? (
+            <AvatarImage
+              className="max-w-md max-h-md"
+              user_id={profilePicture}
+              thumbnail={true}
+              alt={profilePicture}
             />
-          </div>
-          <div>
-            <label className="block text-sm mb-2">Facebook</label>
-            <input
-              type="text"
-              name="facebook"
-              value={facebook}
-              onChange={handleInputChange}
-              placeholder="Facebook"
-              className="border p-2 rounded w-full"
-            />
-          </div> */}
+          ) : (
+            <></>
+          )}
         </div>
 
-        <div>
-          <label className="text-sm mr-8">Profile picture</label>
-          <input
-            type="file"
-            id="blog-image"
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={(e) =>
-              dispatch({
-                type: ActionType.SetProfilePicture,
-                payload: e.target.files[0],
-              })
-            }
-            className="border p-2 rounded"
-          />
-        </div>
-        {profilePicture ? (
-          <AvatarImage
-            className="max-w-md max-h-md"
-            user_id={profilePicture}
-            thumbnail={true}
-            alt={profilePicture}
-          />
-        ) : (
-          <></>
-        )}
-
-        <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
-        {/* Password */}
         <div className="relative">
-          <h1 className="text-2xl mb-4">Update Password</h1>
-          <div className="relative">
-            <label className="text-sm mr-8">New Password</label>
+          <h1 className="text-2xl text-left mb-4">Update Password</h1>
+          <div className="relative w-1/2">
+            <label className="block text-sm font-semibold mb-2">
+              New Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               name="newPassword"
@@ -370,7 +383,12 @@ export default function EditMember() {
             />
             <div
               className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
-              onClick={setShowPassHandler}
+              onClick={(e) =>
+                dispatch({
+                  type: ActionType.ToggleShowPassword,
+                  payload: !showPassword,
+                })
+              }
             >
               <img
                 src={showPassIcon}
@@ -379,8 +397,10 @@ export default function EditMember() {
               />
             </div>
           </div>
-          <div className="relative">
-            <label className="text-sm mr-8">Confirm Password</label>
+          <div className="relative w-1/2">
+            <label className="block text-sm font-semibold mb-2">
+              Confirm Password
+            </label>
             <input
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
@@ -396,7 +416,12 @@ export default function EditMember() {
             />
             <div
               className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
-              onClick={setShowConfirmPassHandler}
+              onClick={(e) =>
+                dispatch({
+                  type: ActionType.ToggleShowConfirmPassword,
+                  payload: !showPassword,
+                })
+              }
             >
               <img
                 src={showPassIcon}
@@ -409,6 +434,43 @@ export default function EditMember() {
             You can enter the same password or update your password.
           </small>
         </div>
+        <PermissionProtector permission={[Permission.UpdateRole]} silent={true}>
+          <div className="flex flex-col">
+            <h1 className="text-2xl text-left font-medium leading-none my-6">
+              Update Role and Permissions
+            </h1>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">Role</label>
+              <div className="w-1/2">
+                <MyMultiselect
+                  options={rolesList.map((role) => ({
+                    name: role.role_name,
+                    id: role.role_id,
+                    permissions: role.permissions,
+                  }))}
+                  selectedOptions={[target_user.role]}
+                  onSelectionChange={handleRoleNameChange}
+                  isSingleSelect={true}
+                />
+              </div>
+            </div>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">
+                Permissions
+              </label>
+              <fieldset className="flex flex-col">
+                <MyMultiselect
+                  options={Object.keys(Permission)
+                    .filter((perm) => !isNaN(Number(perm)))
+                    .map((key) => ({ name: Permission[key], id: key }))}
+                  selectedOptions={target_selectedPermissions}
+                  onSelectionChange={handlePermissionChange}
+                  isSingleSelect={false}
+                />
+              </fieldset>
+            </div>
+          </div>
+        </PermissionProtector>
 
         <button
           type="submit"
