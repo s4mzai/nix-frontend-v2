@@ -50,6 +50,13 @@ const routeMap: CustomRouteElement[] = [
     icon: <DashIcon />,
   },
   {
+    path: "profile/",
+    element: <MemberProfile />,
+    icon: <MemberIcon />,
+    permission: [],
+    label: "Profile",
+  },
+  {
     path: "story/",
     element: (
       <>
@@ -186,7 +193,7 @@ const routeMap: CustomRouteElement[] = [
         label: "Add Member",
       },
       {
-        path: ":memberId/edit-details/",
+        path: "edit-details/:id",
         element: <EditMember />,
         permission: [Permission.UpdateProfile],
         label: "Edit Details",
@@ -220,13 +227,6 @@ const routeMap: CustomRouteElement[] = [
     icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
-  },
-  {
-    path: "profile/",
-    element: <MemberProfile />,
-    icon: <MemberIcon />,
-    permission: [],
-    label: "Profile",
   },
 ];
 
