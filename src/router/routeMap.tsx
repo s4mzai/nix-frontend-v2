@@ -23,10 +23,10 @@ const YourStories = React.lazy(() => import("@/pages/Story/YourStories"));
 const PendingStories = React.lazy(() => import("@/pages/Story/PendingStories"));
 const ReadStory = React.lazy(() => import("@/pages/Story/ReadStory"));
 const PublishedStories = React.lazy(
-  () => import("@/pages/Story/PublishedStories")
+  () => import("@/pages/Story/PublishedStories"),
 );
 const ApprovedStories = React.lazy(
-  () => import("@/pages/Story/ApprovedStories")
+  () => import("@/pages/Story/ApprovedStories"),
 );
 const AllRoles = React.lazy(() => import("@/pages/Roles/AllRoles"));
 const NewRole = React.lazy(() => import("@/pages/Roles/NewRole"));
