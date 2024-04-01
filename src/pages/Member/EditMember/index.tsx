@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import API from "@/services/API";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import MyMultiselect from "@/components/MultiSelect";
 import Permission from "@/types/permissions";
 import { Role } from "@/types/role";
 import { PermissionProtector } from "@/components/PermissionProtector";
+
 
 interface PermissionItem {
   name: string;
@@ -30,6 +31,7 @@ interface EditMemberState {
   target_selectedPermissions: PermissionItem[];
   rolesList: Role[];
   target_roleId: string;
+  target_roleName: string;
   loading: boolean;
 }
 
@@ -45,6 +47,7 @@ enum ActionType {
   SetProfilePicture,
   setSelectedPermissions,
   setRoleId,
+  setRoleName,
   setRolesList,
   setLoading,
 }
@@ -54,23 +57,22 @@ export default function EditMember() {
   const { user, setUser, setGrantedPermissions } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
   const toastId = React.useRef(null);
+  const { id } = useParams<{ id: string }>();
 
   const target_user = user; //todo
 
   const initialState: EditMemberState = {
-    target_name: target_user.name,
-    target_email: target_user.email,
-    target_bio: target_user.bio || "",
+    target_name: null,
+    target_email: "",
+    target_bio: "",
     newPassword: "",
     confirmPassword: "",
     profilePicture: null,
     showPassword: false,
     showConfirmPassword: false,
-    target_selectedPermissions: target_user.permission.map((index) => ({
-      name: Permission[index],
-      id: index,
-    })),
+    target_selectedPermissions: [],
     target_roleId: "",
+    target_roleName: "",
     rolesList: [],
     loading: true,
   };
@@ -96,6 +98,7 @@ export default function EditMember() {
       })),
     });
     dispatch({ type: ActionType.setRoleId, payload: roleData.id });
+    dispatch({ type: ActionType.setRoleName, payload: roleData.name});
   };
 
   const reducer = (
@@ -185,6 +188,9 @@ export default function EditMember() {
       case ActionType.setRolesList:
         updatedData.rolesList = action.payload;
         break;
+      case ActionType.setRoleName:
+        updatedData.target_roleName = action.payload;
+        break;
       case ActionType.setLoading:
         updatedData.loading = action.payload;
         break;
@@ -213,6 +219,7 @@ export default function EditMember() {
     showConfirmPassword,
     rolesList,
     target_roleId,
+    target_roleName,
     target_selectedPermissions,
   } = state;
 
@@ -249,7 +256,7 @@ export default function EditMember() {
       target_email: target_email,
       target_bio: target_bio,
       password: newPassword === "" ? undefined : newPassword,
-      target_user_id: target_user.id,
+      target_user_id: id,
       permission: target_selectedPermissions.map((perm) => perm.id),
       role_id: target_roleId,
     };
@@ -269,8 +276,35 @@ export default function EditMember() {
       .catch((e) => setError(e));
   };
 
+  const fetchTargetUser = () => {
+    if (id) {
+      API.get(`/user/get-user/${id}`)
+        .then((response) => {
+          console.log(response.data.data);
+          const userData = response.data.data;
+          dispatch({ type: ActionType.UpdateName, payload: userData.name });
+          dispatch({ type: ActionType.UpdateName, payload: userData.name });
+          dispatch({ type: ActionType.UpdateEmail, payload: userData.email });
+          dispatch({ type: ActionType.UpdateBio, payload: userData.bio || "" });
+          dispatch({
+            type: ActionType.setSelectedPermissions,
+            payload: userData.permission.map((index) => ({
+              name: Permission[index],
+              id: index,
+            })),
+          });
+          dispatch({ type: ActionType.setRoleId, payload: userData.role_id });
+          dispatch({ type: ActionType.setRoleName, payload: userData.role });
+        })
+        .catch((e) => {
+          setError(e);
+        });
+    }
+  };
+
   React.useEffect(() => {
     fetchRoles();
+    fetchTargetUser();
   }, []);
 
   return (
@@ -448,7 +482,13 @@ export default function EditMember() {
                     id: role.role_id,
                     permissions: role.permissions,
                   }))}
-                  selectedOptions={[target_user.role]}
+                  selectedOptions={[
+                    {
+                      name: target_roleName,
+                      id: target_roleId,
+                      permissions: target_selectedPermissions,
+                    },
+                  ]}
                   onSelectionChange={handleRoleNameChange}
                   isSingleSelect={true}
                 />
