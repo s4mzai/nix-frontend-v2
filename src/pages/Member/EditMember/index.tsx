@@ -280,7 +280,6 @@ export default function EditMember() {
     if (id) {
       API.get(`/user/get-user/${id}`)
         .then((response) => {
-          console.log(response.data.data);
           const userData = response.data.data;
           dispatch({ type: ActionType.UpdateName, payload: userData.name });
           dispatch({ type: ActionType.UpdateName, payload: userData.name });
