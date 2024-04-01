@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        "id-back": "url('@/assets/id_back.jpg')"
+        "id-back": "url('@/assets/id_back.jpg')",
       },
       colors: {
         "brand-blue": "#0c598a",
@@ -13,7 +13,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require('tailwind-scrollbar'),
-  ],
+  plugins: [require("tailwind-scrollbar")],
 };
