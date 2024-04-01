@@ -4,11 +4,10 @@ export default function UserCard({ name, email, role, avatar }) {
   return (
     <div id="container" className="mx-auto ">
       <div className="flex flex-col sm:flex-row">
-        <div className="p-2">
-          <div className="w-60 flex flex-col justify-between h-[350px] hover:shadow-xl bg-white px-10 py-8 rounded-lg shadow text-center">
+          <div className="w-60 h-80 hover:shadow-xl bg-white px-10 py-8 flex flex-col justify-around rounded-lg shadow text-center">
             <div className="mb-3">
               <AvatarImage
-                className="w-[105px] h-[105px] mx-auto rounded-full object-cover"
+                className="mx-auto rounded-full object-cover w-20 h-20"
                 user_id={avatar}
                 thumbnail={true}
                 alt={name}
