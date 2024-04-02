@@ -114,7 +114,13 @@ export default function AllMembers() {
       1,
       currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
     );
-    let endIndex = currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2);
+    let endIndex = Math.min(
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
+      totalPages,
+    );
 
     if (startIndex < 1) {
       endIndex -= startIndex - 1;
@@ -129,6 +135,7 @@ export default function AllMembers() {
       { length: endIndex - startIndex + 1 },
       (_, index) => startIndex + index,
     );
+    console.log(startIndex, pages);
     return (
       <div className="flex justify-center items-center space-x-2 mt-8">
         <button
