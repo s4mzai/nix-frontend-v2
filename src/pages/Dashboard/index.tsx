@@ -135,7 +135,7 @@ export default function Dashbboard() {
             available to DTU Times.
           </p>
           <Link
-            to={`/member/${user.id}/edit-details`}
+            to={`/member/edit-details/${user.id}`}
             className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
           >
             Edit Details

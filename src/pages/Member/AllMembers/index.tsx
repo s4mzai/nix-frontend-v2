@@ -38,6 +38,7 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetSelectedCategory:
       updatedData.selectedCategory = action.payload;
@@ -79,18 +80,18 @@ export default function AllMembers() {
 
   //filter members based on search term
 
-  const indexOfLastMember = state.currentPage * state.perPage;
-  const indexOfFirstMember = indexOfLastMember - state.perPage;
-  const paginatedMembers = membersList.slice(
-    indexOfFirstMember,
-    indexOfLastMember,
-  );
-
-  const filteredMembers = paginatedMembers.filter((member) => {
+  const filteredMembers = membersList.filter((member) => {
     const category = member[selectedCategory.toLowerCase()];
     const categoryValue = category ? category.toString().toLowerCase() : "";
     return categoryValue.includes(searchTerm.toLowerCase());
   });
+
+  const indexOfLastMember = state.currentPage * state.perPage;
+  const indexOfFirstMember = indexOfLastMember - state.perPage;
+  const paginatedMembers = filteredMembers.slice(
+    indexOfFirstMember,
+    indexOfLastMember,
+  );
 
   if (loading)
     return (
@@ -100,17 +101,26 @@ export default function AllMembers() {
     );
   function Pagination() {
     const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(membersList.length / perPage);
+    const totalPages = Math.ceil(filteredMembers.length / perPage);
 
     const handlePageChange = (newPage: number) => {
       dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
     };
 
     const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
     const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2);
-    let endIndex = currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2);
+    let startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
+    let endIndex = Math.min(
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
+      totalPages,
+    );
 
     if (startIndex < 1) {
       endIndex -= startIndex - 1;
@@ -125,6 +135,7 @@ export default function AllMembers() {
       { length: endIndex - startIndex + 1 },
       (_, index) => startIndex + index,
     );
+    console.log(startIndex, pages);
     return (
       <div className="flex justify-center items-center space-x-2 mt-8">
         <button
@@ -187,7 +198,7 @@ export default function AllMembers() {
       </div>
 
       <div className="w-full  gap-4 flex-wrap flex justify-center items-center">
-        {filteredMembers.map((member) => (
+        {paginatedMembers.map((member) => (
           <div key={member.id}>
             <UserCard
               name={member.name}
