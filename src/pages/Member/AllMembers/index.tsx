@@ -38,6 +38,7 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetSelectedCategory:
       updatedData.selectedCategory = action.payload;
@@ -79,18 +80,18 @@ export default function AllMembers() {
 
   //filter members based on search term
 
-  const indexOfLastMember = state.currentPage * state.perPage;
-  const indexOfFirstMember = indexOfLastMember - state.perPage;
-  const paginatedMembers = membersList.slice(
-    indexOfFirstMember,
-    indexOfLastMember,
-  );
-
-  const filteredMembers = paginatedMembers.filter((member) => {
+  const filteredMembers = membersList.filter((member) => {
     const category = member[selectedCategory.toLowerCase()];
     const categoryValue = category ? category.toString().toLowerCase() : "";
     return categoryValue.includes(searchTerm.toLowerCase());
   });
+
+  const indexOfLastMember = state.currentPage * state.perPage;
+  const indexOfFirstMember = indexOfLastMember - state.perPage;
+  const paginatedMembers = filteredMembers.slice(
+    indexOfFirstMember,
+    indexOfLastMember,
+  );
 
   if (loading)
     return (
@@ -100,7 +101,7 @@ export default function AllMembers() {
     );
   function Pagination() {
     const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(membersList.length / perPage);
+    const totalPages = Math.ceil(filteredMembers.length / perPage);
 
     const handlePageChange = (newPage: number) => {
       dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
@@ -187,7 +188,7 @@ export default function AllMembers() {
       </div>
 
       <div className="w-full  gap-4 flex-wrap flex justify-center items-center">
-        {filteredMembers.map((member) => (
+        {paginatedMembers.map((member) => (
           <div key={member.id}>
             <UserCard
               name={member.name}
