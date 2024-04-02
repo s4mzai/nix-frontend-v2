@@ -17,6 +17,7 @@ import "./index.css";
 import { NixImage } from "@/components/NixImage";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import Permission from "@/types/permissions";
+import { CurrUserCtx } from "@/contexts/current_user";
 
 interface ReadStoryState {
   showDTPicker: boolean;
@@ -72,6 +73,7 @@ const reducer = (
 };
 
 export default function ReadStory() {
+  const { user } = useContext(CurrUserCtx);
   const location = useLocation();
   const navigate = useNavigate();
   const { blogId } = useParams();
@@ -119,6 +121,41 @@ export default function ReadStory() {
           navigate("/story/pending-stories");
         })
         .catch((e) => setError(e));
+    }
+  };
+
+  const handleArchive = () => {
+    //archive is same as takedown dw
+    const choice = window.confirm(
+      "Are you sure you want to archive this story?",
+    );
+    if (choice) {
+      const archiveEndPoint = `/blog/take-down-blog/${blog._id}`;
+
+      API.put(archiveEndPoint)
+        .then(() => {
+          toast.success("Successfully archived");
+          navigate("/story/published-stories");
+        })
+        .catch((e) => setError(e));
+      console.debug("story archived");
+    }
+  };
+
+  const handleDelete = () => {
+    const choice = window.confirm(
+      "Are you sure you want to delete this story?",
+    );
+    if (choice) {
+      const deleteEndPoint = `/blog/delete-blog/${blog._id}`;
+
+      API.delete(deleteEndPoint)
+        .then(() => {
+          toast.success("Successfully deleted");
+          navigate("/story/your-stories");
+        })
+        .catch((e) => setError(e));
+      console.debug("story deleted");
     }
   };
 
@@ -204,63 +241,107 @@ export default function ReadStory() {
           {parse(blog.body)}{" "}
         </div>
       </div>
+      <div className="mt-4">
+        <PermissionProtector
+          permission={[Permission.PublishBlog]}
+          silent={true}
+        >
+          {blog.status === BlogStatus.Pending && (
+            <div>
+              <button
+                onClick={handlePublishNow}
+                type="button"
+                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+              >
+                Publish Now
+              </button>
+              <button
+                onClick={() =>
+                  dispatch({ type: ActionType.SetShowDTPicker, payload: true })
+                }
+                type="button"
+                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+              >
+                Publish Later
+              </button>
+              <button
+                onClick={handleSaveToDraft}
+                type="button"
+                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+              >
+                Save Back to Draft
+              </button>
 
-      <PermissionProtector permission={[Permission.PublishBlog]} silent={true}>
-        {blog.status === BlogStatus.Pending && (
-          <div>
-            <button
-              onClick={handlePublishNow}
-              type="button"
-              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-            >
-              Publish Now
-            </button>
-            <button
-              onClick={() =>
-                dispatch({ type: ActionType.SetShowDTPicker, payload: true })
-              }
-              type="button"
-              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-            >
-              Publish Later
-            </button>
-            <button
-              onClick={handleSaveToDraft}
-              type="button"
-              className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-            >
-              Save Back to Draft
-            </button>
-
-            {showDTPicker && (
-              <div className="m-2">
-                <label
-                  htmlFor="datetime"
-                  className="text-md font-medium text-gray-900 "
-                >
-                  Choose when to publish :
-                </label>
-                <input
-                  type="datetime-local"
-                  id="datetime"
-                  placeholder="YYYY-MM-DD"
-                  value={selectedDateTime}
-                  min={getLocalDateTime()}
-                  onChange={handleDateTimeChange}
-                  className="m-2 border rounded-md px-2 py-1"
-                />
+              {showDTPicker && (
+                <div className="m-2">
+                  <label
+                    htmlFor="datetime"
+                    className="text-md font-medium text-gray-900 "
+                  >
+                    Choose when to publish :
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="datetime"
+                    placeholder="YYYY-MM-DD"
+                    value={selectedDateTime}
+                    min={getLocalDateTime()}
+                    onChange={handleDateTimeChange}
+                    className="m-2 border rounded-md px-2 py-1"
+                  />
+                  <button
+                    onClick={handlePublishLater}
+                    type="button"
+                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  >
+                    Confirm Choice
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </PermissionProtector>
+        {blog.status !== BlogStatus.Draft ? (
+          <PermissionProtector
+            permission={[Permission.DeleteBlog]}
+            silent={true}
+          >
+            {blog.status === BlogStatus.Approved ||
+            blog.status === BlogStatus.Published ? (
+              <div>
                 <button
-                  onClick={handlePublishLater}
+                  onClick={handleDelete}
+                  type="button"
+                  className="py-1 px-2 me-2 m-1 text-xs font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                >
+                  Delete Blog
+                </button>
+                <button
+                  onClick={handleArchive}
                   type="button"
                   className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
                 >
-                  Confirm Choice
+                  Publish Now
                 </button>
               </div>
+            ) : (
+              <></>
             )}
+          </PermissionProtector>
+        ) : blog.user.id === user.id ? (
+          <div>
+            <button
+              onClick={handleDelete}
+              type="button"
+              className="py-1 px-2 me-2 m-1 text-xs font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+            >
+              Delete Blog
+            </button>
           </div>
+        ) : (
+          <></>
         )}
-      </PermissionProtector>
+      </div>
     </div>
   );
 }
