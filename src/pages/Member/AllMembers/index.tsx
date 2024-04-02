@@ -110,7 +110,10 @@ export default function AllMembers() {
     const isFirstPage = currentPage === 1;
     const isLastPage = currentPage === totalPages;
     const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2);
+    let startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
     let endIndex = currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2);
 
     if (startIndex < 1) {
