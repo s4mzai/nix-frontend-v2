@@ -1,5 +1,6 @@
+/* eslint-disable prettier/prettier */
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import API from "@/services/API";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { toast } from "react-toastify";
@@ -8,21 +9,30 @@ import React from "react";
 import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
 import { IUser } from "@/types/contextTypes";
+import MyMultiselect from "@/components/MultiSelect";
+import Permission from "@/types/permissions";
+import { Role } from "@/types/role";
+import { PermissionProtector } from "@/components/PermissionProtector";
+
+interface PermissionItem {
+  name: string;
+  id: Permission;
+}
 
 interface EditMemberState {
   target_name: string;
   target_email: string;
   target_bio: string;
-  // linkedin: string;
-  // website: string;
-  // facebook: string;
-  // instagram: string,
   newPassword: string;
   confirmPassword: string;
-  // username: string,
   profilePicture: string | null;
   showPassword: boolean;
   showConfirmPassword: boolean;
+  target_selectedPermissions: PermissionItem[];
+  rolesList: Role[];
+  target_roleId: string;
+  target_roleName: string;
+  loading: boolean;
 }
 
 enum ActionType {
@@ -31,38 +41,62 @@ enum ActionType {
   UpdateName,
   UpdateEmail,
   UpdateBio,
-  // UpdateUsername,
-  // UpdateLinkedin,
-  // UpdateWebsite,
-  // UpdateFacebook,
-  // UpdateInstagram,
   UpdatePassword,
   UpdateConfirmPassword,
   UpdateProfilePictureLink,
   SetProfilePicture,
+  setSelectedPermissions,
+  setRoleId,
+  setRoleName,
+  setRolesList,
+  setLoading,
 }
 
 export default function EditMember() {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(CurrUserCtx);
+  const { user, setUser, setGrantedPermissions } = useContext(CurrUserCtx);
   const { setError } = useContext(ErrorContext);
   const toastId = React.useRef(null);
-  
+  const { id } = useParams<{ id: string }>();
 
   const initialState: EditMemberState = {
-    target_name: user.name,
-    target_email: user.email,
-    target_bio: user.bio || "",
-    // linkedin: "",
-    // website: "",
-    // facebook: "",
-    // instagram: "",
+    target_name: null,
+    target_email: "",
+    target_bio: "",
     newPassword: "",
     confirmPassword: "",
-    // username: "",
     profilePicture: null,
     showPassword: false,
     showConfirmPassword: false,
+    target_selectedPermissions: [],
+    target_roleId: "",
+    target_roleName: "",
+    rolesList: [],
+    loading: true,
+  };
+
+  const handlePermissionChange = (selectedItems) => {
+    const selectedPermissionsWithIntIds = selectedItems.map((permission) => ({
+      ...permission,
+      id: parseInt(permission.id),
+    }));
+    dispatch({
+      type: ActionType.setSelectedPermissions,
+      payload: selectedPermissionsWithIntIds,
+    });
+  };
+
+  const handleRoleNameChange = (e) => {
+    const roleData = e[0];
+    dispatch({
+      type: ActionType.setSelectedPermissions,
+      payload: roleData.permissions.map((index) => ({
+        name: Permission[index],
+        id: index,
+      })),
+    });
+    dispatch({ type: ActionType.setRoleId, payload: roleData.id });
+    dispatch({ type: ActionType.setRoleName, payload: roleData.name });
   };
 
   const reducer = (
@@ -143,6 +177,22 @@ export default function EditMember() {
           }
         }
         break;
+      case ActionType.setSelectedPermissions:
+        updatedData.target_selectedPermissions = action.payload;
+        break;
+      case ActionType.setRoleId:
+        updatedData.target_roleId = action.payload;
+        break;
+      case ActionType.setRolesList:
+        updatedData.rolesList = action.payload;
+        break;
+      case ActionType.setRoleName:
+        updatedData.target_roleName = action.payload;
+        break;
+      case ActionType.setLoading:
+        updatedData.loading = action.payload;
+        break;
+
       default:
         return updatedData;
     }
@@ -155,34 +205,16 @@ export default function EditMember() {
     target_name,
     target_email,
     target_bio,
-    // linkedin,
-    // website,
-    // facebook,
-    // instagram,
     newPassword,
     confirmPassword,
-    // username,
     profilePicture,
     showPassword,
     showConfirmPassword,
+    rolesList,
+    target_roleId,
+    target_roleName,
+    target_selectedPermissions,
   } = state;
-
-  const setShowPassHandler = () => {
-    dispatch({ type: ActionType.ToggleShowPassword, payload: !showPassword });
-  };
-
-  const setShowConfirmPassHandler = () => {
-    dispatch({
-      type: ActionType.ToggleShowConfirmPassword,
-      payload: !showConfirmPassword,
-    });
-  };
-
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-  //   // Update the state with the selected file
-  //   setFormData((prevData) => ({ ...prevData, profilePicture: file }));
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -200,33 +232,93 @@ export default function EditMember() {
       target_email: target_email,
       target_bio: target_bio,
       password: newPassword === "" ? undefined : newPassword,
-      user_id: user.id,
-      target_user_id: user.id,
+      target_user_id: id,
+      permission: target_selectedPermissions.map((perm) => perm.id),
+      role_id: target_roleId,
     };
 
     API.put(endPoint, requestData)
       .then((response) => {
         toast.success("Successfully updated");
-        const new_user = response.data.data.user;
-        localStorage.setItem("user", JSON.stringify(new_user));
-        setUser(new_user as IUser);
-        navigate("/profile");
+        const new_user = response.data.data.user as IUser;
+
+        if (new_user.id == user.id) {
+          localStorage.setItem("user", JSON.stringify(new_user));
+          setGrantedPermissions(new_user.permission);
+          setUser(new_user);
+        }
+        navigate("/profile"); // todo update w pure url
       })
       .catch((e) => setError(e));
   };
 
+  const fetchRoles = () => {
+    const rolesEndpoint = "/role";
+
+    return API.get(rolesEndpoint).then((rolesResponse) => {
+      dispatch({
+        type: ActionType.setRolesList,
+        payload: rolesResponse.data.data,
+      });
+    });
+  };
+
+  const fetchTargetUser = () => {
+    if (id) {
+      return API.get(`/user/get-user/${id}`).then((response) => {
+        const userData = response.data.data;
+        dispatch({ type: ActionType.UpdateName, payload: userData.name });
+        dispatch({ type: ActionType.UpdateName, payload: userData.name });
+        dispatch({ type: ActionType.UpdateEmail, payload: userData.email });
+        dispatch({ type: ActionType.UpdateBio, payload: userData.bio || "" });
+        dispatch({
+          type: ActionType.setSelectedPermissions,
+          payload: userData.permission.map((index) => ({
+            name: Permission[index],
+            id: index,
+          })),
+        });
+        dispatch({ type: ActionType.setRoleId, payload: userData.role_id });
+        dispatch({ type: ActionType.setRoleName, payload: userData.role });
+        dispatch({type: ActionType.UpdateProfilePictureLink, payload: userData.id})
+      });
+    } //TODO handle if no id present
+  };
+
+  React.useEffect(() => {
+    Promise.all([fetchRoles(), fetchTargetUser()])
+      .then(() => {
+        dispatch({ type: ActionType.setLoading, payload: false });
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-      <h1 className="text-4xl font-light mb-4">Edit Info: {target_name}</h1>
+      <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
-        {/* Primary info */}
         <div className="space-y-2">
-          <h1 className="text-2xl mb-4">Primary Info</h1>
+          {/* //todo make this to the right of name and username */}
+        {profilePicture ? (
+          <div className="flex items-center justify-center ">
+            <AvatarImage
+              className="h-36 w-36 rounded-full"
+              user_id={profilePicture}
+              thumbnail={true}
+              alt={profilePicture}
+            />
+            </div>
+          ) : (
+            <></>
+          )}
           <div className="flex space-x-4">
             <div className="w-1/2">
-              <label className="block text-sm mb-2">Name</label>
+              <label className="block font-semibold text-sm mb-2 ">Name</label>
               <input
+                disabled={id !== user.id}
                 type="name"
                 name="name"
                 value={target_name}
@@ -240,22 +332,14 @@ export default function EditMember() {
                 className="border p-2 rounded w-full"
               />
             </div>
-            {/* <div className="w-1/2">
-              <label className="block text-sm mb-2">Username</label>
-              <input
-                type="username"
-                name="username"
-                value={username}
-                onChange={(e) => dispatch({ type: ActionType.UpdateUsername, payload: e.target.value })}
-                placeholder="Username"
-                className="border p-2 rounded w-full"
-              />
-            </div> */}
           </div>
 
-          <div>
-            <label className="block text-sm mb-2">Email Address</label>
+          <div className="w-1/2">
+            <label className="block font-semibold text-sm mb-2">
+              Email Address
+            </label>
             <input
+              disabled={id !== user.id}
               type="email"
               name="email"
               value={target_email}
@@ -270,8 +354,11 @@ export default function EditMember() {
             />
           </div>
           <div>
-            <label className="block text-sm mb-2">About You</label>
+            <label className="block text-sm font-semibold mb-2">
+              About You
+            </label>
             <textarea
+              disabled={id !== user.id}
               name="about"
               value={target_bio}
               onChange={(e) =>
@@ -284,139 +371,159 @@ export default function EditMember() {
               className="border p-2 rounded w-full"
             />
           </div>
-        </div>
-
-        <div className="space-y-2">
-          {/* <h1 className="text-2xl mb-4">Social Info</h1>
           <div>
-            <label className="block text-sm mb-2">LinkedIn</label>
+            <label className="block text-sm font-semibold mb-2">
+              Profile picture
+            </label>
             <input
-              type="text"
-              name="linkedin"
-              value={linkedin}
-              onChange={handleInputChange}
-              placeholder="LinkedIn"
-              className="border p-2 rounded w-full"
+              disabled={id !== user.id}
+              type="file"
+              id="blog-image"
+              accept="image/png, image/jpeg, image/jpg"
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.SetProfilePicture,
+                  payload: e.target.files[0],
+                })
+              }
+              className="border p-2 rounded"
             />
           </div>
-          <div>
-            <label className="block text-sm mb-2">Instagram</label>
-            <input
-              type="text"
-              name="instagram"
-              value={instagram}
-              onChange={handleInputChange}
-              placeholder="Instagram"
-              className="border p-2 rounded w-full"
-            />
+          
+        </div>
+        {id === user.id && (
+          <div className="relative">
+            <h1 className="text-2xl text-left mb-4">Update Password</h1>
+            <div className="relative w-1/2">
+              <label className="block text-sm font-semibold mb-2">
+                New Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="newPassword"
+                value={newPassword}
+                onChange={(e) =>
+                  dispatch({
+                    type: ActionType.UpdatePassword,
+                    payload: e.target.value,
+                  })
+                }
+                placeholder="New Password"
+                className="border p-2 rounded w-full mb-2"
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
+                onClick={(e) =>
+                  dispatch({
+                    type: ActionType.ToggleShowPassword,
+                    payload: !showPassword,
+                  })
+                }
+              >
+                <img
+                  src={showPassIcon}
+                  alt="toggle password visibility"
+                  className="w-6 h-6"
+                />
+              </div>
+            </div>
+            <div className="relative w-1/2">
+              <label className="block text-sm font-semibold mb-2">
+                Confirm Password
+              </label>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) =>
+                  dispatch({
+                    type: ActionType.UpdateConfirmPassword,
+                    payload: e.target.value,
+                  })
+                }
+                placeholder="Confirm Password"
+                className="border p-2 rounded w-full"
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
+                onClick={(e) =>
+                  dispatch({
+                    type: ActionType.ToggleShowConfirmPassword,
+                    payload: !showPassword,
+                  })
+                }
+              >
+                <img
+                  src={showPassIcon}
+                  alt="toggle password visibility"
+                  className="w-6 h-6"
+                />
+              </div>
+            </div>
+            <small className="block text-xs mt-2 text-slate-500">
+              You can enter the same password or update your password.
+            </small>
           </div>
-          <div>
-            <label className="block text-sm mb-2">Facebook</label>
-            <input
-              type="text"
-              name="facebook"
-              value={facebook}
-              onChange={handleInputChange}
-              placeholder="Facebook"
-              className="border p-2 rounded w-full"
-            />
-          </div> */}
-        </div>
-
-        <div>
-          <label className="text-sm mr-8">Profile picture</label>
-          <input
-            type="file"
-            id="blog-image"
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={(e) =>
-              dispatch({
-                type: ActionType.SetProfilePicture,
-                payload: e.target.files[0],
-              })
-            }
-            className="border p-2 rounded"
-          />
-        </div>
-        {profilePicture ? (
-          <AvatarImage
-            className="max-w-md max-h-md"
-            user_id={profilePicture}
-            thumbnail={true}
-            alt={profilePicture}
-          />
-        ) : (
-          <></>
         )}
-
-        <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
-        {/* Password */}
-        <div className="relative">
-          <h1 className="text-2xl mb-4">Update Password</h1>
-          <div className="relative">
-            <label className="text-sm mr-8">New Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="newPassword"
-              value={newPassword}
-              onChange={(e) =>
-                dispatch({
-                  type: ActionType.UpdatePassword,
-                  payload: e.target.value,
-                })
-              }
-              placeholder="New Password"
-              className="border p-2 rounded w-full mb-2"
-            />
-            <div
-              className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
-              onClick={setShowPassHandler}
-            >
-              <img
-                src={showPassIcon}
-                alt="toggle password visibility"
-                className="w-6 h-6"
-              />
+        <PermissionProtector permission={[Permission.UpdateRole]} silent={true}>
+          <div className="flex flex-col">
+            <h1 className="text-2xl text-left font-medium leading-none my-6">
+              Update Role and Permissions
+            </h1>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">Role</label>
+              <div className="w-1/2">
+                <MyMultiselect
+                  options={rolesList.map((role) => ({
+                    name: role.role_name,
+                    id: role.role_id,
+                    permissions: role.permissions,
+                  }))}
+                  selectedOptions={[
+                    {
+                      name: target_roleName,
+                      id: target_roleId,
+                      permissions: target_selectedPermissions,
+                    },
+                  ]}
+                  onSelectionChange={handleRoleNameChange}
+                  isSingleSelect={true}
+                />
+              </div>
+            </div>
+            <div className="my-2">
+              <label className="block text-sm font-semibold mb-2">
+                Permissions
+              </label>
+              <fieldset className="flex flex-col">
+                <MyMultiselect
+                  options={Object.keys(Permission)
+                    .filter((perm) => !isNaN(Number(perm)))
+                    .map((key) => ({ name: Permission[key], id: key }))}
+                  selectedOptions={target_selectedPermissions}
+                  onSelectionChange={handlePermissionChange}
+                  isSingleSelect={false}
+                />
+              </fieldset>
             </div>
           </div>
-          <div className="relative">
-            <label className="text-sm mr-8">Confirm Password</label>
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) =>
-                dispatch({
-                  type: ActionType.UpdateConfirmPassword,
-                  payload: e.target.value,
-                })
-              }
-              placeholder="Confirm Password"
-              className="border p-2 rounded w-full"
-            />
-            <div
-              className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
-              onClick={setShowConfirmPassHandler}
-            >
-              <img
-                src={showPassIcon}
-                alt="toggle password visibility"
-                className="w-6 h-6"
-              />
-            </div>
-          </div>
-          <small className="block text-xs mt-2 text-slate-500">
-            You can enter the same password or update your password.
-          </small>
-        </div>
-
+        </PermissionProtector>
+        <button
+          type="button"
+          className="bg-gray-200 text-black p-3 rounded hover:bg-indigo-500 hover:text-white mx-2"
+          onClick={() => {navigate(-1)}}
+        >
+          Cancel Update
+        </button>
         <button
           type="submit"
-          className="bg-blue-500 text-white p-3 rounded hover:bg-green-500"
+          className="bg-green-500 text-white p-3 rounded hover:bg-indigo-500 mx-2"
           onClick={handleSubmit}
         >
           Update Info
         </button>
+       
+        
       </form>
     </div>
   );

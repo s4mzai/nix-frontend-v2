@@ -14,6 +14,8 @@ const initialState = {
   searchTerm: "",
   selectedCategory: categories[0].toLowerCase(),
   loading: true,
+  currentPage: 1,
+  perPage: 9,
 };
 
 const enum ActionType {
@@ -21,6 +23,7 @@ const enum ActionType {
   SetSearchTerm,
   SetSelectedCategory,
   SetLoading,
+  SetCurrentPage,
 }
 
 const reducer = (
@@ -35,12 +38,16 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetSelectedCategory:
       updatedData.selectedCategory = action.payload;
       break;
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
+      break;
+    case ActionType.SetCurrentPage:
+      updatedData.currentPage = action.payload;
       break;
     default:
       return updatedData;
@@ -72,11 +79,19 @@ export default function AllMembers() {
   }, []);
 
   //filter members based on search term
+
   const filteredMembers = membersList.filter((member) => {
     const category = member[selectedCategory.toLowerCase()];
     const categoryValue = category ? category.toString().toLowerCase() : "";
     return categoryValue.includes(searchTerm.toLowerCase());
   });
+
+  const indexOfLastMember = state.currentPage * state.perPage;
+  const indexOfFirstMember = indexOfLastMember - state.perPage;
+  const paginatedMembers = filteredMembers.slice(
+    indexOfFirstMember,
+    indexOfLastMember,
+  );
 
   if (loading)
     return (
@@ -84,6 +99,83 @@ export default function AllMembers() {
         <Spinner />
       </div>
     );
+  function Pagination() {
+    const { currentPage, perPage } = state;
+    const totalPages = Math.ceil(filteredMembers.length / perPage);
+
+    const handlePageChange = (newPage: number) => {
+      dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+    };
+
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
+    const MAX_PAGES_TO_SHOW = 5;
+    let startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
+    let endIndex = Math.min(
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
+      totalPages,
+    );
+
+    if (startIndex < 1) {
+      endIndex -= startIndex - 1;
+      startIndex = 1;
+    }
+    if (endIndex > totalPages) {
+      startIndex -= endIndex - totalPages;
+      endIndex = totalPages;
+    }
+
+    const pages = Array.from(
+      { length: endIndex - startIndex + 1 },
+      (_, index) => startIndex + index,
+    );
+    console.log(startIndex, pages);
+    return (
+      <div className="flex justify-center items-center space-x-2 mt-8">
+        <button
+          onClick={() => !isFirstPage && handlePageChange(currentPage - 1)}
+          disabled={isFirstPage}
+          className={`px-3 py-1 rounded-md border ${
+            isFirstPage
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          Previous
+        </button>
+        {pages.map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-3 py-1 rounded-md border ${
+              currentPage === page
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
+          disabled={isLastPage}
+          className={`px-3 py-1 rounded-md border ${
+            isLastPage
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          Next
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -106,7 +198,7 @@ export default function AllMembers() {
       </div>
 
       <div className="w-full  gap-4 flex-wrap flex justify-center items-center">
-        {filteredMembers.map((member) => (
+        {paginatedMembers.map((member) => (
           <div key={member.id}>
             <UserCard
               name={member.name}
@@ -117,6 +209,7 @@ export default function AllMembers() {
           </div>
         ))}
       </div>
+      <Pagination />
     </div>
   );
 }
