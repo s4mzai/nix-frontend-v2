@@ -108,7 +108,7 @@ export default function AllMembers() {
     };
 
     const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
     const MAX_PAGES_TO_SHOW = 5;
     let startIndex = Math.max(
       1,

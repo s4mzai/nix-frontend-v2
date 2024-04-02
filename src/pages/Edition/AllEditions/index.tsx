@@ -113,14 +113,14 @@ export default function AllEditions() {
   }, []);
   const indexOfLastEdition = state.currentPage * state.perPage;
   const indexOfFirstEdition = indexOfLastEdition - state.perPage;
-  const paginatedEditions = editions.slice(
-    indexOfFirstEdition,
-    indexOfLastEdition,
-  );
   const filteredEditions = getFilteredEditions(
-    paginatedEditions,
+    editions,
     statusFilters,
     searchTerm,
+  );
+  const paginatedEditions = filteredEditions.slice(
+    indexOfFirstEdition,
+    indexOfLastEdition,
   );
 
   if (loading)
@@ -131,17 +131,26 @@ export default function AllEditions() {
     );
   function Pagination() {
     const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(state.editions.length / perPage);
+    const totalPages = Math.ceil(filteredEditions.length / perPage);
 
     const handlePageChange = (newPage: number) => {
       dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
     };
 
     const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
     const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2);
-    let endIndex = currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2);
+    let startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
+    let endIndex = Math.min(
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
+      totalPages,
+    );
 
     if (startIndex < 1) {
       endIndex -= startIndex - 1;
@@ -242,7 +251,7 @@ export default function AllEditions() {
           </h3>
         ) : (
           <div className="w-full my-5 gap-2 flex-wrap flex justify-right items-center">
-            {filteredEditions.map((edition) => (
+            {paginatedEditions.map((edition) => (
               <div key={edition._id}>
                 <EditionCard edition={edition} />
               </div>
