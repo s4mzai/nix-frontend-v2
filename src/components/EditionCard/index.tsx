@@ -14,11 +14,11 @@ export default function EditionCard({ edition }: { edition: Edition }) {
     >
       <div
         id="container"
-        className="mx-auto bg-gray-50 rounded-md hover:shadow-xl"
+        className="mx-auto bg-gray-50 rounded-md hover:shadow-xl my-4"
       >
         <div className="flex flex-col sm:flex-row">
           <div className="p-2">
-            {
+            <div className="w-full h-64 mb-4" style={{ minHeight: "200px" }}>
               <NixImage
                 alt={`Edition ${edition.edition_id} Cover`}
                 className="w-full h-64 object-cover object-center rounded-lg"
@@ -31,7 +31,7 @@ export default function EditionCard({ edition }: { edition: Edition }) {
                 }}
                 width="600"
               />
-            }
+            </div>
             <h3 className="text-xl font-bold mb-2 mt-4">
               Edition {edition.edition_id} : {edition.name}
             </h3>
