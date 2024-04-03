@@ -26,7 +26,7 @@ const initialState: PublishedStoriesState = {
   searchTerm: "",
   loading: true,
   currentPage: 1,
-  perPage: 10,
+  perPage: 9,
 };
 
 const enum ActionType {
@@ -78,21 +78,27 @@ export default function PublishedStories() {
   const { blogs, searchTerm, loading } = state;
   const indexOfLastBlog = state.currentPage * state.perPage;
   const indexOfFirstBlog = indexOfLastBlog - state.perPage;
-  const paginatedBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const filteredBlogs = getFilteredBlogs(paginatedBlogs, searchTerm);
+  const filteredBlogs = getFilteredBlogs(blogs, searchTerm);
+  const paginatedBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
   function Pagination() {
     const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(blogs.length / perPage);
+    const totalPages = Math.ceil(filteredBlogs.length / perPage);
 
     const handlePageChange = (newPage: number) => {
       dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
     };
 
     const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
     const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2);
-    let endIndex = currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2);
+    let startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
+    let endIndex = Math.min(
+      Math.max(currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2)),
+      totalPages,
+    );
 
     if (startIndex < 1) {
       endIndex -= startIndex - 1;
@@ -209,7 +215,7 @@ export default function PublishedStories() {
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [state.currentPage,searchTerm]);
 
   if (loading)
     return (
@@ -232,7 +238,7 @@ export default function PublishedStories() {
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={filteredBlogs.map((blog) => [
+          content={paginatedBlogs.map((blog) => [
             <div key={blog._id} className="max-w-24">
               {new Date(blog.published_at).toLocaleString(undefined, {
                 dateStyle: "medium",

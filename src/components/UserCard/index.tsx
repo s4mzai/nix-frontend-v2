@@ -3,7 +3,7 @@ import { AvatarImage } from "../AvatarImage";
 export default function UserCard({ name, email, role, avatar }) {
   return (
     <div id="container" className="mx-auto ">
-      <div className="flex flex-col sm:flex-row">
+      <div className="flex flex-col sm:flex-row ml-34">
         <div className="w-60 h-80 hover:shadow-xl bg-white px-10 py-8 flex flex-col justify-around rounded-lg shadow text-center">
           <div className="mb-3">
             <AvatarImage
