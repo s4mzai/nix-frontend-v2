@@ -269,7 +269,6 @@ export default function EditMember() {
       return API.get(`/user/get-user/${id}`).then((response) => {
         const userData = response.data.data;
         dispatch({ type: ActionType.UpdateName, payload: userData.name });
-        dispatch({ type: ActionType.UpdateName, payload: userData.name });
         dispatch({ type: ActionType.UpdateEmail, payload: userData.email });
         dispatch({ type: ActionType.UpdateBio, payload: userData.bio || "" });
         dispatch({
@@ -298,7 +297,7 @@ export default function EditMember() {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-    {(id !== user.id ) ?   <PermissionProtector permission={[Permission.UpdateProfile]} silent={false}/>  : <></>}
+    {(id !== user.id ) ? <PermissionProtector permission={[Permission.UpdateProfile]} silent={false}/> : <></>}
       <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
