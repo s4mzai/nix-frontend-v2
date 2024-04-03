@@ -271,7 +271,7 @@ export default function EditMember() {
           setGrantedPermissions(new_user.permission);
           setUser(new_user);
         }
-        navigate("/profile"); // todo update w pure url
+        navigate(`/member/member-profile/${id}`); // todo update w pure url
       })
       .catch((e) => setError(e));
   };

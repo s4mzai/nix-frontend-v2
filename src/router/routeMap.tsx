@@ -51,10 +51,10 @@ const routeMap: CustomRouteElement[] = [
     icon: <DashIcon />,
   },
   {
-    path: "profile/",
-    element: <Profile />,
+    path: "member/member-profile/",
+    element: <MemberProfile />,
     icon: <MemberIcon />,
-    permission: [],
+    permission: [Permission.ReadProfile],
     label: "Profile",
   },
   {
@@ -203,7 +203,7 @@ const routeMap: CustomRouteElement[] = [
       {
         path: "member-profile/:id",
         element: <MemberProfile />,
-        permission: [Permission.UpdateProfile],
+        permission: [Permission.ReadProfile],
         label: "Member Details",
         hide: true,
       },

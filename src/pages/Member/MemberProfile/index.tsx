@@ -1,59 +1,74 @@
 import API from "@/services/API";
 import { useContext, useEffect, useState } from "react";
 import { CurrUserCtx } from "@/contexts/current_user";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Spinner } from "@/components/Spinner";
+import React from "react";
+import { ErrorContext } from "@/contexts/error";
+import { AvatarImage } from "@/components/AvatarImage";
 
-const AvatarImage = ({ src, alt, className }) => {
-  return <img className={`rounded-full ${className}`} src={src} alt={alt} />;
+interface MemberProfileInitialState {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  bio: string;
+}
+
+const initialState: MemberProfileInitialState = {
+  id: null,
+  name: "",
+  role: "",
+  email: "",
+  bio: "",
 };
 
-const uri = API.getUri();
-
-export default function Profile() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+export default function MemberProfile() {
+  const { setError } = React.useContext(ErrorContext);
   const { ready, user } = useContext(CurrUserCtx);
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    role: "",
-    email: "",
-    bio: ""
-  });
-  if (!ready)
+
+  const { id } = useParams() || user;
+  const [userDetails, setUserDetails] =
+    useState<MemberProfileInitialState>(initialState);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id && id !== user.id) {
+      const userDetailsEndpoint = `/user/get-user/${id}`;
+      API.get(userDetailsEndpoint)
+        .then((response) => {
+          const userData = response.data.data;
+          setUserDetails({
+            id: userData.id,
+            name: userData.name,
+            role: userData.role,
+            email: userData.email,
+            bio: userData.bio,
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error);
+        });
+    } else {
+      setUserDetails({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        bio: user.bio,
+      });
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading)
     return (
       <div className="flex w-full h-full justify-center items-center">
         <Spinner />
       </div>
     );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const apiUrl = `/user/get-user/${id}`;
-        console.log("API URL:", apiUrl); // Logging the API URL
-        const response = await API.get(apiUrl);
-        const userData = response.data.data;
-        setUserDetails({
-          name: userData.name,
-          role: userData.role,
-          email: userData.email,
-          bio: userData.bio
-        });
-
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
-
-    if (id) {
-      fetchData();
-    }
-
-    return () => {
-      // Cleanup function 
-    };
-  }, [id]);
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
       <div className="space-y-6 mt-4">
@@ -62,9 +77,10 @@ export default function Profile() {
             <div className="flex gap-1 items-center">
               <div className="w-36 h-36 bg-gray-200 rounded-full overflow-hidden">
                 <AvatarImage
-                  alt={user.name}
                   className="h-36 w-36"
-                  src={`${API.getUri()}/images/get-avatar/${id}?thumbnail=true`}
+                  user_id={userDetails.id}
+                  thumbnail={true}
+                  alt={userDetails.name}
                 />
               </div>
               <div className="ms-4">
@@ -76,7 +92,7 @@ export default function Profile() {
             </div>
             <div>
               <Link
-                to={`/member/edit-details/${id}/`}
+                to={`/member/edit-details/${userDetails.id}/`}
                 className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
               >
                 Edit Info
