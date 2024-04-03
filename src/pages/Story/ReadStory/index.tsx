@@ -321,7 +321,7 @@ export default function ReadStory() {
                   type="button"
                   className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
                 >
-                  Publish Now
+                  Archive Blog
                 </button>
               </div>
             ) : (

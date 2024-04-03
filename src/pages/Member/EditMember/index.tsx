@@ -253,6 +253,7 @@ export default function EditMember() {
   };
 
   const fetchRoles = () => {
+    if(!user.permission.includes(Permission.ReadRole)) return;
     const rolesEndpoint = "/role";
 
     return API.get(rolesEndpoint).then((rolesResponse) => {
@@ -268,7 +269,6 @@ export default function EditMember() {
       return API.get(`/user/get-user/${id}`).then((response) => {
         const userData = response.data.data;
         dispatch({ type: ActionType.UpdateName, payload: userData.name });
-        dispatch({ type: ActionType.UpdateName, payload: userData.name });
         dispatch({ type: ActionType.UpdateEmail, payload: userData.email });
         dispatch({ type: ActionType.UpdateBio, payload: userData.bio || "" });
         dispatch({
@@ -280,7 +280,7 @@ export default function EditMember() {
         });
         dispatch({ type: ActionType.setRoleId, payload: userData.role_id });
         dispatch({ type: ActionType.setRoleName, payload: userData.role });
-        dispatch({type: ActionType.UpdateProfilePictureLink, payload: userData.id})
+        dispatch({type: ActionType.UpdateProfilePictureLink, payload: userData.id});
       });
     } //TODO handle if no id present
   };
@@ -297,6 +297,7 @@ export default function EditMember() {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
+    {(id !== user.id ) ? <PermissionProtector permission={[Permission.UpdateProfile]} silent={false}/> : <></>}
       <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
@@ -470,6 +471,7 @@ export default function EditMember() {
             <h1 className="text-2xl text-left font-medium leading-none my-6">
               Update Role and Permissions
             </h1>
+            <PermissionProtector permission={[Permission.ReadRole]} silent={true}>
             <div className="my-2">
               <label className="block text-sm font-semibold mb-2">Role</label>
               <div className="w-1/2">
@@ -491,6 +493,7 @@ export default function EditMember() {
                 />
               </div>
             </div>
+            </PermissionProtector>
             <div className="my-2">
               <label className="block text-sm font-semibold mb-2">
                 Permissions
@@ -511,7 +514,7 @@ export default function EditMember() {
         <button
           type="button"
           className="bg-gray-200 text-black p-3 rounded hover:bg-indigo-500 hover:text-white mx-2"
-          onClick={() => {navigate(-1)}}
+          onClick={() => {navigate(-1);}}
         >
           Cancel Update
         </button>

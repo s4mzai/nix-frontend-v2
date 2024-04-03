@@ -215,7 +215,7 @@ export default function PublishedStories() {
 
   useEffect(() => {
     fetchBlogs();
-  }, [state.currentPage,searchTerm]);
+  }, [state.currentPage, searchTerm]);
 
   if (loading)
     return (
