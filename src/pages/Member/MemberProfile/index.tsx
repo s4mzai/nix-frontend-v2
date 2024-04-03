@@ -6,6 +6,8 @@ import { Spinner } from "@/components/Spinner";
 import React from "react";
 import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
+import { PermissionProtector } from "@/components/PermissionProtector";
+import Permission from "@/types/permissions";
 
 interface MemberProfileInitialState {
   id: string;
@@ -93,12 +95,26 @@ export default function MemberProfile() {
               </div>
             </div>
             <div className="absolute top-0 right-0 m-8">
-              <Link
-                to={`/member/edit-details/${userDetails.id}/`}
-                className="bg-blue-500 md:text-md text-sm w-[100px] text-white p-2 rounded hover:bg-green-500"
-              >
-                Edit Info
-              </Link>
+              {userDetails.id === user.id ? (
+                <Link
+                  to={`/member/edit-details/${userDetails.id}/`}
+                  className="bg-blue-500 md:text-md text-sm w-[100px] text-white p-2 rounded hover:bg-green-500"
+                >
+                  Edit Info
+                </Link>
+              ) : (
+                <PermissionProtector
+                  permission={[Permission.UpdateProfile]}
+                  silent={true}
+                >
+                  <Link
+                    to={`/member/edit-details/${userDetails.id}/`}
+                    className="bg-blue-500 md:text-md text-sm w-[100px] text-white p-2 rounded hover:bg-green-500"
+                  >
+                    Edit Info
+                  </Link>
+                </PermissionProtector>
+              )}
             </div>
           </div>
         </div>
@@ -113,15 +129,6 @@ export default function MemberProfile() {
             <span className="text-gray-600 ml-1">{userDetails.email}</span>
           </li>
         </ul>
-
-        {/* <div>
-          <Link
-            to={`/member/edit-details/${id}/`}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
-          >
-            Edit Info
-          </Link>
-        </div> */}
       </div>
     </div>
   );

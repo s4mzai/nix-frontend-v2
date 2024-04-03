@@ -15,7 +15,6 @@ import React from "react";
 import LogsIcon from "@/assets/LogsIcon";
 import TerminalIcon from "@/assets/TerminalIcon";
 import EditionIcon from "@/assets/EditionIcon";
-import Profile from "@/pages/Profile";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -196,7 +195,7 @@ const routeMap: CustomRouteElement[] = [
       {
         path: "edit-details/:id",
         element: <EditMember />,
-        permission: [Permission.UpdateProfile],
+        permission: [], // user should be able to change thier own details without any perm
         label: "Edit Details",
         hide: true,
       },
@@ -227,7 +226,7 @@ const routeMap: CustomRouteElement[] = [
     ),
     permission: [Permission.AccessLogs],
     label: "Terminal",
-    icon: <TerminalIcon />, // todo: change icon
+    icon: <TerminalIcon />,
   },
   {
     path: "logs/",
