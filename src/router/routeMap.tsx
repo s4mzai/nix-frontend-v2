@@ -15,6 +15,7 @@ import React from "react";
 import LogsIcon from "@/assets/LogsIcon";
 import TerminalIcon from "@/assets/TerminalIcon";
 import EditionIcon from "@/assets/EditionIcon";
+import Profile from "@/pages/Profile";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -50,10 +51,10 @@ const routeMap: CustomRouteElement[] = [
     icon: <DashIcon />,
   },
   {
-    path: "profile/",
+    path: "member/member-profile/",
     element: <MemberProfile />,
     icon: <MemberIcon />,
-    permission: [],
+    permission: [Permission.ReadProfile],
     label: "Profile",
   },
   {
@@ -197,6 +198,13 @@ const routeMap: CustomRouteElement[] = [
         element: <EditMember />,
         permission: [Permission.UpdateProfile],
         label: "Edit Details",
+        hide: true,
+      },
+      {
+        path: "member-profile/:id",
+        element: <MemberProfile />,
+        permission: [Permission.ReadProfile],
+        label: "Member Details",
         hide: true,
       },
     ],
