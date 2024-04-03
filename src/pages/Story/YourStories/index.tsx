@@ -266,15 +266,33 @@ export default function AllStory() {
                     label: "Delete",
                     handler: handleDelete,
                     show: blog.status == BlogStatus.Draft,
-                    permissions: [Permission.ReadBlog],
-                  }, // i dont think a user should need perm to delete their draft
-                  // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
-                  //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },
+                    permissions: [],
+                  },
+                  {
+                    label: "Delete",
+                    handler: handleDelete,
+                    show: blog.status !== BlogStatus.Draft,
+                    permissions: [Permission.DeleteBlog],
+                  },
+                  {
+                    label: "Archive",
+                    handler: handleArchive,
+                    show: blog.status === BlogStatus.Pending,
+                    permissions: [],
+                  },
+                  {
+                    label: "Archive",
+                    handler: handleArchive,
+                    show:
+                      blog.status === BlogStatus.Approved ||
+                      blog.status === BlogStatus.Published,
+                    permissions: [],
+                  },
                   {
                     label: "Edit",
                     handler: handleEdit,
                     show: blog.status == BlogStatus.Draft,
-                    permissions: [Permission.ReadBlog],
+                    permissions: [Permission.UpdateBlog],
                   },
                   {
                     label: "Submit",
