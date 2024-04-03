@@ -70,14 +70,11 @@ export default function MemberProfile() {
     );
 
   return (
-    <div className="max-w-4xl mx-auto my-2 md:my-10 p-8 shadow rounded">
+    <div className="relative max-w-4xl mx-auto my-2 md:my-10 p-8 shadow rounded">
       <div className="space-y-6 mt-4">
         <div className="flex justify-between">
-          
           <div className="flex justify-between">
-            
             <div className="flex gap-1 items-center">
-              
               <div className="md:w-36 md:h-36 w-24 h-24 bg-gray-200 rounded-full overflow-hidden">
                 <AvatarImage
                   className="h-36 w-36"
@@ -88,12 +85,14 @@ export default function MemberProfile() {
               </div>
               <div className="ms-4">
                 <h1 className="text-left md:text-3xl text-2xl font-semibold text-gray-800 font-sans">
-                  {userDetails.name}        
+                  {userDetails.name}
                 </h1>
-                <span className="text-left text-gray-600 md:text-md text-xs">{userDetails.role}</span>
+                <span className="text-left text-gray-600 md:text-md text-xs">
+                  {userDetails.role}
+                </span>
               </div>
             </div>
-            <div>
+            <div className="absolute top-0 right-0 m-8">
               <Link
                 to={`/member/edit-details/${userDetails.id}/`}
                 className="bg-blue-500 md:text-md text-sm w-[100px] text-white p-2 rounded hover:bg-green-500"
