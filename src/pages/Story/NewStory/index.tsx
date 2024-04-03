@@ -391,7 +391,7 @@ export default function NewStory() {
 
       <div className="flex space-x-4">
         <button
-          className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
+          className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500 hover:text-white"
           onClick={(e) => handleSubmit(e, true)}
         >
           Save as Draft
