@@ -61,6 +61,15 @@ export default function NewStory() {
     switch (action.type) {
       case ActionType.SetTitle:
         updatedData.title = action.payload;
+        updatedData.slug = (
+          (action.payload as string).replace(/[^a-zA-Z0-9\s]/g, "") +
+          " " +
+          Math.floor(Math.random() * 1001)
+        )
+          .split(/\s+/)
+          .slice(0, 7)
+          .join("-")
+          .toLowerCase();
         break;
       case ActionType.SetByliner:
         updatedData.byliner = action.payload;
