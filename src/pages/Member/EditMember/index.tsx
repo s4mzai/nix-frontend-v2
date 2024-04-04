@@ -13,6 +13,7 @@ import MyMultiselect from "@/components/MultiSelect";
 import Permission from "@/types/permissions";
 import { Role } from "@/types/role";
 import { PermissionProtector } from "@/components/PermissionProtector";
+import { Spinner } from "@/components/Spinner";
 
 interface PermissionItem {
   name: string;
@@ -214,6 +215,7 @@ export default function EditMember() {
     target_roleId,
     target_roleName,
     target_selectedPermissions,
+    loading,
   } = state;
 
   const handleSubmit = async (e) => {
@@ -294,6 +296,14 @@ export default function EditMember() {
         setError(error);
       });
   }, []);
+
+  if (loading)
+  return (
+    <div className="flex flex-grow w-full h-screen justify-center items-center">
+      <Spinner />
+    </div>
+  );
+
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
@@ -450,7 +460,7 @@ export default function EditMember() {
                 onClick={(e) =>
                   dispatch({
                     type: ActionType.ToggleShowConfirmPassword,
-                    payload: !showPassword,
+                    payload: !showConfirmPassword,
                   })
                 }
               >
