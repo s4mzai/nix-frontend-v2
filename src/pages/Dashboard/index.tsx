@@ -67,6 +67,8 @@ export default function Dashbboard() {
 
   const { topUserData, loading } = state;
 
+  const clippedBio = user?.bio?.length > 150 ? `${user.bio.slice(0, 150)}...` : user.bio;
+  console.log(clippedBio)
   React.useEffect(() => {
     const topUserEndpoint = "dashboard/top-users";
 
@@ -121,7 +123,7 @@ export default function Dashbboard() {
           <div className="m-6 w-[300px] h-[464px] bg-id-back bg-cover border-black border-2 text-white rounded-xl overflow-hidden grid grid-rows-2">
             <div className="self-start flex flex-col"></div>
             <div className="bg-black bg-opacity-50 text-opacity-100 p-6 text-right self-end pl-14">
-              <div className="text-lg font-semibold">{user.bio}</div>
+              <div className="text-md  font-semibold">{clippedBio}</div>
             </div>
           </div>
         </div>
