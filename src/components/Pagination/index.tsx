@@ -3,6 +3,7 @@ interface PaginationProps<T> {
   current_page: number;
   per_page: number;
   handlePageChange: (newPage: number) => void;
+  max_pages_to_show?: number;
 }
 
 export default function Pagination<T>({
@@ -10,6 +11,7 @@ export default function Pagination<T>({
   current_page,
   per_page,
   handlePageChange,
+  max_pages_to_show = 5,
 }: PaginationProps<T>) {
   if (filtered_content.length === 0) {
     return <></>;
@@ -18,18 +20,17 @@ export default function Pagination<T>({
 
   const isFirstPage = current_page === 1;
   const isLastPage = current_page === totalPages || totalPages === 0;
-  const MAX_PAGES_TO_SHOW = 5;
-  const startIndex = Math.max(
-    1,
-    current_page - Math.floor(MAX_PAGES_TO_SHOW / 2),
-  );
+
+  const half_pager_length = Math.floor(max_pages_to_show / 2);
+
   const endIndex = Math.min(
-    Math.max(
-      MAX_PAGES_TO_SHOW,
-      current_page + Math.floor(MAX_PAGES_TO_SHOW / 2),
-    ),
+    Math.max(max_pages_to_show, current_page + half_pager_length),
     totalPages,
   );
+  let startIndex = Math.max(1, current_page - half_pager_length);
+  if (endIndex - startIndex + 1 < max_pages_to_show) {
+    startIndex = Math.max(1, endIndex - max_pages_to_show + 1);
+  }
 
   const pages = Array.from(
     { length: endIndex - startIndex + 1 },
