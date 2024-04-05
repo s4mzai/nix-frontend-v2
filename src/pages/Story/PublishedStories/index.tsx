@@ -47,6 +47,7 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
@@ -215,7 +216,7 @@ export default function PublishedStories() {
 
   useEffect(() => {
     fetchBlogs();
-  }, [state.currentPage, searchTerm]);
+  }, []);
 
   if (loading)
     return (
