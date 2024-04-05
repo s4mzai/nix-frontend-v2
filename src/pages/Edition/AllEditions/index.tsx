@@ -9,14 +9,14 @@ import { Spinner } from "@/components/Spinner";
 import EditionCard from "@/components/EditionCard";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
+import { EDITIONS_PER_PAGE as perPage } from "@/config";
 
 interface AllEditionsState {
   editions: Edition[];
   searchTerm: string;
   statusFilters: EditionStatus[];
   loading: boolean;
-  currentPage?: number;
-  perPage?: number;
+  currentPage: number;
 }
 
 const initialState: AllEditionsState = {
@@ -27,7 +27,6 @@ const initialState: AllEditionsState = {
     .filter((v) => !isNaN(v)),
   loading: true,
   currentPage: 1,
-  perPage: 9,
 };
 
 const enum ActionType {
@@ -111,8 +110,8 @@ export default function AllEditions() {
   useEffect(() => {
     fetchEditions();
   }, []);
-  const indexOfLastEdition = state.currentPage * state.perPage;
-  const indexOfFirstEdition = indexOfLastEdition - state.perPage;
+  const indexOfLastEdition = state.currentPage * perPage;
+  const indexOfFirstEdition = indexOfLastEdition - perPage;
   const filteredEditions = getFilteredEditions(
     editions,
     statusFilters,
@@ -130,7 +129,7 @@ export default function AllEditions() {
       </div>
     );
   function Pagination() {
-    const { currentPage, perPage } = state;
+    const { currentPage } = state;
     const totalPages = Math.ceil(filteredEditions.length / perPage);
 
     const handlePageChange = (newPage: number) => {
