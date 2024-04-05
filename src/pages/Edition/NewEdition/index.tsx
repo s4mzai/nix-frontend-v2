@@ -1,8 +1,10 @@
+import { PermissionProtector } from "@/components/PermissionProtector";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
+import Permission from "@/types/permissions";
 import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -25,8 +27,34 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   const [edition, setEdition] = useState<Edition>(null);
   const toastId = useRef(null);
 
+  const handleDelete = (archive: boolean) => {
+    const word = archive ? "archive" : "delete";
+    if (window.confirm(`Are you sure you want to ${word} this edition?`)) {
+      API.delete(`/edition/${word}-edition/${id}`)
+        .then(() => {
+          toast.success(`Edition ${word}d successfully!`);
+          navigate("/edition/all-editions");
+        })
+        .catch((e) => {
+          setError(e);
+        });
+    }
+  };
+
+  type Submitter = EditionStatus | "delete" | "archive";
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    console.debug("New Edition submit action initiated");
     e.preventDefault();
+
+    const submitter = (
+      e.nativeEvent as SubmitEvent
+    ).submitter.attributes.getNamedItem("value").value as Submitter;
+    if (submitter === "delete") {
+      return handleDelete(true);
+    } else if (submitter === "archive") {
+      return handleDelete(false);
+    }
+
     const form = e.currentTarget;
     const formData = new FormData(form);
     const endpoint = id
@@ -37,14 +65,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       formData.append("_id", id);
     }
 
-    formData.append(
-      "status",
-      EditionStatus[
-        (e.nativeEvent as SubmitEvent).submitter.attributes.getNamedItem(
-          "value",
-        ).value
-      ],
-    );
+    formData.append("status", EditionStatus[submitter]);
 
     const data = Object.fromEntries(
       Array.from(formData.entries()).map(([key, value]) => {
@@ -56,6 +77,8 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
     const image_file = document.getElementById(
       "edition-cover",
     ) as HTMLInputElement;
+
+    const requestMethod = id ? "PUT" : "POST";
 
     if (image_file.files.length !== 0) {
       const image = image_file.files[0] as File;
@@ -93,8 +116,6 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
         })
         .finally(() => (toastId.current = null));
 
-      const requestMethod = id ? "PUT" : "POST";
-
       const data_promise = API({
         method: requestMethod,
         url: endpoint,
@@ -107,6 +128,19 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
         toast.success("Edition saved successfully");
         navigate("/edition/all-editions");
       });
+    } else {
+      API({
+        method: requestMethod,
+        url: endpoint,
+        data: data,
+      })
+        .then(() => {
+          toast.success("Edition saved successfully");
+          navigate("/edition/all-editions");
+        })
+        .catch((error) => {
+          setError(error);
+        });
     }
   };
 
@@ -209,9 +243,9 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
             <button
               type="submit"
               value={EditionStatus[EditionStatus.Draft]}
-              className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
+              className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500 hover:text-white"
             >
-              {id ? "Update" : "Create"}
+              {id ? "Update" : "Create"} & Draft
             </button>
             <button
               type="submit"
@@ -220,6 +254,20 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
             >
               {id ? "Update" : "Create"} & Publish
             </button>
+            {id && (
+              <PermissionProtector
+                permission={[Permission.DeleteEdition]}
+                silent={true}
+              >
+                <button
+                  type="submit"
+                  value={"delete"}
+                  className="p-2 text-white bg-red-500 rounded hover:bg-indigo-500"
+                >
+                  Delete Edition
+                </button>
+              </PermissionProtector>
+            )}
           </div>
         </form>
       )}
