@@ -129,6 +129,9 @@ export default function AllEditions() {
       </div>
     );
   function Pagination() {
+    if (filteredEditions.length === 0) {
+      return <></>;
+    }
     const { currentPage } = state;
     const totalPages = Math.ceil(filteredEditions.length / perPage);
 
@@ -139,26 +142,17 @@ export default function AllEditions() {
     const isFirstPage = currentPage === 1;
     const isLastPage = currentPage === totalPages || totalPages === 0;
     const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = Math.max(
+    const startIndex = Math.max(
       1,
       currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
     );
-    let endIndex = Math.min(
+    const endIndex = Math.min(
       Math.max(
         MAX_PAGES_TO_SHOW,
         currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
       ),
       totalPages,
     );
-
-    if (startIndex < 1) {
-      endIndex -= startIndex - 1;
-      startIndex = 1;
-    }
-    if (endIndex > totalPages) {
-      startIndex -= endIndex - totalPages;
-      endIndex = totalPages;
-    }
 
     const pages = Array.from(
       { length: endIndex - startIndex + 1 },
