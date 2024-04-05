@@ -17,6 +17,8 @@ import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import Permission from "@/types/permissions";
+import { toast } from "react-toastify";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 
 interface PendingStoriesState {
   blogs: Blog[];
@@ -81,26 +83,8 @@ export default function PendingStories() {
 
   const { blogs, searchTerm, loading } = state;
 
-  const handleRead = (blogId: string) => {
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate(`/story/${blogId}`, { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-  };
-
-  const handleEdit = (blogId: string) => {
-    //TODO edit blog, should open the blog on the new blog view
-    console.debug(blogId);
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate("/story/new-story", { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-    console.debug("story edited");
-  };
+  const more_menu_options = (blog: Blog) =>
+    moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
 
   const fetchBlogs = () => {
     API.get(blogEndpoint)
@@ -183,20 +167,7 @@ export default function PendingStories() {
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
-              options={[
-                {
-                  label: "Read",
-                  handler: handleRead,
-                  show: true,
-                  permissions: [Permission.ReadBlog],
-                },
-                {
-                  label: "Edit",
-                  handler: handleEdit,
-                  show: true,
-                  permissions: [Permission.EditBeforeBlogPublish],
-                },
-              ]}
+              options={more_menu_options(blog)}
               blogId={blog._id}
               key={blog._id}
             />,

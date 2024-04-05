@@ -1,5 +1,6 @@
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
@@ -145,6 +146,9 @@ export default function PublishedStories() {
       });
   };
 
+  const more_menu_options = (blog: Blog) =>
+    moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
+
   useEffect(() => {
     fetchBlogs();
   }, []);
@@ -199,26 +203,7 @@ export default function PublishedStories() {
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
-              options={[
-                {
-                  label: "Read",
-                  handler: handleRead,
-                  show: true,
-                  permissions: [Permission.ReadBlog],
-                },
-                {
-                  label: "Delete",
-                  handler: handleDelete,
-                  show: true,
-                  permissions: [Permission.DeleteBlog],
-                },
-                {
-                  label: "Archive",
-                  handler: handleArchive,
-                  show: true,
-                  permissions: [Permission.DeleteBlog],
-                },
-              ]}
+              options={more_menu_options(blog)}
               blogId={blog._id}
               key={blog._id}
             />,

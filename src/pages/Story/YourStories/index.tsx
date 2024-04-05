@@ -1,19 +1,19 @@
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
+import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
+import { YOUR_BLOGS_PER_PAGE as perPage } from "@/config";
 import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
+import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import API from "@/services/API";
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Blog } from "@/types/blog";
-import Permission from "@/types/permissions";
-import { YOUR_BLOGS_PER_PAGE as perPage } from "@/config";
-import Pagination from "@/components/Pagination";
 
 interface YourStoriesState {
   blogs: Blog[];
@@ -186,6 +186,9 @@ export default function AllStory() {
       });
   };
 
+  const more_menu_options = (blog: Blog) =>
+    moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
+
   useEffect(() => {
     fetchBlogs();
   }, []);
@@ -270,52 +273,7 @@ export default function AllStory() {
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
-              options={[
-                {
-                  label: "Read",
-                  handler: handleRead,
-                  show: true,
-                  permissions: [Permission.ReadBlog],
-                },
-                {
-                  label: "Delete",
-                  handler: handleDelete,
-                  show: blog.status == BlogStatus.Draft,
-                  permissions: [],
-                },
-                {
-                  label: "Delete",
-                  handler: handleDelete,
-                  show: blog.status !== BlogStatus.Draft,
-                  permissions: [Permission.DeleteBlog],
-                },
-                {
-                  label: "Archive",
-                  handler: handleArchive,
-                  show: blog.status === BlogStatus.Pending,
-                  permissions: [],
-                },
-                {
-                  label: "Archive",
-                  handler: handleArchive,
-                  show:
-                    blog.status === BlogStatus.Approved ||
-                    blog.status === BlogStatus.Published,
-                  permissions: [],
-                },
-                {
-                  label: "Edit",
-                  handler: handleEdit,
-                  show: blog.status == BlogStatus.Draft,
-                  permissions: [Permission.UpdateBlog],
-                },
-                {
-                  label: "Submit",
-                  handler: handleSubmit,
-                  show: blog.status == BlogStatus.Draft,
-                  permissions: [],
-                },
-              ]}
+              options={more_menu_options(blog)}
               blogId={blog._id}
               key={blog._id}
             />,

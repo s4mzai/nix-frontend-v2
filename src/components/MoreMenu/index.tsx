@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { PermissionProtector } from "../PermissionProtector";
 import Permission from "@/types/permissions";
 
-interface Option {
+export interface Option {
   label: string;
   handler: (blogId: string, status: BlogStatus) => void;
   show: boolean;
   permissions: Permission[];
 }
 
-interface MoreMenuProps {
+export interface MoreMenuProps {
   options: Option[];
   blogId: string;
 }
