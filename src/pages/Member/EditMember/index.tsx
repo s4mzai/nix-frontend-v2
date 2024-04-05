@@ -484,9 +484,9 @@ const team_roles = Object.keys(MainWebsiteRole)
                 />
               </div>
             </div>
-            <small className="block text-xs mt-2 text-slate-500">
-              You can enter the same password or update your password.
-            </small>
+            {(newPassword!==confirmPassword || (newPassword && !confirmPassword))&& (
+                <p className="text-red-500 text-sm">Passwords do not match</p>
+              )}
           </div>
         )}
         <PermissionProtector permission={[Permission.UpdateProfile]} silent={true}>
