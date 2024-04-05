@@ -97,7 +97,10 @@ export default function PublishedStories() {
       currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
     );
     let endIndex = Math.min(
-      Math.max(currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2)),
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
       totalPages,
     );
 
