@@ -191,10 +191,16 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
               title="Only numeric edition id allowed"
               required
             />
-
+            <label
+              className="text-xl font-medium leading-none mb-2"
+              htmlFor="edition-cover"
+            >
+              Edition Cover Photo
+            </label>
             <input
               type="file"
               id="edition-cover"
+              name="edition-cover"
               accept="image/png, image/jpeg, image/jpg"
             />
           </div>

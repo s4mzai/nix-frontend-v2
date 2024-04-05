@@ -50,10 +50,10 @@ const routeMap: CustomRouteElement[] = [
     icon: <DashIcon />,
   },
   {
-    path: "profile/",
+    path: "member/member-profile/",
     element: <MemberProfile />,
     icon: <MemberIcon />,
-    permission: [],
+    permission: [Permission.ReadProfile],
     label: "Profile",
   },
   {
@@ -195,8 +195,15 @@ const routeMap: CustomRouteElement[] = [
       {
         path: "edit-details/:id",
         element: <EditMember />,
-        permission: [Permission.UpdateProfile],
+        permission: [], // user should be able to change thier own details without any perm
         label: "Edit Details",
+        hide: true,
+      },
+      {
+        path: "member-profile/:id",
+        element: <MemberProfile />,
+        permission: [Permission.ReadProfile],
+        label: "Member Details",
         hide: true,
       },
     ],
@@ -219,7 +226,7 @@ const routeMap: CustomRouteElement[] = [
     ),
     permission: [Permission.AccessLogs],
     label: "Terminal",
-    icon: <TerminalIcon />, // todo: change icon
+    icon: <TerminalIcon />,
   },
   {
     path: "logs/",

@@ -56,7 +56,7 @@ function Leaderboard({ topUsers }) {
       <div className="w-full max-w-3xl lg:w-1/3 flex justify-center lg:justify-start mt-4 ml-4 lg:mt-0">
         {topUsers.length > 0 && (
           <div>
-            <h3 className="text-lg text-center font-semibold mb-2">
+            <h3 className="text-lg text-center font-semibold mb-2 ml-3">
               Top Columnist
             </h3>
             <UserCard

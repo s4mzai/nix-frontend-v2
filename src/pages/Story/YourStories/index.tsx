@@ -12,12 +12,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Blog } from "@/types/blog";
 import Permission from "@/types/permissions";
+import { YOUR_BLOGS_PER_PAGE as perPage } from "@/config";
+import Pagination from "@/components/Pagination";
 
 interface YourStoriesState {
   blogs: Blog[];
   searchTerm: string;
   statusFilters: BlogStatus[];
   loading: boolean;
+  currentPage: number;
 }
 
 const initialState: YourStoriesState = {
@@ -27,6 +30,7 @@ const initialState: YourStoriesState = {
     .map((v) => Number(v))
     .filter((v) => !isNaN(v)),
   loading: true,
+  currentPage: 1,
 };
 
 const myBlogsEndpoint = "/blog/my-blogs";
@@ -36,6 +40,7 @@ const enum ActionType {
   SetSearchTerm,
   SetStatusFilers,
   SetLoading,
+  SetCurrentPage,
 }
 
 const reducer = (
@@ -50,6 +55,7 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetStatusFilers:
       //also spread operator creates only a shallow copy so mutable data structures like arrays still
@@ -191,6 +197,16 @@ export default function AllStory() {
       </div>
     );
 
+  const indexOfLastBlog = state.currentPage * perPage;
+  const indexOfFirstBlog = indexOfLastBlog - perPage;
+
+  const filteredBlogs = getFilteredBlogs(blogs, statusFilters, searchTerm);
+  const paginatedBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+
+  const handlePageChange = (newPage: number) => {
+    dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1>Your Stories</h1>
@@ -225,71 +241,93 @@ export default function AllStory() {
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={getFilteredBlogs(blogs, statusFilters, searchTerm).map(
-            (blog) => [
-              <div key={blog._id} className="max-w-24">
-                {new Date(blog.updatedAt).toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>,
-              <Link
-                key={`read-${blog._id}`}
-                to={`/story/${blog._id}`}
-                state={{ blog: blog }}
-              >
-                {blog.title}
-              </Link>,
+          content={paginatedBlogs.map((blog) => [
+            <div key={blog._id} className="max-w-24">
+              {new Date(blog.updatedAt).toLocaleString(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </div>,
+            <Link
+              key={`read-${blog._id}`}
+              to={`/story/${blog._id}`}
+              state={{ blog: blog }}
+            >
+              {blog.title}
+            </Link>,
 
-              BlogCategory[blog.category_id],
-              <span
-                // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
-                // alternative fix is to re-export these class names in index.css
-                // i'm lazy, so i just did this impl instead
-                className={`px-2 py-1 inline-block rounded-md ${
-                  BlogStatus[blog.status]
-                }`}
-                key={blog.category_id}
-              >
-                <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min" />
-                {BlogStatus[blog.status]}
-              </span>,
-              <MoreMenu
-                options={[
-                  {
-                    label: "Read",
-                    handler: handleRead,
-                    show: true,
-                    permissions: [Permission.ReadBlog],
-                  },
-                  {
-                    label: "Delete",
-                    handler: handleDelete,
-                    show: blog.status == BlogStatus.Draft,
-                    permissions: [Permission.ReadBlog],
-                  }, // i dont think a user should need perm to delete their draft
-                  // i dont think archive should be available in your stories at all because any user shouldnt be able to archive their published stories
-                  //  { label: "Archive", handler: handleArchive, show: blog.status == BlogStatus.Published, permissions: [Permission.ReadBlog] },
-                  {
-                    label: "Edit",
-                    handler: handleEdit,
-                    show: blog.status == BlogStatus.Draft,
-                    permissions: [Permission.ReadBlog],
-                  },
-                  {
-                    label: "Submit",
-                    handler: handleSubmit,
-                    show: blog.status == BlogStatus.Draft,
-                    permissions: [],
-                  },
-                ]}
-                blogId={blog._id}
-                key={blog._id}
-              />,
-            ],
-          )}
+            BlogCategory[blog.category_id],
+            <span
+              // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
+              // alternative fix is to re-export these class names in index.css
+              // i'm lazy, so i just did this impl instead
+              className={`px-2 py-1 inline-block rounded-md ${
+                BlogStatus[blog.status]
+              }`}
+              key={blog.category_id}
+            >
+              <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min" />
+              {BlogStatus[blog.status]}
+            </span>,
+            <MoreMenu
+              options={[
+                {
+                  label: "Read",
+                  handler: handleRead,
+                  show: true,
+                  permissions: [Permission.ReadBlog],
+                },
+                {
+                  label: "Delete",
+                  handler: handleDelete,
+                  show: blog.status == BlogStatus.Draft,
+                  permissions: [],
+                },
+                {
+                  label: "Delete",
+                  handler: handleDelete,
+                  show: blog.status !== BlogStatus.Draft,
+                  permissions: [Permission.DeleteBlog],
+                },
+                {
+                  label: "Archive",
+                  handler: handleArchive,
+                  show: blog.status === BlogStatus.Pending,
+                  permissions: [],
+                },
+                {
+                  label: "Archive",
+                  handler: handleArchive,
+                  show:
+                    blog.status === BlogStatus.Approved ||
+                    blog.status === BlogStatus.Published,
+                  permissions: [],
+                },
+                {
+                  label: "Edit",
+                  handler: handleEdit,
+                  show: blog.status == BlogStatus.Draft,
+                  permissions: [Permission.UpdateBlog],
+                },
+                {
+                  label: "Submit",
+                  handler: handleSubmit,
+                  show: blog.status == BlogStatus.Draft,
+                  permissions: [],
+                },
+              ]}
+              blogId={blog._id}
+              key={blog._id}
+            />,
+          ])}
         />
       </main>
+      <Pagination
+        filtered_content={filteredBlogs}
+        current_page={state.currentPage}
+        per_page={perPage}
+        handlePageChange={handlePageChange}
+      />
     </div>
   );
 }

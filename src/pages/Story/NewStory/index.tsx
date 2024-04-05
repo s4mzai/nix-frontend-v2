@@ -61,6 +61,15 @@ export default function NewStory() {
     switch (action.type) {
       case ActionType.SetTitle:
         updatedData.title = action.payload;
+        updatedData.slug = (
+          (action.payload as string).replace(/[^a-zA-Z0-9\s]/g, "") +
+          " " +
+          Math.floor(Math.random() * 1001)
+        )
+          .split(/\s+/)
+          .slice(0, 7)
+          .join("-")
+          .toLowerCase();
         break;
       case ActionType.SetByliner:
         updatedData.byliner = action.payload;
@@ -391,7 +400,7 @@ export default function NewStory() {
 
       <div className="flex space-x-4">
         <button
-          className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500"
+          className="bg-gray-200 text-black p-2 rounded hover:bg-indigo-500 hover:text-white"
           onClick={(e) => handleSubmit(e, true)}
         >
           Save as Draft
