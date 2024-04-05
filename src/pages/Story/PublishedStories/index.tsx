@@ -11,7 +11,6 @@ import API from "@/services/API";
 import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import Permission from "@/types/permissions";
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -85,50 +84,6 @@ export default function PublishedStories() {
 
   const handlePageChange = (newPage: number) => {
     dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
-  };
-
-  const handleRead = (blogId) => {
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate(`/story/${blogId}`, { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-  };
-
-  const handleDelete = (blogId) => {
-    const choice = window.confirm(
-      "Are you sure you want to delete this story?",
-    );
-    if (choice) {
-      const deleteEndPoint = `/blog/delete-blog/${blogId}`;
-
-      API.delete(deleteEndPoint)
-        .then(() => {
-          toast.success("Successfully deleted");
-          fetchBlogs();
-        })
-        .catch((e) => setError(e));
-      console.debug("story deleted");
-    }
-  };
-
-  const handleArchive = (blogId) => {
-    //archive is same as takedown dw
-    const choice = window.confirm(
-      "Are you sure you want to archive this story?",
-    );
-    if (choice) {
-      const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
-
-      API.put(archiveEndPoint)
-        .then(() => {
-          toast.success("Successfully archived");
-          fetchBlogs();
-        })
-        .catch((e) => setError(e));
-      console.debug("story archived");
-    }
   };
 
   const fetchBlogs = () => {

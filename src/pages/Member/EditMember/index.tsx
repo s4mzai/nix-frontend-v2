@@ -424,7 +424,7 @@ export default function EditMember() {
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
-                onClick={(e) =>
+                onClick={() =>
                   dispatch({
                     type: ActionType.ToggleShowPassword,
                     payload: !showPassword,
@@ -457,7 +457,7 @@ export default function EditMember() {
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
-                onClick={(e) =>
+                onClick={() =>
                   dispatch({
                     type: ActionType.ToggleShowConfirmPassword,
                     payload: !showConfirmPassword,
@@ -476,7 +476,7 @@ export default function EditMember() {
             </small>
           </div>
         )}
-        <PermissionProtector permission={[Permission.UpdateRole]} silent={true}>
+        <PermissionProtector permission={[Permission.UpsertRole]} silent={true}>
           <div className="flex flex-col">
             <h1 className="text-2xl text-left font-medium leading-none my-6">
               Update Role and Permissions

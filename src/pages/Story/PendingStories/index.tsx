@@ -1,24 +1,19 @@
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import API from "@/services/API";
-
 import { ErrorContext } from "@/contexts/error";
-
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
-
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 import Pagination from "@/components/Pagination";
 import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
 import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import Permission from "@/types/permissions";
 import { toast } from "react-toastify";
-import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 
 interface PendingStoriesState {
   blogs: Blog[];
