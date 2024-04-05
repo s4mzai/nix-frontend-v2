@@ -21,15 +21,13 @@ function Sidebar() {
     setIsSidebarOpen(!isSidebarOpen);
   }
   useEffect(() => {
-    function handleOutsideClicks(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsSidebarOpen(false);
-      }
-    }
+    const handleMouseLeave = () => {
+      setIsSidebarOpen(false);
+    };
 
-    document.addEventListener("mousedown", handleOutsideClicks);
+    document.addEventListener("mouseleave", handleMouseLeave);
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClicks);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
   const items = protectedRoutes[0].children;
@@ -38,7 +36,7 @@ function Sidebar() {
     <div
       onMouseOver={() => setIsSidebarOpen(true)}
       // todo: maybe add some delay to this on leave event and then close the sidebar, ensuring it doesn't overrides if mouse comes back
-      // onMouseLeave={() => setIsSidebarOpen(false)}
+      onMouseLeave={() => setIsSidebarOpen(false)}
       ref={menuRef}
     >
       <MenuBar
