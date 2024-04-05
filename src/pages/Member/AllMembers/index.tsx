@@ -12,7 +12,6 @@ const categories = ["Name", "Role", "Email"];
 const initialState = {
   membersList: [] as Member[],
   searchTerm: "",
-  selectedCategory: categories[0].toLowerCase(),
   loading: true,
   currentPage: 1,
   perPage: 9,
@@ -21,7 +20,6 @@ const initialState = {
 const enum ActionType {
   SetMemberList,
   SetSearchTerm,
-  SetSelectedCategory,
   SetLoading,
   SetCurrentPage,
 }
@@ -40,9 +38,6 @@ const reducer = (
       updatedData.searchTerm = action.payload;
       updatedData.currentPage = 1;
       break;
-    case ActionType.SetSelectedCategory:
-      updatedData.selectedCategory = action.payload;
-      break;
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
       break;
@@ -59,7 +54,7 @@ export default function AllMembers() {
   const { setError } = React.useContext(ErrorContext);
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  const { membersList, searchTerm, selectedCategory, loading } = state;
+  const { membersList, searchTerm, loading } = state;
 
   useEffect(() => {
     const membersEndpoint = "/user";
@@ -79,11 +74,13 @@ export default function AllMembers() {
   }, []);
 
   //filter members based on search term
-
   const filteredMembers = membersList.filter((member) => {
-    const category = member[selectedCategory.toLowerCase()];
-    const categoryValue = category ? category.toString().toLowerCase() : "";
-    return categoryValue.includes(searchTerm.toLowerCase());
+    const smallSearchTerm = searchTerm.toLowerCase();
+    return (
+      member?.name.toLowerCase().includes(smallSearchTerm) ||
+      member?.email.toLowerCase().includes(smallSearchTerm) ||
+      member?.role.toLowerCase().includes(smallSearchTerm)
+    );
   });
 
   const indexOfLastMember = state.currentPage * state.perPage;
@@ -188,11 +185,6 @@ export default function AllMembers() {
           searchTerm={searchTerm}
           onSearch={(value) =>
             dispatch({ type: ActionType.SetSearchTerm, payload: value })
-          }
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={(value) =>
-            dispatch({ type: ActionType.SetSelectedCategory, payload: value })
           }
         />
       </div>
