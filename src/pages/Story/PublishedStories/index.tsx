@@ -1,24 +1,25 @@
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
+import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
+import { PUBLISHED_BLOGS_PER_PAGE as perPage } from "@/config";
 import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
+import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import API from "@/services/API";
+import Permission from "@/types/permissions";
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Blog } from "@/types/blog";
-import Permission from "@/types/permissions";
 
 interface PublishedStoriesState {
   blogs: Blog[];
   searchTerm: string;
   loading: boolean;
   currentPage: number;
-  perPage: number;
 }
 
 const initialState: PublishedStoriesState = {
@@ -26,7 +27,6 @@ const initialState: PublishedStoriesState = {
   searchTerm: "",
   loading: true,
   currentPage: 1,
-  perPage: 9,
 };
 
 const enum ActionType {
@@ -77,86 +77,14 @@ export default function PublishedStories() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const { blogs, searchTerm, loading } = state;
-  const indexOfLastBlog = state.currentPage * state.perPage;
-  const indexOfFirstBlog = indexOfLastBlog - state.perPage;
+  const indexOfLastBlog = state.currentPage * perPage;
+  const indexOfFirstBlog = indexOfLastBlog - perPage;
   const filteredBlogs = getFilteredBlogs(blogs, searchTerm);
   const paginatedBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  function Pagination() {
-    const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(filteredBlogs.length / perPage);
 
-    const handlePageChange = (newPage: number) => {
-      dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
-    };
-
-    const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages || totalPages === 0;
-    const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = Math.max(
-      1,
-      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
-    );
-    let endIndex = Math.min(
-      Math.max(
-        MAX_PAGES_TO_SHOW,
-        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
-      ),
-      totalPages,
-    );
-
-    if (startIndex < 1) {
-      endIndex -= startIndex - 1;
-      startIndex = 1;
-    }
-    if (endIndex > totalPages) {
-      startIndex -= endIndex - totalPages;
-      endIndex = totalPages;
-    }
-
-    const pages = Array.from(
-      { length: endIndex - startIndex + 1 },
-      (_, index) => startIndex + index,
-    );
-    return (
-      <div className="flex justify-center items-center space-x-2 mt-8">
-        <button
-          onClick={() => !isFirstPage && handlePageChange(currentPage - 1)}
-          disabled={isFirstPage}
-          className={`px-3 py-1 rounded-md border ${
-            isFirstPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Previous
-        </button>
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-3 py-1 rounded-md border ${
-              currentPage === page
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <button
-          onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
-          disabled={isLastPage}
-          className={`px-3 py-1 rounded-md border ${
-            isLastPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Next
-        </button>
-      </div>
-    );
-  }
+  const handlePageChange = (newPage: number) => {
+    dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+  };
 
   const handleRead = (blogId) => {
     API.get(`/blog/get-blog/${blogId}`)
@@ -298,7 +226,12 @@ export default function PublishedStories() {
         />
       </main>
       <div className="flex justify-center mt-16 mb-8">
-        <Pagination />
+        <Pagination
+          filtered_content={filteredBlogs}
+          current_page={state.currentPage}
+          per_page={perPage}
+          handlePageChange={handlePageChange}
+        />
       </div>
     </div>
   );
