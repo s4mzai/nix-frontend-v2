@@ -1,13 +1,12 @@
-import API from "@/services/API";
-import { useContext, useEffect, useState } from "react";
-import { CurrUserCtx } from "@/contexts/current_user";
-import { Link, useParams } from "react-router-dom";
-import { Spinner } from "@/components/Spinner";
-import React from "react";
-import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
 import { PermissionProtector } from "@/components/PermissionProtector";
+import { Spinner } from "@/components/Spinner";
+import { CurrUserCtx } from "@/contexts/current_user";
+import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
 import Permission from "@/types/permissions";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 interface MemberProfileInitialState {
   id: string;
@@ -27,7 +26,7 @@ const initialState: MemberProfileInitialState = {
 
 export default function MemberProfile() {
   const { setError } = React.useContext(ErrorContext);
-  const { ready, user } = useContext(CurrUserCtx);
+  const { user } = useContext(CurrUserCtx);
 
   const { id } = useParams() || user;
   const [userDetails, setUserDetails] =

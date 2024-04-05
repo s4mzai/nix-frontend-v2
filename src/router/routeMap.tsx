@@ -3,18 +3,18 @@
 import { Link, Outlet } from "react-router-dom";
 
 import DashIcon from "@/assets/DashIcon";
+import EditionIcon from "@/assets/EditionIcon";
 import LogOutIcon from "@/assets/LogOutIcon";
+import LogsIcon from "@/assets/LogsIcon";
 import MemberIcon from "@/assets/MemberIcon";
 import RoleIcon from "@/assets/RoleIcon";
 import StoryIcon from "@/assets/StoryIcon";
+import TerminalIcon from "@/assets/TerminalIcon";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import ErrorPage from "@/error-page";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
-import LogsIcon from "@/assets/LogsIcon";
-import TerminalIcon from "@/assets/TerminalIcon";
-import EditionIcon from "@/assets/EditionIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -159,13 +159,13 @@ const routeMap: CustomRouteElement[] = [
         path: "new-role/",
         element: <NewRole key="new-role" />,
         label: "New Role",
-        permission: [Permission.CreateRole],
+        permission: [Permission.UpsertRole],
       },
       {
         path: "update-role/",
         element: <NewRole update_page={true} key="update-role" />,
         label: "Update Role",
-        permission: [Permission.UpdateRole],
+        permission: [Permission.UpsertRole],
       },
     ],
   },

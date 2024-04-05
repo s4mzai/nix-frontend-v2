@@ -1,5 +1,6 @@
 import { TagIcon } from "@/assets/TagIcon";
 import MoreMenu from "@/components/MoreMenu";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
@@ -10,7 +11,6 @@ import API from "@/services/API";
 import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import Permission from "@/types/permissions";
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -86,50 +86,6 @@ export default function PublishedStories() {
     dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
   };
 
-  const handleRead = (blogId) => {
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate(`/story/${blogId}`, { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-  };
-
-  const handleDelete = (blogId) => {
-    const choice = window.confirm(
-      "Are you sure you want to delete this story?",
-    );
-    if (choice) {
-      const deleteEndPoint = `/blog/delete-blog/${blogId}`;
-
-      API.delete(deleteEndPoint)
-        .then(() => {
-          toast.success("Successfully deleted");
-          fetchBlogs();
-        })
-        .catch((e) => setError(e));
-      console.debug("story deleted");
-    }
-  };
-
-  const handleArchive = (blogId) => {
-    //archive is same as takedown dw
-    const choice = window.confirm(
-      "Are you sure you want to archive this story?",
-    );
-    if (choice) {
-      const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
-
-      API.put(archiveEndPoint)
-        .then(() => {
-          toast.success("Successfully archived");
-          fetchBlogs();
-        })
-        .catch((e) => setError(e));
-      console.debug("story archived");
-    }
-  };
-
   const fetchBlogs = () => {
     API.get(blogEndpoint)
       .then((blogResponse) => {
@@ -144,6 +100,9 @@ export default function PublishedStories() {
         dispatch({ type: ActionType.SetLoading, payload: false });
       });
   };
+
+  const more_menu_options = (blog: Blog) =>
+    moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
 
   useEffect(() => {
     fetchBlogs();
@@ -199,26 +158,7 @@ export default function PublishedStories() {
               {BlogStatus[blog.status]}
             </span>,
             <MoreMenu
-              options={[
-                {
-                  label: "Read",
-                  handler: handleRead,
-                  show: true,
-                  permissions: [Permission.ReadBlog],
-                },
-                {
-                  label: "Delete",
-                  handler: handleDelete,
-                  show: true,
-                  permissions: [Permission.DeleteBlog],
-                },
-                {
-                  label: "Archive",
-                  handler: handleArchive,
-                  show: true,
-                  permissions: [Permission.DeleteBlog],
-                },
-              ]}
+              options={more_menu_options(blog)}
               blogId={blog._id}
               key={blog._id}
             />,
