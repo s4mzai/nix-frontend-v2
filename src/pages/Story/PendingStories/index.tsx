@@ -10,11 +10,13 @@ import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
 
 import { TagIcon } from "@/assets/TagIcon";
+import MoreMenu from "@/components/MoreMenu";
+import Pagination from "@/components/Pagination";
+import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
+import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import { Blog } from "@/types/blog";
-import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
-import Pagination from "@/components/Pagination";
+import Permission from "@/types/permissions";
 
 interface PendingStoriesState {
   blogs: Blog[];
@@ -79,13 +81,25 @@ export default function PendingStories() {
 
   const { blogs, searchTerm, loading } = state;
 
-  const handleRead = (blogId) => {
+  const handleRead = (blogId: string) => {
     API.get(`/blog/get-blog/${blogId}`)
       .then((blogResponse) => {
         const blogDetails = blogResponse.data.data;
         navigate(`/story/${blogId}`, { state: { key: blogDetails } });
       })
       .catch((e) => setError(e));
+  };
+
+  const handleEdit = (blogId: string) => {
+    //TODO edit blog, should open the blog on the new blog view
+    console.debug(blogId);
+    API.get(`/blog/get-blog/${blogId}`)
+      .then((blogResponse) => {
+        const blogDetails = blogResponse.data.data;
+        navigate("/story/new-story", { state: { key: blogDetails } });
+      })
+      .catch((e) => setError(e));
+    console.debug("story edited");
   };
 
   const fetchBlogs = () => {
@@ -168,15 +182,24 @@ export default function PendingStories() {
               <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min " />
               {BlogStatus[blog.status]}
             </span>,
-            <div key={`${blog._id}-button`}>
-              <button
-                onClick={() => handleRead(blog._id)}
-                type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-              >
-                Read Story
-              </button>
-            </div>,
+            <MoreMenu
+              options={[
+                {
+                  label: "Read",
+                  handler: handleRead,
+                  show: true,
+                  permissions: [Permission.ReadBlog],
+                },
+                {
+                  label: "Edit",
+                  handler: handleEdit,
+                  show: true,
+                  permissions: [Permission.EditBeforeBlogPublish],
+                },
+              ]}
+              blogId={blog._id}
+              key={blog._id}
+            />,
           ])}
         />
       </main>
