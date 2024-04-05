@@ -44,4 +44,5 @@ export enum MainWebsiteRole {
   Photographer = 5,
   Illustrator = 6,
   Developer = 7,
+  Alumni = 8,
 }
