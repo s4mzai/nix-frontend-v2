@@ -251,7 +251,7 @@ export default function ReadStory() {
               <button
                 onClick={handlePublishNow}
                 type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-green-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
               >
                 Publish Now
               </button>
@@ -260,14 +260,14 @@ export default function ReadStory() {
                   dispatch({ type: ActionType.SetShowDTPicker, payload: true })
                 }
                 type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-yellow-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
               >
                 Publish Later
               </button>
               <button
                 onClick={handleSaveToDraft}
                 type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
               >
                 Save Back to Draft
               </button>
@@ -292,7 +292,7 @@ export default function ReadStory() {
                   <button
                     onClick={handlePublishLater}
                     type="button"
-                    className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                    className="py-1 px-2 me-2 m-1 text-md font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
                   >
                     Confirm Choice
                   </button>
@@ -312,14 +312,14 @@ export default function ReadStory() {
                 <button
                   onClick={handleDelete}
                   type="button"
-                  className="py-1 px-2 me-2 m-1 text-xs font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
                 >
                   Delete Blog
                 </button>
                 <button
                   onClick={handleArchive}
                   type="button"
-                  className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
                 >
                   Archive Blog
                 </button>
@@ -333,7 +333,7 @@ export default function ReadStory() {
             <button
               onClick={handleDelete}
               type="button"
-              className="py-1 px-2 me-2 m-1 text-xs font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+              className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
             >
               Delete Blog
             </button>
