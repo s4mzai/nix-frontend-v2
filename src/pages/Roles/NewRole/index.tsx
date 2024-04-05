@@ -178,9 +178,8 @@ export default function NewRole({ update_page = false }) {
   };
 
   useEffect(() => {
-    if (isUpdateMode && state.rolesList.length === 0) fetchRoles();
-    //useEffect runs when value of isUpdateMode changes
-  }, [isUpdateMode]);
+    fetchRoles();
+  }, []);
 
   if (loading)
     return (
