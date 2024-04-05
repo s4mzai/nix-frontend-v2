@@ -73,13 +73,12 @@ export default function AllMembers() {
   }, []);
 
   //filter members based on search term
-
   const filteredMembers = membersList.filter((member) => {
-    const search_term = searchTerm.toLowerCase();
+    const smallSearchTerm = searchTerm.toLowerCase();
     return (
-      member.name.toLowerCase().includes(search_term) ||
-      member.role.toLowerCase().includes(search_term) ||
-      member.email.toLowerCase().includes(search_term)
+      member?.name.toLowerCase().includes(smallSearchTerm) ||
+      member?.email.toLowerCase().includes(smallSearchTerm) ||
+      member?.role.toLowerCase().includes(smallSearchTerm)
     );
   });
 
