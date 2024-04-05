@@ -1,19 +1,18 @@
 /* eslint-disable prettier/prettier */
-import { useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import API from "@/services/API";
-import { CurrUserCtx } from "@/contexts/current_user";
-import { toast } from "react-toastify";
 import showPassIcon from "@/assets/show-password.png";
-import React from "react";
-import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
-import { IUser } from "@/types/contextTypes";
 import MyMultiselect from "@/components/MultiSelect";
-import Permission from "@/types/permissions";
-import { Role } from "@/types/role";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import { Spinner } from "@/components/Spinner";
+import { CurrUserCtx } from "@/contexts/current_user";
+import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
+import { IUser, MainWebsiteRole } from "@/types/contextTypes";
+import Permission from "@/types/permissions";
+import { Role } from "@/types/role";
+import React, { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface PermissionItem {
   name: string;
@@ -33,6 +32,7 @@ interface EditMemberState {
   rolesList: Role[];
   target_roleId: string;
   target_roleName: string;
+  target_websiteRole: MainWebsiteRole;
   loading: boolean;
 }
 
@@ -51,6 +51,7 @@ enum ActionType {
   setRoleName,
   setRolesList,
   setLoading,
+  setMainWebsiteRole,
 }
 
 export default function EditMember() {
@@ -72,6 +73,7 @@ export default function EditMember() {
     target_selectedPermissions: [],
     target_roleId: "",
     target_roleName: "",
+    target_websiteRole: 3,
     rolesList: [],
     loading: true,
   };
@@ -106,96 +108,99 @@ export default function EditMember() {
   ) => {
     const updatedData = { ...state };
     switch (action.type) {
-      case ActionType.ToggleShowConfirmPassword:
-        updatedData.showConfirmPassword = action.payload;
-        break;
-      case ActionType.ToggleShowPassword:
-        updatedData.showPassword = action.payload;
-        break;
-      case ActionType.UpdateName:
-        updatedData.target_name = action.payload;
-        break;
-      case ActionType.UpdateEmail:
-        updatedData.target_email = action.payload;
-        break;
-      case ActionType.UpdateBio:
-        updatedData.target_bio = action.payload;
-        break;
-      case ActionType.UpdatePassword:
-        updatedData.newPassword = action.payload;
-        break;
+    case ActionType.ToggleShowConfirmPassword:
+      updatedData.showConfirmPassword = action.payload;
+      break;
+    case ActionType.ToggleShowPassword:
+      updatedData.showPassword = action.payload;
+      break;
+    case ActionType.UpdateName:
+      updatedData.target_name = action.payload;
+      break;
+    case ActionType.UpdateEmail:
+      updatedData.target_email = action.payload;
+      break;
+    case ActionType.UpdateBio:
+      updatedData.target_bio = action.payload;
+      break;
+    case ActionType.UpdatePassword:
+      updatedData.newPassword = action.payload;
+      break;
+    case ActionType.UpdateConfirmPassword:
+      updatedData.confirmPassword = action.payload;
+      break;
+    case ActionType.UpdateProfilePictureLink:
+      updatedData.profilePicture = action.payload;
+      break;
+    case ActionType.SetProfilePicture:
+      {
+        const avatar = action.payload as File;
+        if (avatar) {
+          toastId.current = toast.info("Uploading 0%", { autoClose: false });
+          const form = new FormData();
+          form.append("avatar", avatar);
+          const endpoint = "/images/upload-avatar";
+          const requestMethod = "POST";
 
-      case ActionType.UpdateConfirmPassword:
-        updatedData.confirmPassword = action.payload;
-        break;
-      case ActionType.UpdateProfilePictureLink:
-        updatedData.profilePicture = action.payload;
-        break;
-      case ActionType.SetProfilePicture:
-        {
-          const avatar = action.payload as File;
-          if (avatar) {
-            toastId.current = toast.info("Uploading 0%", { autoClose: false });
-            const form = new FormData();
-            form.append("avatar", avatar);
-            const endpoint = "/images/upload-avatar";
-            const requestMethod = "POST";
-
-            API({
-              method: requestMethod,
-              url: endpoint,
-              data: form,
-              onUploadProgress: (progressEvent) => {
-                const progress = progressEvent.loaded / progressEvent.total;
-                const percentCompleted = Math.round(progress * 100);
-                console.log(progress);
-                toast.update(toastId.current, {
-                  render: `Uploading ${percentCompleted}%`,
-                  type: "info",
-                  progress: progress,
-                });
-              },
+          API({
+            method: requestMethod,
+            url: endpoint,
+            data: form,
+            onUploadProgress: (progressEvent) => {
+              const progress = progressEvent.loaded / progressEvent.total;
+              const percentCompleted = Math.round(progress * 100);
+              console.log(progress);
+              toast.update(toastId.current, {
+                render: `Uploading ${percentCompleted}%`,
+                type: "info",
+                progress: progress,
+              });
+            },
+          })
+            .then((res) => {
+              toast.update(toastId.current, {
+                render: "Uploading complete!",
+                type: "info",
+                progress: 1,
+              });
+              toast.done(toastId.current);
+              toast.success("Image uploaded successfully");
+              const image_name = res.data.data.name;
+              dispatch({
+                type: ActionType.UpdateProfilePictureLink,
+                payload: image_name,
+              });
             })
-              .then((res) => {
-                toast.update(toastId.current, {
-                  render: "Uploading complete!",
-                  type: "info",
-                  progress: 1,
-                });
-                toast.done(toastId.current);
-                toast.success("Image uploaded successfully");
-                const image_name = res.data.data.name;
-                dispatch({
-                  type: ActionType.UpdateProfilePictureLink,
-                  payload: image_name,
-                });
-              })
-              .catch((e) => {
-                toast.done(toastId.current);
-                setError(e);
-              })
-              .finally(() => (toastId.current = null));
-          }
+            .catch((e) => {
+              toast.done(toastId.current);
+              setError(e);
+            })
+            .finally(() => (toastId.current = null));
         }
-        break;
-      case ActionType.setSelectedPermissions:
-        updatedData.target_selectedPermissions = action.payload;
-        break;
-      case ActionType.setRoleId:
-        updatedData.target_roleId = action.payload;
-        break;
-      case ActionType.setRolesList:
-        updatedData.rolesList = action.payload;
-        break;
-      case ActionType.setRoleName:
-        updatedData.target_roleName = action.payload;
-        break;
-      case ActionType.setLoading:
-        updatedData.loading = action.payload;
-        break;
+      }
+      break;
+    case ActionType.setSelectedPermissions:
+      updatedData.target_selectedPermissions = action.payload;
+      break;
+    case ActionType.setRoleId:
+      updatedData.target_roleId = action.payload;
+      break;
+    case ActionType.setRolesList:
+      updatedData.rolesList = action.payload;
+      break;
+    case ActionType.setRoleName:
+      updatedData.target_roleName = action.payload;
+      break;
+    case ActionType.setLoading:
+      updatedData.loading = action.payload;
+      break;
+    case ActionType.setMainWebsiteRole:
+      console.log("Team" ,action.payload);
+      updatedData.target_websiteRole = action.payload;
+      break;
 
-      default:
-        return updatedData;
+    default:
+      return updatedData;
     }
     return updatedData;
   };
@@ -216,6 +221,7 @@ export default function EditMember() {
     target_roleName,
     target_selectedPermissions,
     loading,
+    target_websiteRole,
   } = state;
 
   const handleSubmit = async (e) => {
@@ -237,6 +243,7 @@ export default function EditMember() {
       target_user_id: id,
       permission: target_selectedPermissions.map((perm) => perm.id),
       role_id: target_roleId,
+      team_role: target_websiteRole,
     };
 
     API.put(endPoint, requestData)
@@ -255,7 +262,7 @@ export default function EditMember() {
   };
 
   const fetchRoles = () => {
-    if(!user.permission.includes(Permission.ReadRole)) return;
+    if (!user.permission.includes(Permission.ReadRole)) return;
     const rolesEndpoint = "/role";
 
     return API.get(rolesEndpoint).then((rolesResponse) => {
@@ -282,7 +289,8 @@ export default function EditMember() {
         });
         dispatch({ type: ActionType.setRoleId, payload: userData.role_id });
         dispatch({ type: ActionType.setRoleName, payload: userData.role });
-        dispatch({type: ActionType.UpdateProfilePictureLink, payload: userData.id});
+        dispatch({ type: ActionType.UpdateProfilePictureLink, payload: userData.id });
+        dispatch({ type: ActionType.setMainWebsiteRole, payload: userData.team_role });
       });
     } //TODO handle if no id present
   };
@@ -298,29 +306,34 @@ export default function EditMember() {
   }, []);
 
   if (loading)
-  return (
-    <div className="flex flex-grow w-full h-screen justify-center items-center">
-      <Spinner />
-    </div>
-  );
+    return (
+      <div className="flex flex-grow w-full h-screen justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
+const team_roles = Object.keys(MainWebsiteRole)
+                  .filter((perm) => !isNaN(Number(perm)))
+                  .map((key) => ({ name: MainWebsiteRole[key] as MainWebsiteRole, id: Number(key) }));
+
+                  console.log("Team Roles", team_roles);
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-    {(id !== user.id ) ? <PermissionProtector permission={[Permission.UpdateProfile]} silent={false}/> : <></>}
+      {(id !== user.id) ? <PermissionProtector permission={[Permission.UpdateProfile]} silent={false} /> : <></>}
       <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
         <div className="space-y-2">
           {/* //todo make this to the right of name and username */}
-        {profilePicture ? (
-          <div className="flex items-center justify-center ">
-            <AvatarImage
-              className="h-36 w-36 rounded-full"
-              user_id={profilePicture}
-              thumbnail={true}
-              alt={profilePicture}
-            />
+          {profilePicture ? (
+            <div className="flex items-center justify-center ">
+              <AvatarImage
+                className="h-36 w-36 rounded-full"
+                user_id={profilePicture}
+                thumbnail={true}
+                alt={profilePicture}
+              />
             </div>
           ) : (
             <></>
@@ -400,7 +413,7 @@ export default function EditMember() {
               className="border p-2 rounded"
             />
           </div>
-          
+
         </div>
         {id === user.id && (
           <div className="relative">
@@ -424,7 +437,7 @@ export default function EditMember() {
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 pt-4 flex items-center cursor-pointer"
-                onClick={(e) =>
+                onClick={() =>
                   dispatch({
                     type: ActionType.ToggleShowPassword,
                     payload: !showPassword,
@@ -457,7 +470,7 @@ export default function EditMember() {
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 pt-5 flex items-center cursor-pointer"
-                onClick={(e) =>
+                onClick={() =>
                   dispatch({
                     type: ActionType.ToggleShowConfirmPassword,
                     payload: !showConfirmPassword,
@@ -471,40 +484,57 @@ export default function EditMember() {
                 />
               </div>
             </div>
-            <small className="block text-xs mt-2 text-slate-500">
-              You can enter the same password or update your password.
-            </small>
+            {(newPassword!==confirmPassword || (newPassword && !confirmPassword))&& (
+                <p className="text-red-500 text-sm">Passwords do not match</p>
+              )}
           </div>
         )}
-        <PermissionProtector permission={[Permission.UpdateRole]} silent={true}>
-          <div className="flex flex-col">
-            <h1 className="text-2xl text-left font-medium leading-none my-6">
+        <PermissionProtector permission={[Permission.UpdateProfile]} silent={true}>
+          <div className="my-2">
+             <h1 className="text-2xl text-left font-medium leading-none my-6">
               Update Role and Permissions
             </h1>
-            <PermissionProtector permission={[Permission.ReadRole]} silent={true}>
-            <div className="my-2">
-              <label className="block text-sm font-semibold mb-2">Role</label>
-              <div className="w-1/2">
-                <MyMultiselect
-                  options={rolesList.map((role) => ({
-                    name: role.role_name,
-                    id: role.role_id,
-                    permissions: role.permissions,
-                  }))}
-                  selectedOptions={[
-                    {
-                      name: target_roleName,
-                      id: target_roleId,
-                      permissions: target_selectedPermissions,
-                    },
-                  ]}
-                  onSelectionChange={handleRoleNameChange}
-                  isSingleSelect={true}
-                />
-              </div>
+            <label className="block text-sm font-semibold mb-2">Display Role</label>
+            <div className="w-1/2">
+              <MyMultiselect
+                options={team_roles}
+                selectedOptions={[
+                 team_roles[target_websiteRole]
+                ]}
+                
+                onSelectionChange={(e) => {
+                  dispatch({
+                    type: ActionType.setMainWebsiteRole,
+                    payload: e[0].id,
+                  });
+                }}
+                isSingleSelect={true}
+              />
             </div>
+              <PermissionProtector permission={[Permission.ReadRole]} silent={true}>
+              <div className="my-2">
+                <label className="block text-sm font-semibold mb-2">Role</label>
+                <div className="w-1/2">
+                  <MyMultiselect
+                    options={rolesList.map((role) => ({
+                      name: role.role_name,
+                      id: role.role_id,
+                      permissions: role.permissions,
+                    }))}
+                    selectedOptions={[
+                      {
+                        name: target_roleName,
+                        id: target_roleId,
+                        permissions: target_selectedPermissions,
+                      },
+                    ]}
+                    onSelectionChange={handleRoleNameChange}
+                    isSingleSelect={true}
+                  />
+                </div>
+              </div>
             </PermissionProtector>
-            <div className="my-2">
+               <div className="my-2">
               <label className="block text-sm font-semibold mb-2">
                 Permissions
               </label>
@@ -521,10 +551,11 @@ export default function EditMember() {
             </div>
           </div>
         </PermissionProtector>
+ 
         <button
           type="button"
           className="bg-gray-200 text-black p-3 rounded hover:bg-indigo-500 hover:text-white mx-2"
-          onClick={() => {navigate(-1);}}
+          onClick={() => { navigate(-1); }}
         >
           Cancel Update
         </button>
@@ -535,8 +566,6 @@ export default function EditMember() {
         >
           Update Info
         </button>
-       
-        
       </form>
     </div>
   );

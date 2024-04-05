@@ -1,38 +1,23 @@
-import API from "@/services/API";
-import { useContext, useEffect, useState } from "react";
-import { CurrUserCtx } from "@/contexts/current_user";
-import { Link, useParams } from "react-router-dom";
-import { Spinner } from "@/components/Spinner";
-import React from "react";
-import { ErrorContext } from "@/contexts/error";
 import { AvatarImage } from "@/components/AvatarImage";
 import { PermissionProtector } from "@/components/PermissionProtector";
+import { Spinner } from "@/components/Spinner";
+import { CurrUserCtx } from "@/contexts/current_user";
+import { ErrorContext } from "@/contexts/error";
+import API from "@/services/API";
+import { IUser, MainWebsiteRole } from "@/types/contextTypes";
 import Permission from "@/types/permissions";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
-interface MemberProfileInitialState {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-  bio: string;
-}
-
-const initialState: MemberProfileInitialState = {
-  id: null,
-  name: "",
-  role: "",
-  email: "",
-  bio: "",
-};
+type MemberProfileInitialState = IUser;
 
 export default function MemberProfile() {
   const { setError } = React.useContext(ErrorContext);
-  const { ready, user } = useContext(CurrUserCtx);
+  const { user } = useContext(CurrUserCtx);
 
   const { id } = useParams() || user;
   const [userDetails, setUserDetails] =
-    useState<MemberProfileInitialState>(initialState);
-  const [loading, setLoading] = useState(true);
+    useState<MemberProfileInitialState>(null);
 
   useEffect(() => {
     if (id && id !== user.id) {
@@ -40,33 +25,19 @@ export default function MemberProfile() {
       API.get(userDetailsEndpoint)
         .then((response) => {
           const userData = response.data.data;
-          setUserDetails({
-            id: userData.id,
-            name: userData.name,
-            role: userData.role,
-            email: userData.email,
-            bio: userData.bio,
-          });
-          setLoading(false);
+          setUserDetails(userData);
         })
         .catch((error) => {
           setError(error);
         });
     } else {
-      setUserDetails({
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        email: user.email,
-        bio: user.bio,
-      });
-      setLoading(false);
+      setUserDetails(user);
     }
   }, []);
 
-  if (loading)
+  if (userDetails === null)
     return (
-      <div className="flex w-full h-full justify-center items-center">
+      <div className="flex w-full h-screen justify-center items-center">
         <Spinner />
       </div>
     );
@@ -125,8 +96,26 @@ export default function MemberProfile() {
 
         <ul className="mb-6">
           <li className="mb-2">
-            <span className="text-gray-600 font-semibold">Email:</span>
+            <span className="text-gray-600 font-semibold">Email :</span>
             <span className="text-gray-600 ml-1">{userDetails.email}</span>
+          </li>
+          <li className="mb-2">
+            <span className="text-gray-600 font-semibold">Joined on :</span>
+            <span className="text-gray-600 ml-1">
+              {new Date(userDetails.created_at).toDateString()}
+            </span>
+          </li>
+          <li className="mb-2">
+            <span className="text-gray-600 font-semibold">Display Role :</span>
+            <span className="text-gray-600 ml-1">
+              {MainWebsiteRole[userDetails.team_role]}
+            </span>
+          </li>
+          <li className="mb-2">
+            <span className="text-gray-600 font-semibold">Is superuser :</span>
+            <span className="text-gray-600 ml-1">
+              {userDetails.is_superuser ? "Yes" : "No"}
+            </span>
           </li>
         </ul>
       </div>

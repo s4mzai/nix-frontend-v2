@@ -1,20 +1,19 @@
 import { useContext, useEffect, useReducer } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import API from "@/services/API";
-
 import { ErrorContext } from "@/contexts/error";
-
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import Table from "@/components/Table";
-
 import { TagIcon } from "@/assets/TagIcon";
+import MoreMenu from "@/components/MoreMenu";
+import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
+import Pagination from "@/components/Pagination";
+import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
+import { Blog } from "@/types/blog";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
-import { Blog } from "@/types/blog";
-import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
-import Pagination from "@/components/Pagination";
+import { toast } from "react-toastify";
 
 interface PendingStoriesState {
   blogs: Blog[];
@@ -79,14 +78,8 @@ export default function PendingStories() {
 
   const { blogs, searchTerm, loading } = state;
 
-  const handleRead = (blogId) => {
-    API.get(`/blog/get-blog/${blogId}`)
-      .then((blogResponse) => {
-        const blogDetails = blogResponse.data.data;
-        navigate(`/story/${blogId}`, { state: { key: blogDetails } });
-      })
-      .catch((e) => setError(e));
-  };
+  const more_menu_options = (blog: Blog) =>
+    moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
 
   const fetchBlogs = () => {
     API.get(blogEndpoint)
@@ -168,15 +161,11 @@ export default function PendingStories() {
               <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min " />
               {BlogStatus[blog.status]}
             </span>,
-            <div key={`${blog._id}-button`}>
-              <button
-                onClick={() => handleRead(blog._id)}
-                type="button"
-                className="py-1 px-2 me-2 m-1 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
-              >
-                Read Story
-              </button>
-            </div>,
+            <MoreMenu
+              options={more_menu_options(blog)}
+              blogId={blog._id}
+              key={blog._id}
+            />,
           ])}
         />
       </main>

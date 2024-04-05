@@ -1,11 +1,11 @@
+import TimesLogo from "@/assets/dtutimesIcon";
+import { AvatarImage } from "@/components/AvatarImage";
+import Leaderboard from "@/components/Leaderboard";
+import { Spinner } from "@/components/Spinner";
 import { CurrUserCtx } from "@/contexts/current_user";
+import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import React from "react";
-import TimesLogo from "@/assets/dtutimesIcon";
-import { Spinner } from "@/components/Spinner";
-import { ErrorContext } from "@/contexts/error";
-import Leaderboard from "@/components/Leaderboard";
-import { AvatarImage } from "@/components/AvatarImage";
 import { Link } from "react-router-dom";
 
 interface TopUserData {
@@ -38,7 +38,6 @@ const initialState: DashboardInitialState = {
 
 const enum ActionType {
   SetTopUserData,
-  SetLoading,
 }
 
 const reducer = (
@@ -49,9 +48,6 @@ const reducer = (
   switch (action.type) {
     case ActionType.SetTopUserData:
       updatedData.topUserData = action.payload;
-      break;
-    case ActionType.SetLoading:
-      updatedData.loading = action.payload;
       break;
     default:
       return updatedData;
@@ -65,7 +61,7 @@ export default function Dashbboard() {
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  const { topUserData, loading } = state;
+  const { topUserData } = state;
 
   const clippedBio = user?.bio?.length > 150 ? `${user.bio.slice(0, 150)}...` : user.bio;
   React.useEffect(() => {
@@ -77,11 +73,9 @@ export default function Dashbboard() {
           type: ActionType.SetTopUserData,
           payload: response.data.data,
         });
-        dispatch({ type: ActionType.SetLoading, payload: false });
       })
       .catch((error) => {
         setError(error);
-        dispatch({ type: ActionType.SetLoading, payload: false });
       });
   }, []);
 

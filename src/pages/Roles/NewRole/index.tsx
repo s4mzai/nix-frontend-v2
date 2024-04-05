@@ -3,10 +3,9 @@ import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import Permission from "@/types/permissions";
+import { Role } from "@/types/role";
 import { useContext, useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
-import { Role } from "@/types/role";
-import { PermissionProtector } from "@/components/PermissionProtector";
 
 interface PermissionItem {
   name: string;
@@ -87,7 +86,7 @@ export default function NewRole({ update_page = false }) {
   } = state;
 
   //to toggle between update and create mode
-  const handleToggleChange = (e) => {
+  const handleToggleChange = () => {
     dispatch({ type: ActionType.setIsUpdateMode, payload: !isUpdateMode });
     dispatch({ type: ActionType.setRoleId, payload: "" });
     dispatch({ type: ActionType.setSelectedPermissions, payload: [] });
@@ -180,8 +179,7 @@ export default function NewRole({ update_page = false }) {
 
   useEffect(() => {
     fetchRoles();
-    //useEffect runs when value of isUpdateMode changes
-  }, [isUpdateMode]);
+  }, []);
 
   if (loading)
     return (
