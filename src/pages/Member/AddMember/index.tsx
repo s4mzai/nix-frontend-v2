@@ -1,52 +1,8 @@
-import { PermissionProtector } from "@/components/PermissionProtector";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import Member from "@/types/member";
-import Permission from "@/types/permissions";
 import React from "react";
 import { toast } from "react-toastify";
-
-const categories = ["Name", "Role", "Email"];
-
-const initialState = {
-  membersList: [] as Member[],
-  searchTerm: "",
-  selectedCategory: categories[0].toLowerCase(),
-  loading: true,
-};
-
-const enum ActionType {
-  SetMemberList,
-  SetSearchTerm,
-  SetSelectedCategory,
-  SetLoading,
-}
-
-const reducer = (
-  state: typeof initialState,
-  action: { type: ActionType; payload },
-) => {
-  const updatedData = { ...state };
-  switch (action.type) {
-    //underscore convention from react docs
-    case ActionType.SetMemberList:
-      updatedData.membersList = action.payload;
-      break;
-    case ActionType.SetSearchTerm:
-      updatedData.searchTerm = action.payload;
-      break;
-    case ActionType.SetSelectedCategory:
-      updatedData.selectedCategory = action.payload;
-      break;
-    case ActionType.SetLoading:
-      updatedData.loading = action.payload;
-      break;
-    default:
-      return updatedData;
-  }
-  return updatedData;
-};
 
 export default function AddMember() {
   const { setError } = React.useContext(ErrorContext);
