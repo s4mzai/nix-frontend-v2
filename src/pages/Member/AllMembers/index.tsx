@@ -1,3 +1,4 @@
+import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 import UserCard from "@/components/UserCard";
@@ -6,15 +7,13 @@ import API from "@/services/API";
 import Member from "@/types/member";
 import React from "react";
 import { useEffect } from "react";
-
-const categories = ["Name", "Role", "Email"];
+import { MEMBERS_PER_PAGE as perPage } from "@/config";
 
 const initialState = {
   membersList: [] as Member[],
   searchTerm: "",
   loading: true,
   currentPage: 1,
-  perPage: 9,
 };
 
 const enum ActionType {
@@ -83,8 +82,8 @@ export default function AllMembers() {
     );
   });
 
-  const indexOfLastMember = state.currentPage * state.perPage;
-  const indexOfFirstMember = indexOfLastMember - state.perPage;
+  const indexOfLastMember = state.currentPage * perPage;
+  const indexOfFirstMember = indexOfLastMember - perPage;
   const paginatedMembers = filteredMembers.slice(
     indexOfFirstMember,
     indexOfLastMember,
@@ -96,83 +95,9 @@ export default function AllMembers() {
         <Spinner />
       </div>
     );
-  function Pagination() {
-    const { currentPage, perPage } = state;
-    const totalPages = Math.ceil(filteredMembers.length / perPage);
-
-    const handlePageChange = (newPage: number) => {
-      dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
-    };
-
-    const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages || totalPages === 0;
-    const MAX_PAGES_TO_SHOW = 5;
-    let startIndex = Math.max(
-      1,
-      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
-    );
-    let endIndex = Math.min(
-      Math.max(
-        MAX_PAGES_TO_SHOW,
-        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
-      ),
-      totalPages,
-    );
-
-    if (startIndex < 1) {
-      endIndex -= startIndex - 1;
-      startIndex = 1;
-    }
-    if (endIndex > totalPages) {
-      startIndex -= endIndex - totalPages;
-      endIndex = totalPages;
-    }
-
-    const pages = Array.from(
-      { length: endIndex - startIndex + 1 },
-      (_, index) => startIndex + index,
-    );
-    console.log(startIndex, pages);
-    return (
-      <div className="flex justify-center items-center space-x-2 mt-8">
-        <button
-          onClick={() => !isFirstPage && handlePageChange(currentPage - 1)}
-          disabled={isFirstPage}
-          className={`px-3 py-1 rounded-md border ${
-            isFirstPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Previous
-        </button>
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-3 py-1 rounded-md border ${
-              currentPage === page
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <button
-          onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
-          disabled={isLastPage}
-          className={`px-3 py-1 rounded-md border ${
-            isLastPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Next
-        </button>
-      </div>
-    );
-  }
+  const handlePageChange = (newPage: number) => {
+    dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+  };
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -201,7 +126,12 @@ export default function AllMembers() {
           </div>
         ))}
       </div>
-      <Pagination />
+      <Pagination
+        filtered_content={filteredMembers}
+        current_page={state.currentPage}
+        per_page={perPage}
+        handlePageChange={handlePageChange}
+      />
     </div>
   );
 }

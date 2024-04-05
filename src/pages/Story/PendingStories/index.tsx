@@ -13,23 +13,28 @@ import { TagIcon } from "@/assets/TagIcon";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import { Blog } from "@/types/blog";
+import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
+import Pagination from "@/components/Pagination";
 
 interface PendingStoriesState {
   blogs: Blog[];
   searchTerm: string;
   loading: boolean;
+  currentPage: number;
 }
 
 const initialState: PendingStoriesState = {
   blogs: [],
   searchTerm: "",
   loading: true,
+  currentPage: 1,
 };
 
 const enum ActionType {
   SetBlogs,
   SetSearchTerm,
   SetLoading,
+  SetCurrentPage,
 }
 
 const blogEndpoint = "/blog";
@@ -45,9 +50,13 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
+      break;
+    case ActionType.SetCurrentPage:
+      updatedData.currentPage = action.payload;
       break;
     default:
       return updatedData;
@@ -55,9 +64,9 @@ const reducer = (
   return updatedData;
 };
 
-const getFilteredBlogs = (blogs, searchTerm) => {
+const getFilteredBlogs = (blogs: Blog[], searchTerm) => {
   return blogs.filter((blog) =>
-    blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    blog?.title?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
 
@@ -107,6 +116,16 @@ export default function PendingStories() {
       </div>
     );
 
+  const indexOfLastBlog = state.currentPage * perPage;
+  const indexOfFirstBlog = indexOfLastBlog - perPage;
+
+  const filteredBlogs = getFilteredBlogs(blogs, searchTerm);
+  const paginatedBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+
+  const handlePageChange = (newPage: number) => {
+    dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1>Pending Stories</h1>
@@ -121,7 +140,7 @@ export default function PendingStories() {
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={getFilteredBlogs(blogs, searchTerm).map((blog) => [
+          content={paginatedBlogs.map((blog) => [
             <div key={blog._id} className="max-w-24">
               {new Date(blog.updatedAt).toLocaleString(undefined, {
                 dateStyle: "medium",
@@ -161,6 +180,14 @@ export default function PendingStories() {
           ])}
         />
       </main>
+      <div className="flex justify-center mt-8 mb-16">
+        <Pagination
+          filtered_content={filteredBlogs}
+          current_page={state.currentPage}
+          per_page={perPage}
+          handlePageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }
