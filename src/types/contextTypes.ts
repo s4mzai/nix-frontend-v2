@@ -31,4 +31,17 @@ export interface IUser {
   role: string;
   permission: Permission[];
   is_superuser: boolean;
+  created_at: string;
+  team_role: MainWebsiteRole;
+}
+
+export enum MainWebsiteRole {
+  DoNotDisplay = 0,
+  Advisor = 1,
+  Coordinator = 2,
+  Columnist = 3,
+  Designer = 4,
+  Photographer = 5,
+  Illustrator = 6,
+  Developer = 7,
 }
