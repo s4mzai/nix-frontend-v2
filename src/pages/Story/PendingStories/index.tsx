@@ -13,23 +13,27 @@ import { TagIcon } from "@/assets/TagIcon";
 import BlogCategory from "@/types/blogCategory";
 import BlogStatus from "@/types/blogStatus";
 import { Blog } from "@/types/blog";
+import { PENDING_BLOGS_PER_PAGE as perPage } from "@/config";
 
 interface PendingStoriesState {
   blogs: Blog[];
   searchTerm: string;
   loading: boolean;
+  currentPage: number;
 }
 
 const initialState: PendingStoriesState = {
   blogs: [],
   searchTerm: "",
   loading: true,
+  currentPage: 1,
 };
 
 const enum ActionType {
   SetBlogs,
   SetSearchTerm,
   SetLoading,
+  SetCurrentPage,
 }
 
 const blogEndpoint = "/blog";
@@ -49,15 +53,18 @@ const reducer = (
     case ActionType.SetLoading:
       updatedData.loading = action.payload;
       break;
+    case ActionType.SetCurrentPage:
+      updatedData.currentPage = action.payload;
+      break;
     default:
       return updatedData;
   }
   return updatedData;
 };
 
-const getFilteredBlogs = (blogs, searchTerm) => {
+const getFilteredBlogs = (blogs: Blog[], searchTerm) => {
   return blogs.filter((blog) =>
-    blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    blog?.title?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
 
@@ -106,6 +113,85 @@ export default function PendingStories() {
         <Spinner />
       </div>
     );
+  const indexOfLastEdition = state.currentPage * perPage;
+  const indexOfFirstEdition = indexOfLastEdition - perPage;
+
+  const filteredEditions = getFilteredBlogs(blogs, searchTerm);
+  const paginatedEditions = filteredEditions.slice(
+    indexOfFirstEdition,
+    indexOfLastEdition,
+  );
+
+  function Pagination() {
+    if (filteredEditions.length === 0) {
+      return <></>;
+    }
+    const { currentPage } = state;
+    const totalPages = Math.ceil(filteredEditions.length / perPage);
+
+    const handlePageChange = (newPage: number) => {
+      dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+    };
+
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages || totalPages === 0;
+    const MAX_PAGES_TO_SHOW = 5;
+    const startIndex = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
+    const endIndex = Math.min(
+      Math.max(
+        MAX_PAGES_TO_SHOW,
+        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
+      ),
+      totalPages,
+    );
+
+    const pages = Array.from(
+      { length: endIndex - startIndex + 1 },
+      (_, index) => startIndex + index,
+    );
+    return (
+      <div className="flex justify-center items-center space-x-2 mt-8">
+        <button
+          onClick={() => !isFirstPage && handlePageChange(currentPage - 1)}
+          disabled={isFirstPage}
+          className={`px-3 py-1 rounded-md border ${
+            isFirstPage
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          Previous
+        </button>
+        {pages.map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-3 py-1 rounded-md border ${
+              currentPage === page
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
+          disabled={isLastPage}
+          className={`px-3 py-1 rounded-md border ${
+            isLastPage
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          Next
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto py-12">
@@ -121,7 +207,7 @@ export default function PendingStories() {
       <main className="flex-grow p-6">
         <Table
           headers={tableHeaders}
-          content={getFilteredBlogs(blogs, searchTerm).map((blog) => [
+          content={paginatedEditions.map((blog) => [
             <div key={blog._id} className="max-w-24">
               {new Date(blog.updatedAt).toLocaleString(undefined, {
                 dateStyle: "medium",
@@ -161,6 +247,9 @@ export default function PendingStories() {
           ])}
         />
       </main>
+      <div className="flex justify-center mt-8 mb-16">
+        <Pagination />
+      </div>
     </div>
   );
 }
