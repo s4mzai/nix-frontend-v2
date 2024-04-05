@@ -16,10 +16,6 @@ export default function Pagination<T>({
   }
   const totalPages = Math.ceil(filtered_content.length / per_page);
 
-  //   const handlePageChange = (newPage: number) => {
-  //     dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
-  //   };
-
   const isFirstPage = current_page === 1;
   const isLastPage = current_page === totalPages || totalPages === 0;
   const MAX_PAGES_TO_SHOW = 5;

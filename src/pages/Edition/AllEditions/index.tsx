@@ -50,6 +50,7 @@ const reducer = (
       break;
     case ActionType.SetSearchTerm:
       updatedData.searchTerm = action.payload;
+      updatedData.currentPage = 1;
       break;
     case ActionType.SetStatusFilers:
       if (newStatusFilters.includes(action.payload)) {
