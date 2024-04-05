@@ -7,9 +7,10 @@ import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
 
 import EditionCard from "@/components/EditionCard";
+import Pagination from "@/components/Pagination";
+import { EDITIONS_PER_PAGE as perPage } from "@/config";
 import { Edition } from "@/types/edition";
 import { EditionStatus } from "@/types/editionStatus";
-import { EDITIONS_PER_PAGE as perPage } from "@/config";
 
 interface AllEditionsState {
   editions: Edition[];
@@ -128,76 +129,11 @@ export default function AllEditions() {
         <Spinner />
       </div>
     );
-  function Pagination() {
-    if (filteredEditions.length === 0) {
-      return <></>;
-    }
-    const { currentPage } = state;
-    const totalPages = Math.ceil(filteredEditions.length / perPage);
 
-    const handlePageChange = (newPage: number) => {
-      dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
-    };
+  const handlePageChange = (newPage: number) => {
+    dispatch({ type: ActionType.SetCurrentPage, payload: newPage });
+  };
 
-    const isFirstPage = currentPage === 1;
-    const isLastPage = currentPage === totalPages || totalPages === 0;
-    const MAX_PAGES_TO_SHOW = 5;
-    const startIndex = Math.max(
-      1,
-      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
-    );
-    const endIndex = Math.min(
-      Math.max(
-        MAX_PAGES_TO_SHOW,
-        currentPage + Math.floor(MAX_PAGES_TO_SHOW / 2),
-      ),
-      totalPages,
-    );
-
-    const pages = Array.from(
-      { length: endIndex - startIndex + 1 },
-      (_, index) => startIndex + index,
-    );
-    return (
-      <div className="flex justify-center items-center space-x-2 mt-8">
-        <button
-          onClick={() => !isFirstPage && handlePageChange(currentPage - 1)}
-          disabled={isFirstPage}
-          className={`px-3 py-1 rounded-md border ${
-            isFirstPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Previous
-        </button>
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-3 py-1 rounded-md border ${
-              currentPage === page
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <button
-          onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
-          disabled={isLastPage}
-          className={`px-3 py-1 rounded-md border ${
-            isLastPage
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Next
-        </button>
-      </div>
-    );
-  }
   return (
     <>
       <div className="max-w-4xl mx-auto py-12">
@@ -253,7 +189,12 @@ export default function AllEditions() {
         )}
       </div>
       <div className="flex justify-center mt-8 mb-16">
-        <Pagination />
+        <Pagination
+          filtered_content={filteredEditions}
+          current_page={state.currentPage}
+          per_page={perPage}
+          handlePageChange={handlePageChange}
+        />
       </div>
     </>
   );
