@@ -1,6 +1,6 @@
 import { protectedRoutes } from "@/router/routeMap";
 import SidebarItem from "./sideNavItems.tsx";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import TimesLogo from "@/assets/dtutimesIcon.js";
 import React, { useEffect, useRef, useState } from "react";
 import MenuBar from "@/assets/menubar.js";
