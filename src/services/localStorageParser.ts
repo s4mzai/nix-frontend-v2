@@ -28,7 +28,7 @@ export const getUserFromJSON = (user_data) => {
     return null;
   }
 
-  const user = {
+  const user: IUser = {
     name: user_data.name,
     email: user_data.email,
     id: user_data.id,
@@ -36,7 +36,9 @@ export const getUserFromJSON = (user_data) => {
     role: user_data.role,
     permission: user_data.permission,
     is_superuser: user_data.is_superuser,
-  } as IUser;
+    created_at: user_data.created_at,
+    team_role: user_data.team_role,
+  };
 
   const permissions = (
     user_data.is_superuser ? "*" : (user_data.permission as Permission[])
