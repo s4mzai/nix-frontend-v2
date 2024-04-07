@@ -195,7 +195,7 @@ export default function EditMember() {
       updatedData.loading = action.payload;
       break;
     case ActionType.setMainWebsiteRole:
-      console.log("Team" ,action.payload);
+      console.log("Team", action.payload);
       updatedData.target_websiteRole = action.payload;
       break;
 
@@ -235,15 +235,20 @@ export default function EditMember() {
       return;
     }
 
-    const requestData = {
+    const reqData = {
       target_name: target_name,
       target_email: target_email,
       target_bio: target_bio,
       password: newPassword === "" ? undefined : newPassword,
       target_user_id: id,
-      permission: target_selectedPermissions.map((perm) => perm.id),
-      role_id: target_roleId,
-      team_role: target_websiteRole,
+
+    };
+    const update_profile_perm = user.permission.includes(Permission.UpdateProfile);
+    const requestData = {
+      ...reqData,
+      permission: update_profile_perm ? target_selectedPermissions.map((perm) => perm.id) : undefined,
+      role_id: update_profile_perm ? target_roleId : undefined,
+      team_role: update_profile_perm ? target_websiteRole : undefined,
     };
 
     API.put(endPoint, requestData)
@@ -312,11 +317,11 @@ export default function EditMember() {
       </div>
     );
 
-const team_roles = Object.keys(MainWebsiteRole)
-                  .filter((perm) => !isNaN(Number(perm)))
-                  .map((key) => ({ name: MainWebsiteRole[key] as MainWebsiteRole, id: Number(key) }));
+  const team_roles = Object.keys(MainWebsiteRole)
+    .filter((perm) => !isNaN(Number(perm)))
+    .map((key) => ({ name: MainWebsiteRole[key] as MainWebsiteRole, id: Number(key) }));
 
-                  console.log("Team Roles", team_roles);
+  console.log("Team Roles", team_roles);
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
@@ -484,14 +489,14 @@ const team_roles = Object.keys(MainWebsiteRole)
                 />
               </div>
             </div>
-            {(newPassword!==confirmPassword || (newPassword && !confirmPassword))&& (
-                <p className="text-red-500 text-sm">Passwords do not match</p>
-              )}
+            {(newPassword !== confirmPassword || (newPassword && !confirmPassword)) && (
+              <p className="text-red-500 text-sm">Passwords do not match</p>
+            )}
           </div>
         )}
         <PermissionProtector permission={[Permission.UpdateProfile]} fallback={true}>
           <div className="my-2">
-             <h1 className="text-2xl text-left font-medium leading-none my-6">
+            <h1 className="text-2xl text-left font-medium leading-none my-6">
               Update Role and Permissions
             </h1>
             <label className="block text-sm font-semibold mb-2">Display Role</label>
@@ -499,9 +504,9 @@ const team_roles = Object.keys(MainWebsiteRole)
               <MyMultiselect
                 options={team_roles}
                 selectedOptions={[
-                 team_roles[target_websiteRole]
+                  team_roles[target_websiteRole]
                 ]}
-                
+
                 onSelectionChange={(e) => {
                   dispatch({
                     type: ActionType.setMainWebsiteRole,
@@ -511,7 +516,7 @@ const team_roles = Object.keys(MainWebsiteRole)
                 isSingleSelect={true}
               />
             </div>
-              <PermissionProtector permission={[Permission.ReadRole]} fallback={true}>
+            <PermissionProtector permission={[Permission.ReadRole]} fallback={true}>
               <div className="my-2">
                 <label className="block text-sm font-semibold mb-2">Role</label>
                 <div className="w-1/2">
@@ -534,7 +539,7 @@ const team_roles = Object.keys(MainWebsiteRole)
                 </div>
               </div>
             </PermissionProtector>
-               <div className="my-2">
+            <div className="my-2">
               <label className="block text-sm font-semibold mb-2">
                 Permissions
               </label>
@@ -551,7 +556,7 @@ const team_roles = Object.keys(MainWebsiteRole)
             </div>
           </div>
         </PermissionProtector>
- 
+
         <button
           type="button"
           className="bg-gray-200 text-black p-3 rounded hover:bg-indigo-500 hover:text-white mx-2"
