@@ -22,7 +22,17 @@ export default function Logs() {
     });
   };
 
-  if (stdout === null || stderr === null) return <Spinner />;
+  if (stdout === null || stderr === null)
+    return (
+      <div className="flex flex-col justify-center h-screen w-full items-center">
+        <Spinner />
+        <div className="mt-2">
+          <code>
+            exec(`npx pm2 logs --nostream NixBackend --lines 200 --raw --out`)
+          </code>
+        </div>
+      </div>
+    );
 
   return (
     <div className="p-6">

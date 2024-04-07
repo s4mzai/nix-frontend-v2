@@ -27,12 +27,11 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   const [edition, setEdition] = useState<Edition>(null);
   const toastId = useRef(null);
 
-  const handleDelete = (archive: boolean) => {
-    const word = archive ? "archive" : "delete";
-    if (window.confirm(`Are you sure you want to ${word} this edition?`)) {
-      API.delete(`/edition/${word}-edition/${id}`)
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to word this edition?")) {
+      API.delete(`/edition/delete-edition/${id}`)
         .then(() => {
-          toast.success(`Edition ${word}d successfully!`);
+          toast.success("Edition deleted successfully!");
           navigate("/edition/all-editions");
         })
         .catch((e) => {
@@ -41,7 +40,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
     }
   };
 
-  type Submitter = EditionStatus | "delete" | "archive";
+  type Submitter = EditionStatus | "delete";
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     console.debug("New Edition submit action initiated");
     e.preventDefault();
@@ -50,9 +49,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
       e.nativeEvent as SubmitEvent
     ).submitter.attributes.getNamedItem("value").value as Submitter;
     if (submitter === "delete") {
-      return handleDelete(true);
-    } else if (submitter === "archive") {
-      return handleDelete(false);
+      return handleDelete();
     }
 
     const form = e.currentTarget;
