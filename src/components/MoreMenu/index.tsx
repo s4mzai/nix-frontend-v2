@@ -92,7 +92,7 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
             .map((option, index) => (
               <PermissionProtector
                 key={index}
-                silent={true}
+                fallback={true}
                 permission={option.permissions}
               >
                 <button

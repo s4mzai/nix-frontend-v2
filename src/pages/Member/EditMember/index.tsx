@@ -320,7 +320,7 @@ const team_roles = Object.keys(MainWebsiteRole)
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-8 shadow rounded">
-      {(id !== user.id) ? <PermissionProtector permission={[Permission.UpdateProfile]} silent={false} /> : <></>}
+      {(id !== user.id) ? <PermissionProtector permission={[Permission.UpdateProfile]} fallback={false} /> : <></>}
       <h1 className="text-4xl font-semibold mb-4">Edit Info: {target_name}</h1>
       <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
         <hr className="border-t border-gray-300 mt-6 mb-6 w-full" />
@@ -489,7 +489,7 @@ const team_roles = Object.keys(MainWebsiteRole)
               )}
           </div>
         )}
-        <PermissionProtector permission={[Permission.UpdateProfile]} silent={true}>
+        <PermissionProtector permission={[Permission.UpdateProfile]} fallback={true}>
           <div className="my-2">
              <h1 className="text-2xl text-left font-medium leading-none my-6">
               Update Role and Permissions
@@ -511,7 +511,7 @@ const team_roles = Object.keys(MainWebsiteRole)
                 isSingleSelect={true}
               />
             </div>
-              <PermissionProtector permission={[Permission.ReadRole]} silent={true}>
+              <PermissionProtector permission={[Permission.ReadRole]} fallback={true}>
               <div className="my-2">
                 <label className="block text-sm font-semibold mb-2">Role</label>
                 <div className="w-1/2">

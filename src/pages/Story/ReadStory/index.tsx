@@ -244,7 +244,7 @@ export default function ReadStory() {
       <div className="mt-4">
         <PermissionProtector
           permission={[Permission.PublishBlog]}
-          silent={true}
+          fallback={true}
         >
           {blog.status === BlogStatus.Pending && (
             <div>
@@ -304,7 +304,7 @@ export default function ReadStory() {
         {blog.status !== BlogStatus.Draft ? (
           <PermissionProtector
             permission={[Permission.DeleteBlog]}
-            silent={true}
+            fallback={true}
           >
             {blog.status === BlogStatus.Approved ||
             blog.status === BlogStatus.Published ? (

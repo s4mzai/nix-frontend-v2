@@ -76,7 +76,7 @@ export default function MemberProfile() {
               ) : (
                 <PermissionProtector
                   permission={[Permission.UpdateProfile]}
-                  silent={true}
+                  fallback={true}
                 >
                   <Link
                     to={`/member/edit-details/${userDetails.id}/`}

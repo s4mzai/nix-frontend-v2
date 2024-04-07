@@ -254,7 +254,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
             {id && (
               <PermissionProtector
                 permission={[Permission.DeleteEdition]}
-                silent={true}
+                fallback={true}
               >
                 <button
                   type="submit"
