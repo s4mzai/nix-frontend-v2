@@ -43,11 +43,16 @@ export default function Logs() {
       >
         Clear logs
       </button>
-      <h2>Stdout</h2>
-      <pre>{stdout}</pre>
-      <hr className="m-4" />
-      <h2>Stderr</h2>
-      <pre>{stderr}</pre>
+      <div className="mt-4 self-start xl:flex xl:flex-row ">
+        <div className="xl:basis-1/2">
+          <h2 className="text-lg font-bold">Stdout</h2>
+          <pre className="text-wrap">{stdout}</pre>
+        </div>
+        <div className="mt-4 xl:basis-1/2">
+          <h2 className="text-lg font-bold">Stderr</h2>
+          <pre className="text-wrap">{stderr}</pre>
+        </div>
+      </div>
     </div>
   );
 }

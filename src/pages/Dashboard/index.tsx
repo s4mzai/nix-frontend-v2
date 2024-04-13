@@ -89,28 +89,28 @@ export default function Dashbboard() {
     <div>
       <div className="flex justify-start flex-col xl:flex-row">
         <div className="flex justify-evenly flex-col lg:flex-row">
-          <div className="m-6 w-[300px] h-[464px] border-black border-2 bg-gray-800 text-white rounded-xl overflow-hidden grid grid-rows-2">
+          <div className="m-6 w-[300px] h-[464px] border-black border-2 bg-gray-700 text-white rounded-xl overflow-hidden grid grid-rows-2">
             <div className="self-start flex flex-col">
               <div className="flex justify-between">
-                <TimesLogo className="w-16 h-16" />
+                <TimesLogo className="w-20 h-20 " />
 
                 <div className="pt-4 pr-4">
                   <div className="text-base">DTU Times</div>
                   <div className="text-xs">2024-25</div>
                 </div>
               </div>
-              <div className="flex mt-16 justify-center">
+              <div className="flex mt-6 justify-center">
                 <AvatarImage
                   alt={user.name}
-                  className="h-36 w-36 rounded-full"
+                  className="h-48 w-48 rounded-full border-black border-2"
                   user_id={user.id}
                   thumbnail={true}
                 />
               </div>
             </div>
-            <div className="bg-black p-6 text-center self-end">
+            <div className="bg-black p-6 text-center self-end tracking-widest">
               <div className="text-base pb-2">{user.role}</div>
-              <div className="text-lg font-semibold">{user.name}</div>
+              <div className="text-xl font-semibold">{user.name}</div>
             </div>
           </div>
           <div className="m-6 w-[300px] h-[464px] bg-id-back bg-cover border-black border-2 text-white rounded-xl overflow-hidden grid grid-rows-2">

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { AvatarImage } from "../AvatarImage";
 import { Spinner } from "../Spinner";
 import UserCard from "../UserCard";
@@ -35,7 +36,13 @@ function Leaderboard({ topUsers }) {
                     />
                   </div>
                   <div className="flex items-center flex-1">
-                    <div className="font-semibold">{user.userDetails.name}</div>
+                    <Link
+                      to={`https://team.dtutimes.com/member/member-profile/${user._id}`}
+                    >
+                      <div className="font-semibold">
+                        {user.userDetails.name}
+                      </div>
+                    </Link>
                   </div>
                   <div className="flex items-center w-10">
                     <div className="font-semibold">

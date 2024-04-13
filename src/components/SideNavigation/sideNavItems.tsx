@@ -47,7 +47,7 @@ function SidebarItem({
 
   if (items.children) {
     return (
-      <PermissionProtector permission={items.permission} silent={true}>
+      <PermissionProtector permission={items.permission} fallback={true}>
         <div className="flex flex-col">
           <div
             className={`flex items-center justify-between text-white p-2 cursor-pointer w-[220px] h-[45px] ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
@@ -78,7 +78,7 @@ function SidebarItem({
                 <PermissionProtector
                   key={`nested-${item.label}.${index}`}
                   permission={item.permission}
-                  silent={true}
+                  fallback={true}
                 >
                   <SidebarItem
                     items={{
@@ -102,7 +102,7 @@ function SidebarItem({
   } else {
     return (
       <>
-        <PermissionProtector permission={items.permission} silent={true}>
+        <PermissionProtector permission={items.permission} fallback={true}>
           
           <div className="flex flex-row" id={`${items.label}-label`}>
             <NavLink className={({ isActive }) => isActive ? " bg-gray-500 rounded " : ""} to={items.path}>
