@@ -59,7 +59,7 @@ export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
     const formData = new FormData(form);
     const editionNum = Number(formData.get("edition_id"));
     if (editionNum > 200) {
-      toast.error("Edition ID should be less than 200");
+      toast.error("Edition ID is asserted to be less than 200");
       return;
     }
     const endpoint = id
