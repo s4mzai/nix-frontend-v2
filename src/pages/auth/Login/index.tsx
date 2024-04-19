@@ -96,7 +96,11 @@ export default function Login() {
     ).value;
 
     setLoading(true);
-    await API.post("/auth/login", { email, password })
+    await API.post(
+      "/auth/login",
+      { email, password },
+      { withCredentials: true },
+    )
       .then((res) => {
         const data = res.data;
         if (data.status === "success") {
