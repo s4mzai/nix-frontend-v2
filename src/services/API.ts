@@ -3,7 +3,6 @@ import { getTokenFromStorage } from "./localStorageParser";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_NIX_BACKEND,
-  withCredentials: true,
 });
 
 API.interceptors.request.use((req) => {
@@ -31,7 +30,7 @@ API.interceptors.response.use(
 
     //here redirect to login page
     return Promise.reject(error);
-  }
+  },
 );
 
 export const refreshAuthToken = async (): Promise<string | null> => {
