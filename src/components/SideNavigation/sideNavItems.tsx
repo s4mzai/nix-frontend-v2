@@ -5,7 +5,6 @@ import RouteElement from "@/types/routeElement";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-
 interface SidebarItemProps {
   items: RouteElement;
   is_expanded?: boolean;
@@ -25,7 +24,7 @@ function SidebarItem({
   setIsSidebarOpen,
 }: SidebarItemProps) {
   const [subopen, setsubOpen] = useState(null);
-  
+
   const openerFn = (index) => {
     if (index === open) {
       setsubOpen(null);
@@ -103,35 +102,29 @@ function SidebarItem({
     return (
       <>
         <PermissionProtector permission={items.permission} fallback={true}>
-          
           <div className="flex flex-row" id={`${items.label}-label`}>
-            <NavLink className={({ isActive }) => isActive ? " bg-gray-500 rounded " : ""} to={items.path}>
-          
-          <div
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? " bg-gray-500 rounded " : ""
+              }
+              to={items.path}
+            >
+              <div
                 className={`flex items-center w-[220px] h-[45px]  p-2 cursor-pointer ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
               >
                 <span
                   className={`${isSidebarOpen ? "transition-all duration-800 " : "scale-[1.5] transition-all duration-800  hover:bg-gray-500 hover:rounded w-[40px] h-[30px] flex justify-center items-center"}`}
                 >
-                  
                   <SvgWrapper>{items.icon}</SvgWrapper>
-
-                  
                 </span>
                 <div
                   className={`ml-3 ${isSidebarOpen ? "transition-all duration-600 " : "hidden transition-all duration-600"} `}
                 >
-                  {items.label} 
+                  {items.label}
                 </div>
               </div>
-           
-            
-       
-              
             </NavLink>
           </div>
-            
-          
         </PermissionProtector>
       </>
     );
