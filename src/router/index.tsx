@@ -5,6 +5,7 @@ import CurrUserCtxProvider from "@/contexts/current_user.js";
 import React from "react";
 
 //lazy imports
+const Usage = React.lazy(() => import("@/pages/Usage/index.js"));
 const Login = React.lazy(() => import("@/pages/auth/Login/index.js"));
 const ForgotPassword = React.lazy(
   () => import("@/pages/auth/ForgotPassword/index.js"),
@@ -25,6 +26,7 @@ const AppRoute = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<HomePage />} />
+            <Route path="/usage" element={<Usage />} />
             <Route path="/*" element={<ProtectedRoute />} />
           </Routes>
         </CurrUserCtxProvider>
