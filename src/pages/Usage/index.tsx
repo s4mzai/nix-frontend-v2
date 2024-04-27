@@ -115,6 +115,40 @@ export default function Usage() {
       </div>
       <hr />
       <div>
+        <h2 className="font-bold text-xl my-3">Blog Categories</h2>
+        <div className="px-4">
+          <ol className="list-decimal">
+            <li>
+              <b>Draft: </b> These blogs are visible only to you if you are the
+              author. You can edit this blog as many times as you want until you
+              submit it for approval. Use the Edit option in the more menu to
+              edit.
+            </li>
+            <li>
+              <b>Pending: </b> Draft blogs submitted for approval turn into
+              Pending blogs. They are now visible to editors as well. Editors
+              can view your blog and edit them themselves if they wish to. Once
+              they deem the blog as final, they can choose to publish it right
+              then or schedule it for future publishing.
+            </li>
+            <li>
+              <b>Approved: </b> Pending blogs scheduled for future publishing
+              turn into Approved blogs. Their publish date was defined when they
+              were scheduled and will be published automatically when the time
+              comes. These are visible only to those with power to publish.
+            </li>
+            <li>
+              <b>Published: </b> Pending blogs that were immediately published
+              or Approved blogs whose publishing time was reached turn into
+              Published blogs. These are visible to everyone in the team. You
+              can read them but only those team members with permission can
+              either take them down or delete them.
+            </li>
+          </ol>
+        </div>
+      </div>
+      <hr/>
+      <div>
         <h2 className="font-bold text-xl my-3">Reviewing blogs</h2>
         <div className="px-4">
           Note: This section is only visible to the team members who have the
@@ -127,11 +161,11 @@ export default function Usage() {
             </li>
             <li>
               As a reviewer, you can read and review the blogs and contact the
-              Author if there are any changes required in the blog before if can
+              Author if there are any changes required in the blog before it can
               be published
               <img src={PendingBlogPage} />
               <b>
-                If there are only small changes, pubslisher can change it
+                If there are only small changes, publisher can change it
                 directly as well using the Edit option in the menu shown in the
                 image.
               </b>
@@ -139,9 +173,9 @@ export default function Usage() {
             <li>
               Here is what reading the blog will look like!
               <br />
-              If you want to publish the blog you can use the publish options
-              while if there are changes required you can contact the author and
-              save the blog back to their draft using the &quot;Save To
+              If you want to publish the blog you can use the publish options.
+              However, if there are changes required you can contact the author
+              and save the blog back to their drafts using the &quot;Save To
               Draft&quot; option.
               <img src={BlogReview} />
             </li>
