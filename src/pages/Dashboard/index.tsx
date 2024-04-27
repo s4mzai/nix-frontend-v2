@@ -136,6 +136,20 @@ export default function Dashbboard() {
           >
             Edit Details
           </Link>
+          <div className="my-8">
+            <div className="text-sm mb-4">
+              Not sure where to start? Here is a tour of this portal&apos;s
+              functionality :
+            </div>
+            <Link
+              to={"/usage"}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
+            >
+              Tutorial
+            </Link>
+          </div>
         </div>
       </div>
 
