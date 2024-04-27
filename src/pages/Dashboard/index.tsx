@@ -63,7 +63,8 @@ export default function Dashbboard() {
 
   const { topUserData } = state;
 
-  const clippedBio = user?.bio?.length > 150 ? `${user.bio.slice(0, 150)}...` : user.bio;
+  const clippedBio =
+    user?.bio?.length > 150 ? `${user.bio.slice(0, 150)}...` : user.bio;
   React.useEffect(() => {
     const topUserEndpoint = "dashboard/top-users";
 
