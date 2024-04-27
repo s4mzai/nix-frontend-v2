@@ -4,6 +4,9 @@ import LoginPageImage from "@/assets/Usage/login_page.png";
 import StorySection from "@/assets/Usage/story_section.png";
 import NewStory from "@/assets/Usage/new_story.png";
 import ReviewBlogSection from "@/assets/Usage/review_blog_section.png";
+import PendingBlogPage from "@/assets/Usage/pending_blog_page.png";
+import BlogReview from "@/assets/Usage/blog_review.png";
+
 import "./index.css";
 
 export default function Usage() {
@@ -121,6 +124,26 @@ export default function Usage() {
               Login and navigate to the{" "}
               <Link to="/story/pending-stories/">Pending Stories section</Link>
               <img src={ReviewBlogSection} />
+            </li>
+            <li>
+              As a reviewer, you can read and review the blogs and contact the
+              Author if there are any changes required in the blog before if can
+              be published
+              <img src={PendingBlogPage} />
+              <b>
+                If there are only small changes, pubslisher can change it
+                directly as well using the Edit option in the menu shown in the
+                image.
+              </b>
+            </li>
+            <li>
+              Here is what reading the blog will look like!
+              <br />
+              If you want to publish the blog you can use the publish options
+              while if there are changes required you can contact the author and
+              save the blog back to their draft using the &quot;Save To
+              Draft&quot; option.
+              <img src={BlogReview} />
             </li>
           </ol>
         </div>
