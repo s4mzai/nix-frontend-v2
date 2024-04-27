@@ -26,7 +26,7 @@ const AppRoute = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<HomePage />} />
-            {/* <Route path="/usage" element={<Usage />} /> */}
+            <Route path="/usage" element={<Usage />} />
             <Route path="/*" element={<ProtectedRoute />} />
           </Routes>
         </CurrUserCtxProvider>

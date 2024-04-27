@@ -236,13 +236,6 @@ const routeMap: CustomRouteElement[] = [
     permission: [Permission.AccessLogs],
     label: "Logs",
   },
-  {
-    path: "usage/",
-    element: <Usage />,
-    permission: [],
-    label: "Usage",
-    hide: true,
-  },
 ];
 
 const make_protected = (routes: CustomRouteElement[]) => {

@@ -143,6 +143,8 @@ export default function Dashbboard() {
             </div>
             <Link
               to={"/usage"}
+              target="_blank"
+              rel="noopener noreferrer" 
               className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
             >
               Tutorial
