@@ -36,6 +36,7 @@ const AddMember = React.lazy(() => import("@/pages/Member/AddMember"));
 const NewEdition = React.lazy(() => import("@/pages/Edition/NewEdition"));
 const AllEditions = React.lazy(() => import("@/pages/Edition/AllEditions"));
 const Logs = React.lazy(() => import("@/pages/Logs"));
+const Usage = React.lazy(() => import("@/pages/Usage"));
 const MemberProfile = React.lazy(() => import("@/pages/Member/MemberProfile"));
 const EditMember = React.lazy(() => import("@/pages/Member/EditMember"));
 
@@ -234,6 +235,13 @@ const routeMap: CustomRouteElement[] = [
     icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
+  },
+  {
+    path: "usage/",
+    element: <Usage />,
+    permission: [],
+    label: "Usage",
+    hide: true,
   },
 ];
 
