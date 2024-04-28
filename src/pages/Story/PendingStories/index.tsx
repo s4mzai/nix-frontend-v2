@@ -67,8 +67,6 @@ const getFilteredBlogs = (blogs: Blog[], searchTerm) => {
   );
 };
 
-const tableHeaders = ["Last Updated", "Author", "Title", "Category", "Status"];
-
 export default function PendingStories() {
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);

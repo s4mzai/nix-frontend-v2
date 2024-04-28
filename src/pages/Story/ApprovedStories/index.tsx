@@ -62,8 +62,6 @@ const getFilteredBlogs = (blogs: Blog[], searchTerm: string): Blog[] => {
   );
 };
 
-const tableHeaders = ["To Publish On", "Author", "Title", "Category", "Status"];
-
 const blogEndpoint = "/blog";
 
 export default function ApprovedStories() {

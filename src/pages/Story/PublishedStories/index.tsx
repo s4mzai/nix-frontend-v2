@@ -64,8 +64,6 @@ const getFilteredBlogs = (blogs: Blog[], searchTerm: string) => {
   );
 };
 
-const tableHeaders = ["Published On", "Author", "Title", "Category", "Status"];
-
 const blogEndpoint = "/blog/published-blogs";
 
 export default function PublishedStories() {

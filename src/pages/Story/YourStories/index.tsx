@@ -89,8 +89,6 @@ const getFilteredBlogs = (
   );
 };
 
-const tableHeaders = ["Last Updated", "Title", "Category", "Status"];
-
 export default function AllStory() {
   const navigate = useNavigate();
   const { setError } = useContext(ErrorContext);
