@@ -4,7 +4,7 @@ import BlogCategory from "./blogCategory";
 export interface Blog {
   _id: string;
   user: {
-    id: string;
+    _id: string;
     name: string;
     email: string;
   };
