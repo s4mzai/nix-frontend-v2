@@ -18,4 +18,12 @@ export default defineConfig({
         : undefined,
     pure: ["console.error"],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        compact: true,
+        dir: "dist",
+      },
+    },
+  },
 });
