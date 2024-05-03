@@ -1,4 +1,4 @@
-import QuestionBlock from "@/components/QuestionBlock";
+// import QuestionBlock from "@/components/QuestionBlock";
 import { Link } from "react-router-dom";
 import LoginPageImage from "@/assets/Usage/login_page.png";
 import StorySection from "@/assets/Usage/story_section.png";
@@ -147,7 +147,7 @@ export default function Usage() {
           </ol>
         </div>
       </div>
-      <hr/>
+      <hr />
       <div>
         <h2 className="font-bold text-xl my-3">Reviewing blogs</h2>
         <div className="px-4">

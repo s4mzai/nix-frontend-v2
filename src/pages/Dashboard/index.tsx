@@ -144,7 +144,7 @@ export default function Dashbboard() {
             <Link
               to={"/usage"}
               target="_blank"
-              rel="noopener noreferrer" 
+              rel="noopener noreferrer"
               className="bg-blue-500 text-white p-2 rounded hover:bg-green-500"
             >
               Tutorial

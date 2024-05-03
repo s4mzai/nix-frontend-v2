@@ -14,7 +14,7 @@ npm i # or yarn or pnpm whatever u like
 cp .env .env.local
 ```
 
-- Edit this file and change the env variable to `VITE_NIX_BACKEND="http://134.209.159.97:8080/api/v1"`
+- Edit this file and change the env variable to `VITE_NIX_BACKEND="https://team.dtutimes.com/api/v1"`
 - Start dev mode `npm run dev`
 
 ---

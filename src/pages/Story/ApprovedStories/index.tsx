@@ -1,18 +1,16 @@
-import { TagIcon } from "@/assets/TagIcon";
-import MoreMenu from "@/components/MoreMenu";
 import { moreMenuOptionsGenerator } from "@/components/MoreMenu/generator";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 import { Spinner } from "@/components/Spinner";
-import Table from "@/components/Table";
+import BlogTable from "@/components/Table/BlogTable";
 import { APPROVED_BLOGS_PER_PAGE as perPage } from "@/config";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { Blog } from "@/types/blog";
-import BlogCategory from "@/types/blogCategory";
+import BlogPageType from "@/types/blogPages";
 import BlogStatus from "@/types/blogStatus";
 import { useContext, useEffect, useReducer } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface ApprovedStoriesState {
@@ -63,8 +61,6 @@ const getFilteredBlogs = (blogs: Blog[], searchTerm: string): Blog[] => {
     blog?.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
-
-const tableHeaders = ["To Publish On", "Author", "Title", "Category", "Status"];
 
 const blogEndpoint = "/blog";
 
@@ -128,40 +124,10 @@ export default function ApprovedStories() {
         />
       </div>
       <main className="flex-grow p-6">
-        <Table
-          headers={tableHeaders}
-          content={paginatedBlogs.map((blog) => [
-            new Date(blog.published_at).toLocaleString(undefined, {
-              dateStyle: "medium",
-              timeStyle: "short",
-            }),
-            blog.user.name,
-            <Link
-              key={`read-${blog._id}`}
-              to={`/story/${blog._id}`}
-              state={{ blog: blog }}
-            >
-              {blog.title}
-            </Link>,
-            BlogCategory[blog.category_id],
-            <span
-              // tailwind is compiled to real css, so we can't use dynamic tailwind wale class names
-              // alternative fix is to re-export these class names in index.css
-              // i'm lazy, so i just did this impl instead
-              className={`px-2 py-1 inline-block rounded-md ${
-                BlogStatus[blog.status]
-              }`}
-              key={blog.category_id}
-            >
-              <TagIcon className="w-4 h-4 inline max-lg:hidden mr-1 size-min " />
-              {BlogStatus[blog.status]}
-            </span>,
-            <MoreMenu
-              options={more_menu_options(blog)}
-              blogId={blog._id}
-              key={blog._id}
-            />,
-          ])}
+        <BlogTable
+          page_type={BlogPageType.ApprovedStories}
+          paginatedBlogs={paginatedBlogs}
+          more_menu_options={more_menu_options}
         />
       </main>
       <Pagination

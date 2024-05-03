@@ -328,7 +328,7 @@ export default function ReadStory() {
               <></>
             )}
           </PermissionProtector>
-        ) : blog.user.id === user.id ? (
+        ) : blog.user._id === user.id ? (
           <div>
             <button
               onClick={handleDelete}
