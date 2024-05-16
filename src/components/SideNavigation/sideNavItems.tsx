@@ -79,16 +79,18 @@ function SidebarItem({
                   permission={item.permission}
                   fallback={true}
                 >
-                  <SidebarItem
-                    items={{
-                      ...item,
-                      path: `${items.path}${item.path}`,
-                    }}
-                    is_expanded={subopen === index}
-                    menu_open={() => openerFn(index)}
-                    isSidebarOpen={isSidebarOpen}
-                    setIsSidebarOpen={setIsSidebarOpen}
-                  />
+                  <div className="my-1">
+                    <SidebarItem
+                      items={{
+                        ...item,
+                        path: `${items.path}${item.path}`,
+                      }}
+                      is_expanded={subopen === index}
+                      menu_open={() => openerFn(index)}
+                      isSidebarOpen={isSidebarOpen}
+                      setIsSidebarOpen={setIsSidebarOpen}
+                    />
+                  </div>
                 </PermissionProtector>
               ))}
             </div>
