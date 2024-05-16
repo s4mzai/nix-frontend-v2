@@ -15,6 +15,7 @@ import ErrorPage from "@/error-page";
 import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
+import ProfileIcon from "@/assets/ProfileIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -52,7 +53,7 @@ const routeMap: CustomRouteElement[] = [
   {
     path: "member/member-profile/",
     element: <MemberProfile />,
-    icon: <MemberIcon />,
+    icon: <ProfileIcon />,
     permission: [Permission.ReadProfile],
     label: "Profile",
   },
