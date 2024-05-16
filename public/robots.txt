@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /story/*
+Disallow: /edition/*
+
+User-agent: Googlebot
+Allow: /$
+Allow: /login
+Allow: /usage

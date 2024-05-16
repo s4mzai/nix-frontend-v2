@@ -66,15 +66,19 @@ export function moreMenuOptionsGenerator({
     }
   };
 
-  const handleArchive = (blogId) => {
+  const handleArchive = (blogId: string, make_pending: boolean = false) => {
     //archive is same as takedown dw
     const choice = window.confirm(
-      "Are you sure you want to archive this story?",
+      make_pending
+        ? "Are you sure you want to make this story as 'Pending'?"
+        : "Are you sure you want to move this story back to author's draft?",
     );
     if (choice) {
       const archiveEndPoint = `/blog/take-down-blog/${blogId}`;
 
-      API.put(archiveEndPoint)
+      API.put(archiveEndPoint, {
+        make_pending: make_pending,
+      })
         .then(() => {
           toast.success("Successfully archived");
           fetchBlogs();
@@ -120,14 +124,22 @@ export function moreMenuOptionsGenerator({
       permissions: [],
     },
     {
-      label: "Archive",
-      handler: handleArchive,
+      label: "Draft blog",
+      handler: (id) => handleArchive(id),
       show: blog.status === BlogStatus.Pending,
       permissions: [],
     },
     {
-      label: "Archive",
-      handler: handleArchive,
+      label: "Make Pending",
+      handler: (id) => handleArchive(id, true),
+      show:
+        blog.status === BlogStatus.Published ||
+        blog.status === BlogStatus.Approved,
+      permissions: [Permission.DeleteBlog],
+    },
+    {
+      label: "Make Draft",
+      handler: (id) => handleArchive(id),
       show:
         blog.status === BlogStatus.Approved ||
         blog.status === BlogStatus.Published,
