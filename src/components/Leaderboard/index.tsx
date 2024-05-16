@@ -36,9 +36,7 @@ function Leaderboard({ topUsers }) {
                     />
                   </div>
                   <div className="flex items-center flex-1">
-                    <Link
-                      to={`https://team.dtutimes.com/member/member-profile/${user._id}`}
-                    >
+                    <Link to={`/member/member-profile/${user._id}`}>
                       <div className="font-semibold">
                         {user.userDetails.name}
                       </div>

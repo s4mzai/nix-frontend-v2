@@ -43,12 +43,12 @@ export default function Logs() {
       >
         Clear logs
       </button>
-      <div className="mt-4 self-start xl:flex xl:flex-row ">
-        <div className="xl:basis-1/2">
+      <div className="mt-4 self-start xl:flex xl:flex-row">
+        <div className="xl:w-[45vw] overflow-x-scroll w-[80vw]">
           <h2 className="text-lg font-bold">Stdout</h2>
           <pre className="text-wrap">{stdout}</pre>
         </div>
-        <div className="mt-4 xl:basis-1/2">
+        <div className="xl:w-[45vw] overflow-x-scroll w-[80vw]">
           <h2 className="text-lg font-bold">Stderr</h2>
           <pre className="text-wrap">{stderr}</pre>
         </div>
