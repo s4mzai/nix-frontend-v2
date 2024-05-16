@@ -16,11 +16,16 @@ export interface MoreMenuProps {
   blogId: string;
 }
 
+const enum MenuDirection {
+  Up,
+  Down,
+}
+
 //please stick to passing options/function which do something tangible for user because the moremenu needs to close
 //after one click on it
 export default function MoreMenu({ options, blogId }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [menuDirection, setMenuDirection] = useState("down");
+  const [menuDirection, setMenuDirection] = useState(MenuDirection.Down);
   const menuRef = useRef(null);
 
   const handleOptionFunction = (handler) => {
@@ -37,20 +42,11 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
       menuRef.current.getBoundingClientRect().top >
       window.innerHeight * 0.75
     ) {
-      setMenuDirection("up");
+      setMenuDirection(MenuDirection.Up);
     } else {
-      setMenuDirection("down");
+      setMenuDirection(MenuDirection.Down);
     }
   };
-
-  // const handleEdit = () => {
-  //   // these checks will actually make use feel ui isn't working, as it shows nothing if onEdit is not passed
-  //   // better would be to let the global error handler handle and "post a toast"
-  //   // if (onEdit) {
-  //   onEdit(blogId);
-  //   setIsOpen(false);
-  //   // }
-  // };
 
   useEffect(() => {
     //function to handle clicks
@@ -83,8 +79,8 @@ export default function MoreMenu({ options, blogId }: MoreMenuProps) {
       </div>
       {isOpen && (
         <div
-          className={`z-10 origin-top-right absolute ${
-            menuDirection === "up" ? "bottom-full" : "top-full"
+          className={`z-10 origin-top-right w-max absolute ${
+            menuDirection === MenuDirection.Up ? "bottom-full" : "top-full"
           } bg-gray-200 rounded-md shadow-md`}
         >
           {options
