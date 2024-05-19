@@ -273,8 +273,21 @@ export default function ReadStory() {
                 type="button"
                 className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
               >
-                Save Back to Draft
+                Move to Author&apos;s Draft
               </button>
+              <PermissionProtector
+                permission={[Permission.EditBeforeBlogPublish]}
+                fallback={true}
+              >
+                <button
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-orange-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  onClick={() =>
+                    navigate("/story/new-story", { state: { key: blog } })
+                  }
+                >
+                  Edit Story
+                </button>
+              </PermissionProtector>
 
               {showDTPicker && (
                 <div className="m-2">
