@@ -124,15 +124,19 @@ export default function ReadStory() {
     }
   };
 
-  const handleArchive = () => {
+  const handleArchive = (make_pending: boolean = false) => {
     //archive is same as takedown dw
     const choice = window.confirm(
-      "Are you sure you want to archive this story?",
+      make_pending
+        ? "Are you sure you want to make this story as 'Pending'?"
+        : "Are you sure you want to move this story back to author's draft?",
     );
     if (choice) {
       const archiveEndPoint = `/blog/take-down-blog/${blog._id}`;
 
-      API.put(archiveEndPoint)
+      API.put(archiveEndPoint, {
+        make_pending: make_pending,
+      })
         .then(() => {
           toast.success("Successfully archived");
           navigate("/story/published-stories");
@@ -312,16 +316,23 @@ export default function ReadStory() {
                 <button
                   onClick={handleDelete}
                   type="button"
-                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-red-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                 >
                   Delete Blog
                 </button>
                 <button
-                  onClick={handleArchive}
+                  onClick={() => handleArchive(false)}
                   type="button"
-                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 "
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                 >
-                  Archive Blog
+                  Move to Author&apos;s Draft
+                </button>
+                <button
+                  onClick={() => handleArchive(true)}
+                  type="button"
+                  className="py-1 px-2 me-2 m-1 text-md font-medium text-white focus:outline-none bg-yellow-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                >
+                  Move to Pending Stories
                 </button>
               </div>
             ) : (
