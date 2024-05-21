@@ -6,7 +6,7 @@ interface RouteElement extends NonIndexRouteObject {
   label: string;
   icon?: React.SVGProps<SVGSVGElement>;
   hide?: true;
-  submenu?: RouteElement[];
+  children?: RouteElement[];
 }
 
 export default RouteElement;
