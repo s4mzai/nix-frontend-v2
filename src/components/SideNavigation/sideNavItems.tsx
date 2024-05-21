@@ -48,6 +48,29 @@ function SidebarItem({
     return (
       <PermissionProtector permission={items.permission} fallback={true}>
         <div className="flex flex-col w-min">
+          <div
+            className={`flex items-center justify-between text-white p-2 cursor-pointer w-[220px] h-[45px] ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
+            onClick={menu_open}
+          >
+            <div className="flex items-center">
+              <div
+                onClick={() => setIsSidebarOpen(true)}
+                className={`${isSidebarOpen ? "transition-all duration-800" : "scale-[1.5] transition-all duration-800  hover:bg-gray-500 hover:rounded w-[29px] h-[30px] flex justify-center items-center"}`}
+              >
+                <SvgWrapper>{items.icon}</SvgWrapper>
+              </div>
+              <span
+                className={`ml-3 ${isSidebarOpen ? "transition-all duration-600" : "hidden transition-all duration-600"}`}
+              >
+                {items.label}
+              </span>
+            </div>
+            <div
+              className={`ml-3 ${isSidebarOpen ? "transition-all duration-600" : "hidden transition-all duration-600"}`}
+            >
+              {is_expanded ? <UpArrow /> : <DownArrow />}
+            </div>
+          </div>
           {isSidebarOpen && is_expanded ? (
             <div className="pl-4">
               {items.children.map((item, index) => (
