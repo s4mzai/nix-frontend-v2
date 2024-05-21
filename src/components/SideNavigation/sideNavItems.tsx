@@ -1,5 +1,4 @@
 import DownArrow from "@/assets/ChevronDownIcon";
-import UpArrow from "@/assets/ChevronUpIcon";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import RouteElement from "@/types/routeElement";
 import { useEffect, useState } from "react";
@@ -68,7 +67,7 @@ function SidebarItem({
             <div
               className={`ml-3 ${isSidebarOpen ? "transition-all duration-600" : "hidden transition-all duration-600"}`}
             >
-              {is_expanded ? <UpArrow /> : <DownArrow />}
+              <DownArrow className={is_expanded ? "rotate-180" : ""} />
             </div>
           </div>
           {isSidebarOpen && is_expanded ? (
