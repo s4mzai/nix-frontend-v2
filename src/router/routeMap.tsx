@@ -67,7 +67,7 @@ const routeMap: CustomRouteElement[] = [
     label: "Story",
     icon: <StoryIcon />,
     permission: [Permission.ReadBlog],
-    children: [
+    submenu: [
       {
         path: "new-story/",
         element: <NewStory />,
@@ -117,7 +117,7 @@ const routeMap: CustomRouteElement[] = [
         <Outlet />
       </>
     ),
-    children: [
+    submenu: [
       {
         path: "new-edition/",
         element: <NewEdition key="new-edition" />,
@@ -149,7 +149,7 @@ const routeMap: CustomRouteElement[] = [
         <Outlet />
       </>
     ),
-    children: [
+    submenu: [
       {
         path: "all-roles/",
         element: <AllRoles />,
@@ -180,7 +180,7 @@ const routeMap: CustomRouteElement[] = [
     permission: [],
     label: "Member",
     icon: <MemberIcon />,
-    children: [
+    submenu: [
       {
         path: "all-members/",
         element: <AllMembers />,
@@ -240,8 +240,8 @@ const routeMap: CustomRouteElement[] = [
 
 const make_protected = (routes: CustomRouteElement[]) => {
   return routes.map((route) => {
-    if (route.children) {
-      route.children = make_protected(route.children);
+    if (route.submenu) {
+      route.submenu = make_protected(route.submenu);
     } else {
       route.element = (
         <PermissionProtector permission={route.permission}>

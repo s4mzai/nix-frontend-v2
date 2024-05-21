@@ -44,7 +44,7 @@ function SidebarItem({
     return null;
   }
 
-  if (items.children) {
+  if (items.submenu) {
     return (
       <PermissionProtector permission={items.permission} fallback={true}>
         <div className="flex flex-col w-min">
@@ -73,7 +73,7 @@ function SidebarItem({
           </div>
           {isSidebarOpen && is_expanded ? (
             <div className="pl-4">
-              {items.children.map((item, index) => (
+              {items.submenu.map((item, index) => (
                 <PermissionProtector
                   key={`nested-${item.label}.${index}`}
                   permission={item.permission}
