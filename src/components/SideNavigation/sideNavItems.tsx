@@ -47,33 +47,10 @@ function SidebarItem({
   if (items.children) {
     return (
       <PermissionProtector permission={items.permission} fallback={true}>
-        <div className="flex flex-col">
-          <div
-            className={`flex items-center justify-between text-white p-2 cursor-pointer w-[220px] h-[45px] ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
-            onClick={menu_open}
-          >
-            <div className="flex items-center">
-              <div
-                onClick={() => setIsSidebarOpen(true)}
-                className={`${isSidebarOpen ? "transition-all duration-800" : "scale-[1.5] transition-all duration-800  hover:bg-gray-500 hover:rounded w-[29px] h-[30px] flex justify-center items-center"}`}
-              >
-                <SvgWrapper>{items.icon}</SvgWrapper>
-              </div>
-              <span
-                className={`ml-3 ${isSidebarOpen ? "transition-all duration-600" : "hidden transition-all duration-600"}`}
-              >
-                {items.label}
-              </span>
-            </div>
-            <div
-              className={`ml-3 ${isSidebarOpen ? "transition-all duration-600" : "hidden transition-all duration-600"}`}
-            >
-              {is_expanded ? <UpArrow /> : <DownArrow />}
-            </div>
-          </div>
+        <div className="flex flex-col w-min">
           {isSidebarOpen && is_expanded ? (
             <div className="pl-4">
-              {items.children.map((item, index) => (
+              {items.submenu.map((item, index) => (
                 <PermissionProtector
                   key={`nested-${item.label}.${index}`}
                   permission={item.permission}
@@ -112,7 +89,7 @@ function SidebarItem({
               to={items.path}
             >
               <div
-                className={`flex items-center w-[220px] h-[45px]  p-2 cursor-pointer ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
+                className={`flex items-center h-[45px]  p-2 cursor-pointer ${isSidebarOpen ? "w-[220px] hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
               >
                 <span
                   className={`${isSidebarOpen ? "transition-all duration-800 " : "scale-[1.5] transition-all duration-800  hover:bg-gray-500 hover:rounded w-[40px] h-[30px] flex justify-center items-center"}`}
