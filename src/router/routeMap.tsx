@@ -241,7 +241,7 @@ const routeMap: CustomRouteElement[] = [
 const make_protected = (routes: CustomRouteElement[]) => {
   return routes.map((route) => {
     if (route.submenu) {
-      route.submenu = make_protected(route.submenu);
+      route.children = make_protected(route.submenu);
     } else {
       route.element = (
         <PermissionProtector permission={route.permission}>
