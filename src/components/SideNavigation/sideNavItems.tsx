@@ -89,7 +89,7 @@ function SidebarItem({
               to={items.path}
             >
               <div
-                className={`flex items-center w-[220px] h-[45px]  p-2 cursor-pointer ${isSidebarOpen ? "hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
+                className={`flex items-center h-[45px]  p-2 cursor-pointer ${isSidebarOpen ? "w-[220px] hover:bg-gray-500 hover:rounded transition-all duration-600" : "w-[45px] transition-all duration-600"}`}
               >
                 <span
                   className={`${isSidebarOpen ? "transition-all duration-800 " : "scale-[1.5] transition-all duration-800  hover:bg-gray-500 hover:rounded w-[40px] h-[30px] flex justify-center items-center"}`}
