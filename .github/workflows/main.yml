@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Update build path
-        run: ln -s ~/nix_frontend/dist dist
-
       - name: Run build task
         run: npm run build
+
+      - name: Deploy to web
+        run: rsync -avz --delete dist/ ~/nix_frontend/dist
