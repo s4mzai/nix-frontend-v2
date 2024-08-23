@@ -16,6 +16,7 @@ import Permission from "@/types/permissions";
 import CustomRouteElement from "@/types/routeElement";
 import React from "react";
 import ProfileIcon from "@/assets/ProfileIcon";
+import NotificationIcon from "@/assets/NotificationIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -39,6 +40,7 @@ const AllEditions = React.lazy(() => import("@/pages/Edition/AllEditions"));
 const Logs = React.lazy(() => import("@/pages/Logs"));
 const MemberProfile = React.lazy(() => import("@/pages/Member/MemberProfile"));
 const EditMember = React.lazy(() => import("@/pages/Member/EditMember"));
+const NotificationPage = React.lazy(() => import("@/pages/Notification"));
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -235,6 +237,13 @@ const routeMap: CustomRouteElement[] = [
     icon: <LogsIcon />,
     permission: [Permission.AccessLogs],
     label: "Logs",
+  },
+  {
+    path: "notification/",
+    element: <NotificationPage />,
+    icon: <NotificationIcon />,
+    permission: [],
+    label: "Notifications",
   },
 ];
 
