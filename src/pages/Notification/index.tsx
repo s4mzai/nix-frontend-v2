@@ -86,14 +86,16 @@ export default function NotificationPage() {
       <button
         onClick={async () => {
           console.log("Registering service!");
-          await BgService.registerServiceWorker("notification-service.js");
+          await BgService.registerServiceWorker(
+            "https://team-dev.dtutimes.com/notification-service.js",
+          );
         }}
       >
         Get alerts on spam!
       </button>
       <button
         onClick={async () => {
-          console.log(await BgService.getRegistration());
+          console.log("services: ", await BgService.getRegistration());
         }}
       >
         Get alerts on spam!
