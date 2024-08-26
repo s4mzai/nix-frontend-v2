@@ -86,19 +86,27 @@ export default function NotificationPage() {
       <button
         onClick={async () => {
           console.log("Registering service!");
-          await BgService.registerServiceWorker(
+          const x = await BgService.registerServiceWorker(
             "https://team-dev.dtutimes.com/notification-service.js",
           );
+          console.log("Service worker registered", x);
         }}
       >
-        Get alerts on spam!
+        Register service worker
       </button>
       <button
         onClick={async () => {
           console.log("services: ", await BgService.getRegistration());
         }}
       >
-        Get alerts on spam!
+        Console log bg services
+      </button>
+      <button
+        onClick={async () => {
+          console.log("services: ", await BgService.unregisterServiceWorker());
+        }}
+      >
+        Console log bg services
       </button>
       {notifications.map((notif) => {
         return <NotificationCard key={notif._id} notif={notif} />;
