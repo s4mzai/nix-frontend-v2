@@ -43,7 +43,15 @@ class BgService {
   }
 }
 
+export function is_supported() {
+  return Notification.isSupported() && BgService.isSupported();
+}
+
 export async function setup_notification() {
+  if (!is_supported()) {
+    throw new Error("Notification are not supported");
+  }
+
   await Notification.requestPermission();
 
   const worker = await BgService.registerServiceWorker(
