@@ -242,7 +242,7 @@ const routeMap: CustomRouteElement[] = [
     path: "notification/",
     element: <NotificationPage />,
     icon: <NotificationIcon />,
-    permission: [],
+    permission: [Permission.AccessLogs],
     label: "Notifications",
   },
 ];
