@@ -49,3 +49,24 @@ service_worker.addEventListener("activate", async () => {
     console.log("Error", err);
   }
 });
+
+service_worker.addEventListener("push", function (event) {
+  if (event.data) {
+    console.log(event.data.text());
+    pushNotification("Hi", event.data.text(), service_worker.registration);
+  } else {
+    console.log("No data!");
+  }
+});
+
+/**
+ * @param title {string}
+ * @param body {string}
+ * @param swRegistration {ServiceWorkerRegistration}
+ */
+const pushNotification = (title, body, swRegistration) => {
+  const options = {
+    body,
+  };
+  swRegistration.showNotification(title, options);
+};
