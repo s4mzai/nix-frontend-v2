@@ -51,9 +51,16 @@ service_worker.addEventListener("activate", async () => {
 });
 
 service_worker.addEventListener("push", function (event) {
-  if (event.data) {
-    console.log(event.data.text());
-    pushNotification("Hi", event.data.text(), service_worker.registration);
+  const data = event.data.json();
+  if (data) {
+    pushNotification(
+      data.title,
+      {
+        icon: "https://dtutimes.com/favicon.ico",
+        body: data.body,
+      },
+      service_worker.registration,
+    );
   } else {
     console.log("No data!");
   }
@@ -61,12 +68,9 @@ service_worker.addEventListener("push", function (event) {
 
 /**
  * @param title {string}
- * @param body {string}
+ * @param options {NotificationOptions}
  * @param swRegistration {ServiceWorkerRegistration}
  */
-const pushNotification = (title, body, swRegistration) => {
-  const options = {
-    body,
-  };
+const pushNotification = (title, options, swRegistration) => {
   swRegistration.showNotification(title, options);
 };
