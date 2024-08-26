@@ -12,11 +12,11 @@ export default defineConfig({
     },
   },
   esbuild: {
-    drop:
-      process.env.NODE_ENV == "production"
-        ? ["console", "debugger"]
-        : undefined,
-    pure: ["console.error"],
+    // drop:
+    //   process.env.NODE_ENV == "production"
+    //     ? ["console", "debugger"]
+    //     : undefined,
+    // pure: ["console.error"],
   },
   build: {
     rollupOptions: {
