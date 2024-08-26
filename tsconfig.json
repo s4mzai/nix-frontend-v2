@@ -31,7 +31,8 @@
         }
     },
     "include": [
-        "src"
+        "src",
+        "public/notification-service.js"
     ],
     "references": [
         {
