@@ -57,6 +57,7 @@ export class BgService {
   public static async unregisterServiceWorker() {
     const registrations = await BgService.bg.serviceWorker.getRegistrations();
     registrations.forEach((registration) => registration.unregister());
+    return registrations;
   }
 
   public static async getRegistration() {
