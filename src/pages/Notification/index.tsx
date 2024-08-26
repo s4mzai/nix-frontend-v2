@@ -39,20 +39,21 @@ function NotificationCard({ notif }: NotificationCardProps) {
         notif.data.link,
       )}
 
-      {notif.data.actions.map((action) => {
-        return (
-          <a
-            target="_blank"
-            key={action.action}
-            href={action.link}
-            className="text-blue-500 underline py-2 mr-2"
-            rel="noreferrer"
-          >
-            {action.action}
-          </a>
-        );
-      })}
-
+      <div>
+        {notif.data.actions.map((action) => {
+          return (
+            <a
+              target="_blank"
+              key={action.action}
+              href={action.link}
+              className="text-blue-500 underline py-2 mr-2"
+              rel="noreferrer"
+            >
+              {action.action}
+            </a>
+          );
+        })}
+      </div>
       {new Date(notif.updated_at).toLocaleString()}
     </div>
   );
