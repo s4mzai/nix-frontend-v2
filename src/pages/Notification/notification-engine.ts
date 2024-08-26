@@ -19,7 +19,9 @@ class BgService {
   static bg = window.navigator;
 
   public static isSupported() {
-    return BgService.bg !== undefined;
+    return (
+      BgService.bg !== undefined && BgService.bg.serviceWorker !== undefined
+    );
   }
 
   public static async registerServiceWorker(swPath: string) {
@@ -42,7 +44,7 @@ class BgService {
 }
 
 export async function setup_notification() {
-  Notification.requestPermission();
+  await Notification.requestPermission();
 
   const worker = await BgService.registerServiceWorker(
     "https://team.dtutimes.com/notification-service.js",
