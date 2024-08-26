@@ -35,7 +35,7 @@ service_worker.addEventListener("activate", async () => {
 
     const body = JSON.stringify(subscribe_json);
 
-    await fetch("https://team-dev.dtutimes.com/api/v1/notification/subscribe", {
+    await fetch("https://team.dtutimes.com/api/v1/notification/subscribe", {
       method: "POST",
       body,
       headers: {
@@ -72,5 +72,27 @@ service_worker.addEventListener("push", function (event) {
  * @param swRegistration {ServiceWorkerRegistration}
  */
 const pushNotification = (title, options, swRegistration) => {
+  console.log("Push Notification", title, options);
   swRegistration.showNotification(title, options);
 };
+
+service_worker.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    service_worker.clients
+      .matchAll({
+        type: "window",
+      })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (
+            client.url === "https://team.dtutimes.com/notification" &&
+            "focus" in client
+          )
+            return client.focus();
+        }
+        if (service_worker.clients.openWindow)
+          return service_worker.clients.openWindow("/notification");
+      }),
+  );
+});
