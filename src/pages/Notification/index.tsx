@@ -3,7 +3,11 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { INotification } from "@/types/notification";
 import React, { useEffect, useState } from "react";
-import { Notification, BgService } from "./notification-engine";
+import {
+  setup_notification,
+  disable_notification,
+  setup_present,
+} from "./notification-engine";
 
 interface NotificationCardProps {
   notif: INotification;
@@ -57,8 +61,11 @@ export default function NotificationPage() {
   const { setError } = React.useContext(ErrorContext);
 
   const [notifications, setNotifs] = useState<INotification[]>(null);
+  const [status, setStatus] = useState<boolean>(false);
 
   useEffect(() => {
+    setup_present().then(setStatus);
+
     const notifications = "/notification";
     API.get(notifications)
       .then((response) => {
@@ -80,34 +87,17 @@ export default function NotificationPage() {
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1>Latest Updates</h1>
-      <button onClick={Notification.requestPermission}>
-        Get alerts on Notification!
-      </button>
-      <button
-        onClick={async () => {
-          console.log("Registering service!");
-          const x = await BgService.registerServiceWorker(
-            "https://team-dev.dtutimes.com/notification-service.js",
-          );
-          console.log("Service worker registered", x);
-        }}
-      >
-        Register service worker
-      </button>
-      <button
-        onClick={async () => {
-          console.log("services: ", await BgService.getRegistration());
-        }}
-      >
-        Console log bg services
-      </button>
-      <button
-        onClick={async () => {
-          console.log("services: ", await BgService.unregisterServiceWorker());
-        }}
-      >
-        Console log bg services
-      </button>
+      <div>
+        {status ? (
+          <button className="ml-2" onClick={disable_notification}>
+            Disable Notifications
+          </button>
+        ) : (
+          <button className="mr-2" onClick={setup_notification}>
+            Get alerts on Notification!
+          </button>
+        )}
+      </div>
       {notifications.map((notif) => {
         return <NotificationCard key={notif._id} notif={notif} />;
       })}
