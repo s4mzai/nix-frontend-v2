@@ -61,7 +61,7 @@ export default function NotificationPage() {
   const { setError } = React.useContext(ErrorContext);
 
   const [notifications, setNotifs] = useState<INotification[]>(null);
-  const [status, setStatus] = useState<boolean>(false);
+  const [status, setStatus] = useState<boolean>(null);
 
   useEffect(() => {
     setup_present().then(setStatus);
@@ -77,7 +77,7 @@ export default function NotificationPage() {
       });
   }, []);
 
-  if (notifications === null)
+  if (notifications === null || status === null)
     return (
       <div className="flex w-full h-screen justify-center items-center">
         <Spinner />
@@ -89,11 +89,23 @@ export default function NotificationPage() {
       <h1>Latest Updates</h1>
       <div>
         {status ? (
-          <button className="ml-2" onClick={disable_notification}>
+          <button
+            className="ml-2"
+            onClick={() => {
+              setStatus(null);
+              disable_notification().then(setup_present).then(setStatus);
+            }}
+          >
             Disable Notifications
           </button>
         ) : (
-          <button className="mr-2" onClick={setup_notification}>
+          <button
+            className="mr-2"
+            onClick={() => {
+              setStatus(null);
+              setup_notification().then(setup_present).then(setStatus);
+            }}
+          >
             Get alerts on Notification!
           </button>
         )}

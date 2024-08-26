@@ -45,7 +45,7 @@ export async function setup_notification() {
   Notification.requestPermission();
 
   const worker = await BgService.registerServiceWorker(
-    "https://team-dev.dtutimes.com/notification-service.js",
+    "https://team.dtutimes.com/notification-service.js",
   );
 
   console.log("Service worker registered", worker);
