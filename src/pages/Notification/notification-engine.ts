@@ -1,12 +1,5 @@
-export class Notification {
+class Notification {
   static notify = window.Notification;
-
-  public static isPermissionGranted() {
-    if (!Notification.isSupported()) {
-      throw new Error("Notification API is not supported");
-    }
-    return Notification.notify.permission === "granted";
-  }
 
   public static async requestPermission() {
     if (!Notification.isSupported()) {
@@ -17,31 +10,12 @@ export class Notification {
     return permission;
   }
 
-  public static constructNotification(
-    title: string,
-    options: NotificationOptions,
-  ) {
-    return new Notification.notify(title, options);
-  }
-
   public static isSupported() {
     return Notification.notify !== undefined;
   }
-
-  public static async displayNotification(
-    title: string,
-    options: NotificationOptions,
-  ) {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      Notification.constructNotification(title, options);
-    } else {
-      console.error("Permission denied");
-    }
-  }
 }
 
-export class BgService {
+class BgService {
   static bg = window.navigator;
 
   public static isSupported() {
@@ -55,13 +29,33 @@ export class BgService {
   }
 
   public static async unregisterServiceWorker() {
-    const registrations = await BgService.bg.serviceWorker.getRegistrations();
+    const registrations = await BgService.getRegistrations();
     registrations.forEach((registration) => registration.unregister());
     return registrations;
   }
 
-  public static async getRegistration() {
-    const registration = await BgService.bg.serviceWorker.getRegistration();
+  public static async getRegistrations() {
+    const registration = await BgService.bg.serviceWorker.getRegistrations();
+    console.log("Service worker registered", registration);
     return registration;
   }
+}
+
+export async function setup_notification() {
+  Notification.requestPermission();
+
+  const worker = await BgService.registerServiceWorker(
+    "https://team-dev.dtutimes.com/notification-service.js",
+  );
+
+  console.log("Service worker registered", worker);
+}
+
+export async function disable_notification() {
+  await BgService.unregisterServiceWorker();
+}
+
+export async function setup_present() {
+  const services = await BgService.getRegistrations();
+  return services.length > 0;
 }
