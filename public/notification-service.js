@@ -21,8 +21,9 @@ service_worker.addEventListener("activate", async () => {
   try {
     /** @type {PushSubscriptionOptions} */
     const options = {
-      applicationServerKey:
+      applicationServerKey: urlB64ToUint8Array(
         "BCOsRaxpJeR0KyIPIg1rHx3pUtWVsGDGOxH65dDkqyU5ycF-CjPJxuqiXF4M0LpUMG_rk_YxSZX34uHbrV5umJQ",
+      ),
       userVisibleOnly: true,
     };
     console.log("Hello from service worker second time");
