@@ -3,6 +3,7 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import { INotification } from "@/types/notification";
 import React, { useEffect, useState } from "react";
+import { Notification, BgService } from "./notification-engine";
 
 interface NotificationCardProps {
   notif: INotification;
@@ -79,6 +80,24 @@ export default function NotificationPage() {
   return (
     <div className="max-w-4xl mx-auto py-12">
       <h1>Latest Updates</h1>
+      <button onClick={Notification.requestPermission}>
+        Get alerts on Notification!
+      </button>
+      <button
+        onClick={async () => {
+          console.log("Registering service!");
+          await BgService.registerServiceWorker("notification-service.js");
+        }}
+      >
+        Get alerts on spam!
+      </button>
+      <button
+        onClick={async () => {
+          console.log(await BgService.getRegistration());
+        }}
+      >
+        Get alerts on spam!
+      </button>
       {notifications.map((notif) => {
         return <NotificationCard key={notif._id} notif={notif} />;
       })}
