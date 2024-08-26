@@ -7,6 +7,7 @@ import {
   setup_notification,
   disable_notification,
   setup_present,
+  is_supported,
 } from "./notification-engine";
 
 interface NotificationCardProps {
@@ -64,7 +65,11 @@ export default function NotificationPage() {
   const [status, setStatus] = useState<boolean>(null);
 
   useEffect(() => {
-    setup_present().then(setStatus);
+    if (is_supported()) {
+      setup_present().then(setStatus);
+    } else {
+      setStatus(false);
+    }
 
     const notifications = "/notification";
     API.get(notifications)
@@ -93,7 +98,10 @@ export default function NotificationPage() {
             className="ml-2"
             onClick={() => {
               setStatus(null);
-              disable_notification().then(setup_present).then(setStatus);
+              disable_notification()
+                .then(setup_present)
+                .then(setStatus)
+                .catch(setError);
             }}
           >
             Disable Notifications
@@ -103,7 +111,10 @@ export default function NotificationPage() {
             className="mr-2"
             onClick={() => {
               setStatus(null);
-              setup_notification().then(setup_present).then(setStatus);
+              setup_notification()
+                .then(setup_present)
+                .then(setStatus)
+                .catch(setError);
             }}
           >
             Get alerts on Notification!

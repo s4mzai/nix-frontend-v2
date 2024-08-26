@@ -19,7 +19,9 @@ class BgService {
   static bg = window.navigator;
 
   public static isSupported() {
-    return BgService.bg !== undefined;
+    return (
+      BgService.bg !== undefined && BgService.bg.serviceWorker !== undefined
+    );
   }
 
   public static async registerServiceWorker(swPath: string) {
@@ -41,8 +43,16 @@ class BgService {
   }
 }
 
+export function is_supported() {
+  return Notification.isSupported() && BgService.isSupported();
+}
+
 export async function setup_notification() {
-  Notification.requestPermission();
+  if (!is_supported()) {
+    throw new Error("Notification are not supported");
+  }
+
+  await Notification.requestPermission();
 
   const worker = await BgService.registerServiceWorker(
     "https://team.dtutimes.com/notification-service.js",
