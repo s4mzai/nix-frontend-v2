@@ -5,13 +5,22 @@ class Notification {
     if (!Notification.isSupported()) {
       throw new Error("Notification API is not supported");
     }
+
     const permission = await Notification.notify.requestPermission();
+    if (permission !== "granted") {
+      throw new Error("Notification permission denied");
+    }
+
     console.log("Notification API permission", permission);
     return permission;
   }
 
   public static isSupported() {
     return Notification.notify !== undefined;
+  }
+
+  public static permissionGranted() {
+    return Notification.notify.permission === "granted";
   }
 }
 
@@ -67,5 +76,5 @@ export async function disable_notification() {
 
 export async function setup_present() {
   const services = await BgService.getRegistrations();
-  return services.length > 0;
+  return Notification.permissionGranted() && services.length > 0;
 }
