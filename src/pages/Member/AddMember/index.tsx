@@ -3,7 +3,7 @@ import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
 import React from "react";
 import { toast } from "react-toastify";
-
+import Papa from 'papaparse';
 
 const roleMap: { [key: string]: number } = {
   "Superhuman": 0,
@@ -22,6 +22,7 @@ export default function AddMember() {
   const { setError } = React.useContext(ErrorContext);
   const [loading, setLoading] = React.useState(false);
   const [role, setRole] = React.useState<string>("");
+  const [csvFile, setCsvFile] = React.useState<File | null>(null);
 
   const roles = [
     "Superhuman", "Npc", "Coordinator", "Columnist", "Developer", "Designer",
@@ -31,6 +32,15 @@ export default function AddMember() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
+    if (csvFile) {
+      handleCsvUpload();
+    } else {
+      handleSingleMemberAdd(e);
+    }
+  };
+
+  const handleSingleMemberAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     const name = (e.currentTarget.elements.namedItem("name") as HTMLInputElement).value;
     const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
 
@@ -61,6 +71,40 @@ export default function AddMember() {
     }
   };
 
+  const handleCsvUpload = () => {
+    if (!csvFile) {
+      toast.error("Please select a CSV file");
+      setLoading(false);
+      return;
+    }
+
+    Papa.parse(csvFile, {
+      complete: async (results) => {
+        const data = results.data as string[][];
+        for (let i = 1; i < data.length; i++) {
+          const [name, email, role] = data[i];
+          const teamRole = roleMap[role];
+
+          if (teamRole === undefined) {
+            toast.error(`Invalid role for ${name}: ${role}`);
+            continue;
+          }
+
+          try {
+            await API.post("/auth/signup", { name, username: email, teamRole });
+            toast.success(`Added ${name} successfully`);
+          } catch (e) {
+            setError(e);
+            toast.error(`Error adding ${name}. Please try again.`);
+          }
+        }
+        setLoading(false);
+        setCsvFile(null);
+      },
+      header: true,
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex flex-grow w-full h-screen justify-center items-center">
@@ -84,7 +128,6 @@ export default function AddMember() {
             name="name"
             pattern="[A-Za-z/s]+" 
             title="Only alphabetical names are allowed"
-            required
           />
           <label className="text-2xl font-medium leading-none mb-2 mt-6" htmlFor="email">Email</label>
           <input
@@ -93,7 +136,6 @@ export default function AddMember() {
             id="email"
             placeholder="Enter email"
             name="email"
-            required
           />
           <label className="text-2xl font-medium leading-none mb-2 mt-6" htmlFor="role">Declare Role</label>
           <select
@@ -102,7 +144,6 @@ export default function AddMember() {
             name="role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            required
           >
             <option value="" disabled>Select Role</option>
             {roles.map((roleOption) => (
@@ -112,11 +153,20 @@ export default function AddMember() {
             ))}
           </select>
 
+          <label className="text-2xl font-medium leading-none mb-2 mt-6" htmlFor="csv">Or Upload CSV</label>
+          <input
+            type="file"
+            id="csv"
+            accept=".csv"
+            onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+            className="border p-2 rounded"
+          />
+
           <button
             className="update-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-1xl mt-4"
             type="submit"
           >
-            Register
+            {csvFile ? "Upload CSV" : "Register"}
           </button>
         </div>
       </form>
