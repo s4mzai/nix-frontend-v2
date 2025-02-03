@@ -1,6 +1,6 @@
 import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 import React, { ReactNode } from "react";
 
 type FallbackChild =

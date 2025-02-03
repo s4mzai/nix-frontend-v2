@@ -3,7 +3,7 @@ import {
   CurrentUserCtxType,
   GrantedPermissions,
   IUser,
-} from "@/types/contextTypes";
+} from "@/commonlib/types/frontend/contextTypes";
 import { getUserFromStorage } from "@/services/localStorageParser";
 
 export const CurrUserCtx = React.createContext<CurrentUserCtxType | null>(null);

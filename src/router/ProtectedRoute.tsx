@@ -2,7 +2,7 @@ import { Spinner } from "@/components/Spinner";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { PermErrCtx } from "@/contexts/permission_error";
 import Layout from "@/pages/Layout";
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 import React, { useEffect } from "react";
 import { Navigate, useNavigate, useRoutes } from "react-router-dom";
 import { protectedRoutes } from "./routeMap";

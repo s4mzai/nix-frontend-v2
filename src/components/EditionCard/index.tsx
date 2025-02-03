@@ -1,6 +1,6 @@
 import { TagIcon } from "@/assets/TagIcon";
-import { Edition } from "@/types/edition";
-import { EditionStatus } from "@/types/editionStatus";
+import { IEdition as Edition } from "@/commonlib/types/edition";
+import { EditionStatus } from "@/commonlib/types/edition";
 import { Link } from "react-router-dom";
 import { NixImage } from "../NixImage";
 

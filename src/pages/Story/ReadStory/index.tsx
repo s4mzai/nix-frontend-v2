@@ -11,12 +11,12 @@ import { Spinner } from "@/components/Spinner";
 
 import { TagIcon } from "@/assets/TagIcon";
 
-import BlogStatus from "@/types/blogStatus";
-import { BlogDetails } from "@/types/blog";
+import BlogStatus from "@/commonlib/types/blogStatus";
+import { BlogDetails } from "@/commonlib/types/blog";
 import "./index.css";
 import { NixImage } from "@/components/NixImage";
 import { PermissionProtector } from "@/components/PermissionProtector";
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 import { CurrUserCtx } from "@/contexts/current_user";
 
 interface ReadStoryState {
