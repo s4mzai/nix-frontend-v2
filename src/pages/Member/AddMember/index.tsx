@@ -81,8 +81,8 @@ export default function AddMember() {
     Papa.parse(csvFile, {
       complete: async (results) => {
         const data = results.data as string[][];
-        for (let i = 1; i < data.length; i++) {
-          const [name, email, role] = data[i];
+        for (let i = 0; i < data.length-1; i++) {
+          const {name, email, role} = data[i];
           const teamRole = roleMap[role];
 
           if (teamRole === undefined) {
