@@ -1,8 +1,8 @@
 import MoreVerticalIcon from "@/assets/MoreIcon";
-import BlogStatus from "@/types/blogStatus";
+import BlogStatus from "@/commonlib/types/blogStatus";
 import { useEffect, useRef, useState } from "react";
 import { PermissionProtector } from "../PermissionProtector";
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 
 export interface Option {
   label: string;
