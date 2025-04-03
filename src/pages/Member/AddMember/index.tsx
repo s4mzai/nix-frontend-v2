@@ -4,7 +4,7 @@ import API from "@/services/API";
 import React from "react";
 import { toast } from "react-toastify";
 import Papa from 'papaparse';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaFileCsv, FaCloudUploadAlt, FaDownload } from 'react-icons/fa';
 
 
 const roleMap: { [key: string]: string } = {
@@ -26,6 +26,8 @@ export default function AddMember() {
   const [role, setRole] = React.useState<string>("");
   const [csvFiles, setCsvFiles] = React.useState<File[]>([]);
   const [isMultiMember, setIsMultiMember] = React.useState(false);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const roles = Object.keys(roleMap);
 
@@ -150,18 +152,58 @@ export default function AddMember() {
     document.body.removeChild(link);
   };
 
-  const handleFileDelete = (indexToDelete: number) => {
-    setCsvFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToDelete));
-    // Reset the file input
-    const fileInput = document.getElementById('csv') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files).filter(file => file.type === 'text/csv');
+    if (droppedFiles.length === 0) {
+      toast.error("Please drop only CSV files");
+      return;
     }
+    setCsvFiles(prevFiles => [...prevFiles, ...droppedFiles]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files || []);
+    const newFiles = Array.from(e.target.files || []).filter(file => file.type === 'text/csv');
+    if (newFiles.length === 0) {
+      toast.error("Please select only CSV files");
+      return;
+    }
     setCsvFiles(prevFiles => [...prevFiles, ...newFiles]);
+  };
+
+  const handleFileDelete = (indexToDelete: number) => {
+    setCsvFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToDelete));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   if (loading) {
@@ -241,29 +283,60 @@ export default function AddMember() {
           </div>
         ) : (
           // Multi-Member CSV Upload Form
-          <div className="flex flex-col">
-            <label className="text-2xl font-medium leading-none mb-2" htmlFor="csv">Upload CSV Files</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="file"
-                id="csv"
-                accept=".csv"
-                multiple
-                onChange={handleFileChange}
-                className="border p-2 rounded flex-grow"
-              />
+          <div className="flex flex-col space-y-6">
+            
+
+            <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-200 ease-in-out
+                ${isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-indigo-400'}`}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <div className="flex flex-col items-center">
+                <FaCloudUploadAlt className="w-12 h-12 text-gray-400 mb-4" />
+                <p className="text-gray-600 mb-2">Drag and drop your CSV files here</p>
+                <p className="text-gray-500 text-sm mb-4">or</p>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 transition-colors duration-200"
+                >
+                  Browse Files
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  id="csv"
+                  accept=".csv"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <p className="text-gray-500 text-sm mt-4">Only CSV files are allowed</p>
+              </div>
             </div>
+
             {csvFiles.length > 0 && (
-              <div className="mt-4 space-y-2">
-                <h3 className="text-lg font-medium">Uploaded Files:</h3>
-                <div className="space-y-2">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800">Uploaded Files</h3>
+                </div>
+                <div className="divide-y divide-gray-200">
                   {csvFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                      <span className="text-sm">{file.name}</span>
+                    <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50">
+                      <div className="flex items-center space-x-4">
+                        <FaFileCsv className="w-6 h-6 text-indigo-500" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                        </div>
+                      </div>
                       <button
                         type="button"
                         onClick={() => handleFileDelete(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-gray-400 hover:text-red-500 transition-colors duration-200"
                       >
                         <FaTimes />
                       </button>
@@ -272,13 +345,17 @@ export default function AddMember() {
                 </div>
               </div>
             )}
-            <button
-              type="button"
-              onClick={downloadSampleCsv}
-              className="bg-blue-500 text-white hover:bg-blue-700 border p-3 rounded text-xl mt-4"
-            >
-              Download Sample CSV
-            </button>
+
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={downloadSampleCsv}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <FaDownload className="mr-2" />
+                Download Sample CSV
+              </button>
+            </div>
           </div>
         )}
 
