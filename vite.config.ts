@@ -8,6 +8,9 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@/types": fileURLToPath(
+        new URL("./src/commonlib/types", import.meta.url),
+      ),
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },

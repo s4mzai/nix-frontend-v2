@@ -4,8 +4,9 @@ import { Spinner } from "@/components/Spinner";
 import { CurrUserCtx } from "@/contexts/current_user";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { IUser, MainWebsiteRole } from "@/types/contextTypes";
-import Permission from "@/types/permissions";
+import { IUser } from "@/commonlib/types/frontend/contextTypes";
+import { MainWebsiteRole } from "@/types/mainWebsiteRole";
+import Permission from "@/commonlib/types/permissions";
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 

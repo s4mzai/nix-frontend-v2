@@ -1,12 +1,13 @@
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { INotification } from "@/types/notification";
+import { INotification } from "@/commonlib/types/notification";
 import React, { useEffect, useState } from "react";
 import {
   setup_notification,
   disable_notification,
   setup_present,
+  is_supported,
 } from "./notification-engine";
 
 interface NotificationCardProps {
@@ -38,20 +39,21 @@ function NotificationCard({ notif }: NotificationCardProps) {
         notif.data.link,
       )}
 
-      {notif.data.actions.map((action) => {
-        return (
-          <a
-            target="_blank"
-            key={action.action}
-            href={action.link}
-            className="text-blue-500 underline py-2 mr-2"
-            rel="noreferrer"
-          >
-            {action.action}
-          </a>
-        );
-      })}
-
+      <div>
+        {notif.data.actions.map((action) => {
+          return (
+            <a
+              target="_blank"
+              key={action.action}
+              href={action.link}
+              className="text-blue-500 underline py-2 mr-2"
+              rel="noreferrer"
+            >
+              {action.action}
+            </a>
+          );
+        })}
+      </div>
       {new Date(notif.updated_at).toLocaleString()}
     </div>
   );
@@ -64,7 +66,11 @@ export default function NotificationPage() {
   const [status, setStatus] = useState<boolean>(null);
 
   useEffect(() => {
-    setup_present().then(setStatus);
+    if (is_supported()) {
+      setup_present().then(setStatus);
+    } else {
+      setStatus(false);
+    }
 
     const notifications = "/notification";
     API.get(notifications)
@@ -93,7 +99,10 @@ export default function NotificationPage() {
             className="ml-2"
             onClick={() => {
               setStatus(null);
-              disable_notification().then(setup_present).then(setStatus);
+              disable_notification()
+                .then(setup_present)
+                .then(setStatus)
+                .catch(setError);
             }}
           >
             Disable Notifications
@@ -103,7 +112,10 @@ export default function NotificationPage() {
             className="mr-2"
             onClick={() => {
               setStatus(null);
-              setup_notification().then(setup_present).then(setStatus);
+              setup_notification()
+                .then(setup_present)
+                .then(setStatus)
+                .catch(setError);
             }}
           >
             Get alerts on Notification!

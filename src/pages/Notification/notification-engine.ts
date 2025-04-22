@@ -5,7 +5,12 @@ class Notification {
     if (!Notification.isSupported()) {
       throw new Error("Notification API is not supported");
     }
+
     const permission = await Notification.notify.requestPermission();
+    if (permission !== "granted") {
+      throw new Error("Notification permission denied");
+    }
+
     console.log("Notification API permission", permission);
     return permission;
   }
@@ -13,13 +18,19 @@ class Notification {
   public static isSupported() {
     return Notification.notify !== undefined;
   }
+
+  public static permissionGranted() {
+    return Notification.notify.permission === "granted";
+  }
 }
 
 class BgService {
   static bg = window.navigator;
 
   public static isSupported() {
-    return BgService.bg !== undefined;
+    return (
+      BgService.bg !== undefined && BgService.bg.serviceWorker !== undefined
+    );
   }
 
   public static async registerServiceWorker(swPath: string) {
@@ -41,8 +52,16 @@ class BgService {
   }
 }
 
+export function is_supported() {
+  return Notification.isSupported() && BgService.isSupported();
+}
+
 export async function setup_notification() {
-  Notification.requestPermission();
+  if (!is_supported()) {
+    throw new Error("Notification are not supported");
+  }
+
+  await Notification.requestPermission();
 
   const worker = await BgService.registerServiceWorker(
     "https://team.dtutimes.com/notification-service.js",
@@ -57,5 +76,5 @@ export async function disable_notification() {
 
 export async function setup_present() {
   const services = await BgService.getRegistrations();
-  return services.length > 0;
+  return Notification.permissionGranted() && services.length > 0;
 }

@@ -2,8 +2,8 @@ import MyMultiselect from "@/components/MultiSelect";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import Permission from "@/types/permissions";
-import { Role } from "@/types/role";
+import Permission from "@/commonlib/types/permissions";
+import { Role } from "@/commonlib/types/role";
 import { useContext, useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
 

@@ -1,6 +1,6 @@
 import DownArrow from "@/assets/ChevronDownIcon";
 import { PermissionProtector } from "@/components/PermissionProtector";
-import RouteElement from "@/types/routeElement";
+import RouteElement from "@/commonlib/types/frontend/routeElement";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 

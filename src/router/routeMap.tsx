@@ -12,11 +12,12 @@ import StoryIcon from "@/assets/StoryIcon";
 import TerminalIcon from "@/assets/TerminalIcon";
 import { PermissionProtector } from "@/components/PermissionProtector";
 import ErrorPage from "@/error-page";
-import Permission from "@/types/permissions";
-import CustomRouteElement from "@/types/routeElement";
+import Permission from "@/commonlib/types/permissions";
+import CustomRouteElement from "@/commonlib/types/frontend/routeElement";
 import React from "react";
 import ProfileIcon from "@/assets/ProfileIcon";
 import NotificationIcon from "@/assets/NotificationIcon";
+import EventsIcon from "@/assets/EventIcon";
 
 //lazy imports
 const Login = React.lazy(() => import("@/pages/auth/Login"));
@@ -41,6 +42,7 @@ const Logs = React.lazy(() => import("@/pages/Logs"));
 const MemberProfile = React.lazy(() => import("@/pages/Member/MemberProfile"));
 const EditMember = React.lazy(() => import("@/pages/Member/EditMember"));
 const NotificationPage = React.lazy(() => import("@/pages/Notification"));
+const NewEvent = React.lazy(() => import("@/pages/Events/NewEvent"));
 
 /** This route map serves the routes as well as is used to
  * generate nav bar menu, so the links can never be broken */
@@ -244,6 +246,13 @@ const routeMap: CustomRouteElement[] = [
     icon: <NotificationIcon />,
     permission: [],
     label: "Notifications",
+  },
+  {
+    path: "events/",
+    element: <NewEvent />,
+    icon: <EventsIcon />,
+    permission: [Permission.CreateUpdateEvent],
+    label: "Events",
   },
 ];
 

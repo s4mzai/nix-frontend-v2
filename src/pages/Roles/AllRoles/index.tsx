@@ -2,7 +2,7 @@ import Collapsible from "@/components/Collapsible";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DeleteIcon from "@/assets/DeleteIcon";
