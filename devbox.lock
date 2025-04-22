@@ -1,6 +1,9 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "resolved": "github:NixOS/nixpkgs/ebe4301cbd8f81c4f8d3244b3632338bbeb6d49c?lastModified=1744868846&narHash=sha256-5RJTdUHDmj12Qsv7XOhuospjAjATNiTMElplWnJE9Hs%3D"
+    },
     "nodejs@22": {
       "last_modified": "2024-12-23T21:10:33Z",
       "plugin_version": "0.0.2",
@@ -63,6 +66,54 @@
             }
           ],
           "store_path": "/nix/store/fkyp1bm5gll9adnfcj92snyym524mdrj-nodejs-22.11.0"
+        }
+      }
+    },
+    "rsync@3.4.1": {
+      "last_modified": "2025-03-11T17:52:14Z",
+      "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#rsync",
+      "source": "devbox-search",
+      "version": "3.4.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qiq98vlv9gf9aiarmi6rz9y2cqdsjvlg-rsync-3.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/qiq98vlv9gf9aiarmi6rz9y2cqdsjvlg-rsync-3.4.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ifvzhlyb08jg9ds7lzwyv5vch7185rf6-rsync-3.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ifvzhlyb08jg9ds7lzwyv5vch7185rf6-rsync-3.4.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cn12w1q2kjvs7h4lfz2nmv3w2pypqhdi-rsync-3.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cn12w1q2kjvs7h4lfz2nmv3w2pypqhdi-rsync-3.4.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/69c5vqpb58dckbizfajqwl280bkpwf7g-rsync-3.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/69c5vqpb58dckbizfajqwl280bkpwf7g-rsync-3.4.1"
         }
       }
     }
