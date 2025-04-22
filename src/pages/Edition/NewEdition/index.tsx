@@ -2,9 +2,9 @@ import { PermissionProtector } from "@/components/PermissionProtector";
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { Edition } from "@/types/edition";
-import { EditionStatus } from "@/types/editionStatus";
-import Permission from "@/types/permissions";
+import { IEdition as Edition } from "@/commonlib/types/edition";
+import { EditionStatus } from "@/commonlib/types/edition";
+import Permission from "@/commonlib/types/permissions";
 import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,7 +18,6 @@ const initial_state: Edition = {
   createdAt: null,
   updatedAt: null,
 };
-
 export default function NewEdition({ edition: _ed }: { edition?: Edition }) {
   const location = useLocation();
   const navigate = useNavigate();
