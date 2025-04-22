@@ -30,6 +30,11 @@ jobs:
           node-version: 22
           cache: "npm"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
       - name: Get to work dir
         run: cd $GITHUB_WORKSPACE && echo $GITHUB_WORKSPACE && ls -la
 
