@@ -45,4 +45,4 @@ jobs:
         run: npm run build
 
       - name: Deploy to web
-        run: rsync -avz --delete dist/ ~/nix_frontend_dev
+        run: rsync -avz --delete dist/ /var/www/nix-frontend/team-dev.dtutimes.com

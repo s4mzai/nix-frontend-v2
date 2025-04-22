@@ -6,7 +6,7 @@ import BlogTable from "@/components/Table/BlogTable";
 import { YOUR_BLOGS_PER_PAGE as perPage } from "@/config";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { Blog } from "@/types/blog";
+import { IBlog } from "@/types/blog";
 import BlogPageType from "@/types/blogPages";
 import BlogStatus from "@/types/blogStatus";
 import { useContext, useEffect, useReducer } from "react";
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface YourStoriesState {
-  blogs: Blog[];
+  blogs: IBlog[];
   searchTerm: string;
   statusFilters: BlogStatus[];
   loading: boolean;
@@ -78,7 +78,7 @@ const reducer = (
 };
 
 const getFilteredBlogs = (
-  blogs: Blog[],
+  blogs: IBlog[],
   statusFilters: BlogStatus[],
   searchTerm: string,
 ) => {
@@ -111,7 +111,7 @@ export default function AllStory() {
       });
   };
 
-  const more_menu_options = (blog: Blog) =>
+  const more_menu_options = (blog: IBlog) =>
     moreMenuOptionsGenerator({ blog, navigate, fetchBlogs, setError, toast });
 
   useEffect(() => {
