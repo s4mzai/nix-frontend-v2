@@ -51,12 +51,11 @@ export default function AddMember() {
   };
 
   const handleSingleMemberAdd = async (e: React.FormEvent<HTMLFormElement>) => {
-    const name = (
-      e.currentTarget.elements.namedItem("name") as HTMLInputElement
-    ).value;
-    const email = (
-      e.currentTarget.elements.namedItem("email") as HTMLInputElement
-    ).value;
+    e.preventDefault();
+    const form = e.currentTarget;
+
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
 
     if (!role) {
       toast.error("Please select a role");
@@ -68,10 +67,10 @@ export default function AddMember() {
       await API.post("/auth/signup", { name, username: email, teamRole: role });
       toast.success("Member added successfully");
       setRole("");
-      e.currentTarget.reset();
-    } catch (e: any) {
-      setError(e);
-      toast.error(e?.message || "Error adding member. Please try again.");
+      form.reset();
+    } catch (err: any) {
+      setError(err);
+      toast.error(err?.message || "Error adding member. Please try again.");
     } finally {
       setLoading(false);
     }
