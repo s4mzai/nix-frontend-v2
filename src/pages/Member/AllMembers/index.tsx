@@ -8,6 +8,8 @@ import {Member} from "@/commonlib/types/member";
 import React from "react";
 import { useEffect } from "react";
 import { MEMBERS_PER_PAGE as perPage } from "@/config";
+import ChevronDownIcon from "@/assets/ChevronDownIcon";
+import CheckIcon from "@/assets/CheckIcon";
 
 const initialState = {
   membersList: [] as Member[],
@@ -173,8 +175,8 @@ export default function AllMembers() {
               className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
               onClick={() => { setIsRoleOpen((v) => !v); setIsDateOpen(false); }}
             >
-              Role
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
+                             Role
+               <ChevronDownIcon className="h-4 w-4" />
             </button>
             {isRoleOpen && (
               <div className="absolute left-0 sm:left-auto sm:right-0 z-20 mt-2 w-full sm:w-64 rounded-xl border border-gray-200 bg-white shadow-lg">
@@ -192,13 +194,13 @@ export default function AllMembers() {
                           dispatch({ type: ActionType.SetRoleFilter, payload: value });
                           setIsRoleOpen(false);
                         }}
-                      >
-                        {selected ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-blue-600"><path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                        ) : (
-                          <span className="h-4 w-4" />
-                        )}
-                        <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                                             >
+                         {selected ? (
+                           <CheckIcon className="h-4 w-4 text-blue-600" />
+                         ) : (
+                           <span className="h-4 w-4" />
+                         )}
+                         <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
                       </button>
                     );
                   })}
@@ -212,8 +214,8 @@ export default function AllMembers() {
                className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
                onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
              >
-               Date
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
+                               Date
+                <ChevronDownIcon className="h-4 w-4" />
              </button>
              {isDateOpen && (
                <div className="absolute left-0 sm:left-auto sm:right-0 z-20 mt-2 w-full sm:w-48 rounded-xl border border-gray-200 bg-white shadow-lg">
@@ -231,13 +233,13 @@ export default function AllMembers() {
                           dispatch({ type: ActionType.SetDateSort, payload: d as any });
                           setIsDateOpen(false);
                         }}
-                      >
-                        {selected ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-blue-600"><path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                        ) : (
-                          <span className="h-4 w-4" />
-                        )}
-                        <span>{label}</span>
+                                             >
+                         {selected ? (
+                           <CheckIcon className="h-4 w-4 text-blue-600" />
+                         ) : (
+                           <span className="h-4 w-4" />
+                         )}
+                         <span>{label}</span>
                       </button>
                     );
                   })}
