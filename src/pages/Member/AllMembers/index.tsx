@@ -14,6 +14,8 @@ const initialState = {
   searchTerm: "",
   loading: true,
   currentPage: 1,
+  roleFilter: "all",
+  dateSort: "default" as "default" | "newest" | "oldest",
 };
 
 const enum ActionType {
@@ -21,6 +23,8 @@ const enum ActionType {
   SetSearchTerm,
   SetLoading,
   SetCurrentPage,
+  SetRoleFilter,
+  SetDateSort,
 }
 
 const reducer = (
@@ -43,6 +47,14 @@ const reducer = (
     case ActionType.SetCurrentPage:
       updatedData.currentPage = action.payload;
       break;
+    case ActionType.SetRoleFilter:
+      updatedData.roleFilter = action.payload;
+      updatedData.currentPage = 1;
+      break;
+    case ActionType.SetDateSort:
+      updatedData.dateSort = action.payload;
+      updatedData.currentPage = 1;
+      break;
     default:
       return updatedData;
   }
@@ -52,8 +64,12 @@ const reducer = (
 export default function AllMembers() {
   const { setError } = React.useContext(ErrorContext);
   const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [isRoleOpen, setIsRoleOpen] = React.useState(false);
+  const [isDateOpen, setIsDateOpen] = React.useState(false);
+  const roleRef = React.useRef<HTMLDivElement>(null);
+  const dateRef = React.useRef<HTMLDivElement>(null);
 
-  const { membersList, searchTerm, loading } = state;
+  const { membersList, searchTerm, loading, roleFilter, dateSort } = state;
 
   useEffect(() => {
     const membersEndpoint = "/user";
@@ -72,14 +88,53 @@ export default function AllMembers() {
       });
   }, []);
 
-  //filter members based on search term
-  const filteredMembers = membersList.filter((member) => {
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (isRoleOpen && roleRef.current && !roleRef.current.contains(target)) {
+        setIsRoleOpen(false);
+      }
+      if (isDateOpen && dateRef.current && !dateRef.current.contains(target)) {
+        setIsDateOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isRoleOpen, isDateOpen]);
+
+  const rolesOptions = [
+    "all",
+    "superhuman",
+    "developer",
+    "editor",
+    "columnist",
+    "designer",
+    "alumni",
+    "illustrator",
+    "photographer",
+    "coordinator",
+    "npc",
+  ];
+
+  const filteredMembers = membersList
+  .filter((member) => {
     const smallSearchTerm = searchTerm.toLowerCase();
     return (
       member?.name.toLowerCase().includes(smallSearchTerm) ||
       member?.email.toLowerCase().includes(smallSearchTerm) ||
       member?.role.toLowerCase().includes(smallSearchTerm)
     );
+  })
+  .filter((member) => {
+    if (!roleFilter || roleFilter === "all") return true;
+    return member?.role?.toLowerCase() === roleFilter.toLowerCase();
+  })
+  .sort((a, b) => {
+    if (dateSort === "default") return 0;
+    const aDate = a && (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
+    const bDate = b && (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
+    if (dateSort === "newest") return bDate - aDate;
+    return aDate - bDate;
   });
 
   const indexOfLastMember = state.currentPage * perPage;
@@ -112,6 +167,85 @@ export default function AllMembers() {
             dispatch({ type: ActionType.SetSearchTerm, payload: value })
           }
         />
+        <div className="w-full flex justify-end gap-3 px-4 mb-4">
+          <div className="relative" ref={roleRef}>
+            <button
+              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"}`}
+              onClick={() => { setIsRoleOpen((v) => !v); setIsDateOpen(false); }}
+            >
+              Role
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
+            </button>
+            {isRoleOpen && (
+              <div className="absolute right-0 z-20 mt-2 w-64 rounded-xl border border-gray-200 bg-white shadow-lg">
+                <div className="px-4 py-3 text-sm font-semibold">Filter by Role</div>
+                <div className="border-t border-gray-100" />
+                <div className="py-2">
+                  {rolesOptions.map((role) => {
+                    const value = role.toLowerCase();
+                    const selected = roleFilter === value;
+                    return (
+                      <button
+                        key={role}
+                        className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm hover:bg-gray-50 ${selected ? "text-gray-900" : "text-gray-700"}`}
+                        onClick={() => {
+                          dispatch({ type: ActionType.SetRoleFilter, payload: value });
+                          setIsRoleOpen(false);
+                        }}
+                      >
+                        {selected ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-blue-600"><path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                        ) : (
+                          <span className="h-4 w-4" />
+                        )}
+                        <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="relative" ref={dateRef}>
+            <button
+              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"}`}
+              onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
+            >
+              Date
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
+            </button>
+            {isDateOpen && (
+              <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-lg">
+                <div className="px-4 py-3 text-sm font-semibold">Filter by Date</div>
+                <div className="border-t border-gray-100" />
+                <div className="py-2">
+                  {["default", "newest", "oldest"].map((d) => {
+                    const selected = dateSort === (d as any);
+                    const label = d.charAt(0).toUpperCase() + d.slice(1);
+                    return (
+                      <button
+                        key={d}
+                        className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm hover:bg-gray-50 ${selected ? "text-gray-900" : "text-gray-700"}`}
+                        onClick={() => {
+                          dispatch({ type: ActionType.SetDateSort, payload: d as any });
+                          setIsDateOpen(false);
+                        }}
+                      >
+                        {selected ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-blue-600"><path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                        ) : (
+                          <span className="h-4 w-4" />
+                        )}
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="w-full  gap-4 flex-wrap flex justify-center items-center">
