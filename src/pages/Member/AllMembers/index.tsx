@@ -167,17 +167,17 @@ export default function AllMembers() {
             dispatch({ type: ActionType.SetSearchTerm, payload: value })
           }
         />
-        <div className="w-full flex justify-end gap-3 px-4 mb-4">
+        <div className="w-full flex flex-col sm:flex-row justify-center sm:justify-end gap-3 px-4 mb-4">
           <div className="relative" ref={roleRef}>
             <button
-              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"}`}
+              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
               onClick={() => { setIsRoleOpen((v) => !v); setIsDateOpen(false); }}
             >
               Role
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
             </button>
             {isRoleOpen && (
-              <div className="absolute right-0 z-20 mt-2 w-64 rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="absolute left-0 sm:left-auto sm:right-0 z-20 mt-2 w-full sm:w-64 rounded-xl border border-gray-200 bg-white shadow-lg">
                 <div className="px-4 py-3 text-sm font-semibold">Filter by Role</div>
                 <div className="border-t border-gray-100" />
                 <div className="py-2">
@@ -207,16 +207,16 @@ export default function AllMembers() {
             )}
           </div>
 
-          <div className="relative" ref={dateRef}>
-            <button
-              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"}`}
-              onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
-            >
-              Date
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
-            </button>
-            {isDateOpen && (
-              <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-lg">
+                     <div className="relative" ref={dateRef}>
+             <button
+               className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
+               onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
+             >
+               Date
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" /></svg>
+             </button>
+             {isDateOpen && (
+               <div className="absolute left-0 sm:left-auto sm:right-0 z-20 mt-2 w-full sm:w-48 rounded-xl border border-gray-200 bg-white shadow-lg">
                 <div className="px-4 py-3 text-sm font-semibold">Filter by Date</div>
                 <div className="border-t border-gray-100" />
                 <div className="py-2">
