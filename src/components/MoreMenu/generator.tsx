@@ -1,8 +1,8 @@
 import API from "@/services/API";
-import { Blog } from "@/types/blog";
-import BlogStatus from "@/types/blogStatus";
-import { CustomError } from "@/types/contextTypes";
-import Permission from "@/types/permissions";
+import { IBlog as Blog } from "@/commonlib/types/blog";
+import BlogStatus from "@/commonlib/types/blogStatus";
+import { CustomError } from "@/commonlib/types/frontend/contextTypes";
+import Permission from "@/commonlib/types/permissions";
 import { NavigateFunction } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Option } from ".";

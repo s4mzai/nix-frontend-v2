@@ -9,8 +9,8 @@ import { Spinner } from "@/components/Spinner";
 import EditionCard from "@/components/EditionCard";
 import Pagination from "@/components/Pagination";
 import { EDITIONS_PER_PAGE as perPage } from "@/config";
-import { Edition } from "@/types/edition";
-import { EditionStatus } from "@/types/editionStatus";
+import { IEdition as Edition } from "@/commonlib/types/edition";
+import { EditionStatus } from "@/commonlib/types/edition";
 
 interface AllEditionsState {
   editions: Edition[];

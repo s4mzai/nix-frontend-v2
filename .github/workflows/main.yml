@@ -22,9 +22,21 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
 
       - name: Get to work dir
-        run: cd $GITHUB_WORKSPACE
+        run: cd $GITHUB_WORKSPACE && echo $GITHUB_WORKSPACE && ls -la
 
       - name: Install dependencies
         run: npm i
@@ -33,4 +45,4 @@ jobs:
         run: npm run build
 
       - name: Deploy to web
-        run: rsync -avz --delete dist/ ~/nix_frontend/dist
+        run: rsync -vz --delete --recursive dist/ /var/www/nix-frontend/team.dtutimes.com

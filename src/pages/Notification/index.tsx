@@ -1,7 +1,7 @@
 import { Spinner } from "@/components/Spinner";
 import { ErrorContext } from "@/contexts/error";
 import API from "@/services/API";
-import { INotification } from "@/types/notification";
+import { INotification } from "@/commonlib/types/notification";
 import React, { useEffect, useState } from "react";
 import {
   setup_notification,

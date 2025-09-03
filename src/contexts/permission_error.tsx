@@ -1,6 +1,6 @@
-import Permission from "@/types/permissions";
+import Permission from "@/commonlib/types/permissions";
 import React from "react";
-import { PermErrCtxType } from "@/types/contextTypes";
+import { PermErrCtxType } from "@/commonlib/types/frontend/contextTypes";
 
 export const PermErrCtx = React.createContext<PermErrCtxType | null>(null);
 

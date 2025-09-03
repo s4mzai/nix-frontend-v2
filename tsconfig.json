@@ -21,6 +21,7 @@
     "outDir": "dist",
     "strictNullChecks": false,
     "paths": {
+      "@/types/*": ["./src/commonlib/types/*"],
       "@/*": ["./src/*"]
     }
   },
