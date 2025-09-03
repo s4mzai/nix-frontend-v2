@@ -92,6 +92,7 @@ export default function AddMember() {
         complete: async (results) => {
           const data = results.data as Record<string, string>[];
           const skippedRows: number[] = [];
+          const userData = [];
 
           for (let i = 0; i < data.length; i++) {
             const { name, email, role } = data[i];
@@ -101,39 +102,32 @@ export default function AddMember() {
             }
 
             const matchedRole = roles.find(
-              (r) => r.role_name.toLowerCase() === role.toLowerCase()
+              (r) => r.role_name.toLowerCase() === role.toLowerCase(),
             );
 
             if (!matchedRole) {
               errors.push(
-                `Invalid role for ${name}: ${role} in file ${file.name}`
+                `Invalid role for ${name}: ${role} in file ${file.name}`,
               );
               continue;
             }
 
-            try {
-              await API.post("/auth/signup", {
-                name,
-                username: email,
-                teamRole: matchedRole.role_id,
-              });
-              toast.success(`Added ${name} successfully from ${file.name}`);
-            } catch (e) {
-              if (e instanceof Error) {
-                errors.push(
-                  `Error adding ${name} from ${file.name}: ${e.message}`
-                );
-              } else {
-                errors.push(
-                  `Error adding ${name} from ${file.name}: Unknown error occurred.`
-                );
-              }
-            }
+            userData.push({
+              name: name,
+              email: email,
+              role_id: matchedRole.role_id,
+            });
+          }
+
+          try {
+            await API.post("/auth/post-add-users", { users: userData });
+          } catch (e) {
+            console.log(e);
           }
 
           if (skippedRows.length > 0) {
             toast.warning(
-              `The following rows were skipped in ${file.name} due to missing fields: ${skippedRows.join(", ")}`
+              `The following rows were skipped in ${file.name} due to missing fields: ${skippedRows.join(", ")}`,
             );
           }
 
@@ -192,7 +186,7 @@ export default function AddMember() {
     setIsDragging(false);
 
     const droppedFiles = Array.from(e.dataTransfer.files).filter(
-      (file) => file.type === "text/csv"
+      (file) => file.type === "text/csv",
     );
     if (droppedFiles.length === 0) {
       toast.error("Please drop only CSV files");
@@ -203,7 +197,7 @@ export default function AddMember() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []).filter(
-      (file) => file.type === "text/csv"
+      (file) => file.type === "text/csv",
     );
     if (newFiles.length === 0) {
       toast.error("Please select only CSV files");
@@ -214,7 +208,7 @@ export default function AddMember() {
 
   const handleFileDelete = (indexToDelete: number) => {
     setCsvFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToDelete)
+      prevFiles.filter((_, index) => index !== indexToDelete),
     );
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
