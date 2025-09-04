@@ -17,12 +17,9 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-      
-      - name: Get to work dir
-        run: cd $GITHUB_WORKSPACE && echo $GITHUB_WORKSPACE && ls -la
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run build task
         run: npm run build
@@ -46,5 +43,3 @@ jobs:
       - name: Deploy to web
         run: |
           rsync -vz --delete --recursive dist/ /var/www/nix-frontend/team.dtutimes.com
-
-
