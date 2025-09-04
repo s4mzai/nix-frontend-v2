@@ -42,5 +42,6 @@ jobs:
 
       - name: Deploy to web
         run: |
-          rsync -az --delete --no-o --no-g --no-perms ./dist/ /var/www/nix-frontend/team.dtutimes.com
+          rsync -vz --delete --recursive dist/ /var/www/nix-frontend/team.dtutimes.com
+
 
