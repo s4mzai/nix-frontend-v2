@@ -22,7 +22,7 @@ jobs:
         run: cd $GITHUB_WORKSPACE && echo $GITHUB_WORKSPACE && ls -la
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Run build task
         run: npm run build
