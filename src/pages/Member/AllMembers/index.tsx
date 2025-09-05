@@ -21,7 +21,7 @@ const initialState = {
 };
 const pluralMap: Record<string, string> = {
   alumni: "alumni",
-  "all members": "all the members",
+  "all members": "all members",
   developer: "developers",
   editor: "editors",
   columnist: "columnists",
@@ -171,8 +171,8 @@ export default function AllMembers() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12">
-      <h1>{roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}</h1>
+          <div className="max-w-4xl mx-auto py-12">
+        <h1>{pluralMap[roleFilter.toLowerCase()]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</h1>
       <p className="text-lg text-center mt-4 mb-10">
         List of {pluralMap[roleFilter.toLocaleLowerCase()] || roleFilter} of the DTU Times team.
       </p>
