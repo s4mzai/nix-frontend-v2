@@ -120,7 +120,7 @@ export default function AddMember() {
           }
 
           try {
-            await API.post("/auth/post-add-users", { users: userData });
+            await API.post("/auth/add-members", { users: userData });
           } catch (e) {
             console.log(e);
           }
