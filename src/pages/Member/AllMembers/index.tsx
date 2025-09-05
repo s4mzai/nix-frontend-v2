@@ -16,9 +16,23 @@ const initialState = {
   searchTerm: "",
   loading: true,
   currentPage: 1,
-  roleFilter: "all",
+  roleFilter: "all members",
   dateSort: "default" as "default" | "newest" | "oldest",
 };
+const pluralMap: Record<string, string> = {
+  alumni: "alumni",
+  "all members": "all the members",
+  developer: "developers",
+  editor: "editors",
+  columnist: "columnists",
+  designer: "designers",
+  illustrator: "illustrators",
+  photographer: "photographers",
+  coordinator: "coordinators",
+  npc: "npcs",
+  superhuman: "superhumans",
+};
+
 
 const enum ActionType {
   SetMemberList,
@@ -105,7 +119,7 @@ export default function AllMembers() {
   }, [isRoleOpen, isDateOpen]);
 
   const rolesOptions = [
-    "all",
+    "all members",
     "superhuman",
     "developer",
     "editor",
@@ -128,7 +142,7 @@ export default function AllMembers() {
     );
   })
   .filter((member) => {
-    if (!roleFilter || roleFilter === "all") return true;
+    if (!roleFilter || roleFilter === "all members") return true;
     return member?.role?.toLowerCase() === roleFilter.toLowerCase();
   })
   .sort((a, b) => {
@@ -158,9 +172,9 @@ export default function AllMembers() {
 
   return (
     <div className="max-w-4xl mx-auto py-12">
-      <h1>All Members</h1>
+      <h1>{roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}</h1>
       <p className="text-lg text-center mt-4 mb-10">
-        List of all the members of the DTU Times team.
+        List of {pluralMap[roleFilter.toLocaleLowerCase()] || roleFilter} of the DTU Times team.
       </p>
       <div className="px-3">
         <SearchBar
@@ -175,7 +189,7 @@ export default function AllMembers() {
               className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
               onClick={() => { setIsRoleOpen((v) => !v); setIsDateOpen(false); }}
             >
-                             Role
+                             {roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}
                <ChevronDownIcon className="h-4 w-4" />
             </button>
             {isRoleOpen && (
@@ -214,7 +228,7 @@ export default function AllMembers() {
                className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
                onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
              >
-                               Date
+                               {dateSort.charAt(0).toUpperCase() + dateSort.slice(1)}
                 <ChevronDownIcon className="h-4 w-4" />
              </button>
              {isDateOpen && (
