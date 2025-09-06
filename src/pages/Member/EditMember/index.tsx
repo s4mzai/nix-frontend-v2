@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import showPassIcon from "@/assets/show-password.png";
 import { AvatarImage } from "@/components/AvatarImage";
 import MyMultiselect from "@/components/MultiSelect";

@@ -89,7 +89,7 @@ export default function AddMember() {
     const warnings: string[] = [];
     const successfulUploads: string[] = [];
 
-    csvFiles.forEach((file, fileIndex) => {
+    csvFiles.forEach((file) => {
       Papa.parse(file, {
         complete: async (results) => {
           const data = results.data as Record<string, string>[];
@@ -99,7 +99,6 @@ export default function AddMember() {
           for (let i = 0; i < data.length; i++) {
             const { name, email, role } = data[i];
             if (!name || !email || !role) {
-              skippedRows.push(i + 1);
               continue;
             }
 
@@ -127,14 +126,10 @@ export default function AddMember() {
               successfulUploads.push(file.name);
             }
           } catch (e: any) {
-            const errorMessage = e?.response?.data?.message || e?.message || "Unknown error occurred";
-            
-            
-            if (errorMessage.toLowerCase().includes("already registered")) {
-              errors.push(`User already exists in ${file.name}: ${errorMessage}`);
-            } else {
-              errors.push(`Failed to upload ${file.name}: ${errorMessage}`);
-            }
+            const errorMessage =
+              e?.response?.data?.message || e?.message || "Some error occurred";
+
+            errors.push(`Error uploading ${file.name}\n${errorMessage}`);
           }
 
           if (skippedRows.length > 0) {
@@ -145,21 +140,28 @@ export default function AddMember() {
 
           processedCount++;
           if (processedCount === totalFiles) {
-            
             if (successfulUploads.length > 0) {
-              const successMessage = successfulUploads.length === 1 
-                ? `Successfully uploaded ${successfulUploads[0]} and members are added`
-                : `Successfully uploaded ${successfulUploads.length} files: ${successfulUploads.join(", ")} and members are added`;
+              const successMessage =
+                successfulUploads.length === 1
+                  ? `Successfully uploaded ${successfulUploads[0]} and members are added`
+                  : `Successfully uploaded ${successfulUploads.length} files: ${successfulUploads.join(", ")} and members are added`;
               toast.success(successMessage);
             }
 
-            
             if (warnings.length > 0) {
-              warnings.forEach(warning => toast.warning(warning));
+              warnings.forEach((warning) => toast.warning(warning));
             }
 
             if (errors.length > 0) {
-              errors.forEach(error => toast.error(error));
+              errors.forEach((error) =>
+                toast.error(
+                  <div>
+                    {error.split("\n").map((line, index) => (
+                      <div key={index}>{line}</div>
+                    ))}
+                  </div>,
+                ),
+              );
             }
 
             if (successfulUploads.length === 0 && errors.length === 0) {
@@ -178,7 +180,11 @@ export default function AddMember() {
   const downloadSampleCsv = () => {
     const sampleData = [
       ["name", "email", "role"],
-      ...roles.map((role, index) => ["John", `john${index + 1}@gmail.com`, role.role_name]),
+      ...roles.map((role, index) => [
+        "John",
+        `john${index + 1}@gmail.com`,
+        role.role_name,
+      ]),
     ];
 
     const csvContent =
@@ -439,7 +445,9 @@ export default function AddMember() {
 
         {/* Submit Button */}
         <button
-          className={`update-button bg-gray-50 text-black hover:bg-indigo-500 border p-3 rounded text-xl mt-4`}
+          className={
+            "update-button bg-indigo-500 text-white hover:bg-indigo-600 transition-all border px-3 py-1 rounded text-lg mt-4"
+          }
           type="submit"
         >
           {isMultiMember ? "Upload CSV" : "Register"}
