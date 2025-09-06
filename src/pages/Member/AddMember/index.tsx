@@ -86,6 +86,8 @@ export default function AddMember() {
     let processedCount = 0;
     const totalFiles = csvFiles.length;
     const errors: string[] = [];
+    const warnings: string[] = [];
+    const successfulUploads: string[] = [];
 
     csvFiles.forEach((file, fileIndex) => {
       Papa.parse(file, {
@@ -120,22 +122,50 @@ export default function AddMember() {
           }
 
           try {
-            await API.post("/auth/add-members", { users: userData });
-          } catch (e) {
-            console.log(e);
+            if (userData.length > 0) {
+              await API.post("/auth/add-members", { users: userData });
+              successfulUploads.push(file.name);
+            }
+          } catch (e: any) {
+            const errorMessage = e?.response?.data?.message || e?.message || "Unknown error occurred";
+            
+            
+            if (errorMessage.toLowerCase().includes("already registered")) {
+              errors.push(`User already exists in ${file.name}: ${errorMessage}`);
+            } else {
+              errors.push(`Failed to upload ${file.name}: ${errorMessage}`);
+            }
           }
 
           if (skippedRows.length > 0) {
-            toast.warning(
+            warnings.push(
               `The following rows were skipped in ${file.name} due to missing fields: ${skippedRows.join(", ")}`,
             );
           }
 
           processedCount++;
           if (processedCount === totalFiles) {
-            if (errors.length > 0) {
-              toast.error(errors.join("\n"));
+            
+            if (successfulUploads.length > 0) {
+              const successMessage = successfulUploads.length === 1 
+                ? `Successfully uploaded ${successfulUploads[0]} and members are added`
+                : `Successfully uploaded ${successfulUploads.length} files: ${successfulUploads.join(", ")} and members are added`;
+              toast.success(successMessage);
             }
+
+            
+            if (warnings.length > 0) {
+              warnings.forEach(warning => toast.warning(warning));
+            }
+
+            if (errors.length > 0) {
+              errors.forEach(error => toast.error(error));
+            }
+
+            if (successfulUploads.length === 0 && errors.length === 0) {
+              toast.warning("No valid data found in the uploaded files");
+            }
+
             setLoading(false);
             setCsvFiles([]);
           }
@@ -148,7 +178,7 @@ export default function AddMember() {
   const downloadSampleCsv = () => {
     const sampleData = [
       ["name", "email", "role"],
-      ...roles.map((role) => ["John", "john@doe.com", role.role_name]),
+      ...roles.map((role, index) => ["John", `john${index + 1}@gmail.com`, role.role_name]),
     ];
 
     const csvContent =
