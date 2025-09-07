@@ -10,15 +10,17 @@ import { useEffect } from "react";
 import { MEMBERS_PER_PAGE as perPage } from "@/config";
 import ChevronDownIcon from "@/assets/ChevronDownIcon";
 import CheckIcon from "@/assets/CheckIcon";
+import { pluralizeRole, capitalizeWords } from "@/utils/pluralize";
 
 const initialState = {
   membersList: [] as Member[],
   searchTerm: "",
   loading: true,
   currentPage: 1,
-  roleFilter: "all",
+  roleFilter: "all members",
   dateSort: "default" as "default" | "newest" | "oldest",
 };
+
 
 const enum ActionType {
   SetMemberList,
@@ -104,18 +106,11 @@ export default function AllMembers() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isRoleOpen, isDateOpen]);
 
+  // Generate roles options dynamically from members data
+  const uniqueRoles = Array.from(new Set(membersList.map(member => member.role.toLowerCase())));
   const rolesOptions = [
-    "all",
-    "superhuman",
-    "developer",
-    "editor",
-    "columnist",
-    "designer",
-    "alumni",
-    "illustrator",
-    "photographer",
-    "coordinator",
-    "npc",
+    "all members",
+    ...uniqueRoles.sort()
   ];
 
   const filteredMembers = membersList
@@ -128,7 +123,7 @@ export default function AllMembers() {
     );
   })
   .filter((member) => {
-    if (!roleFilter || roleFilter === "all") return true;
+    if (!roleFilter || roleFilter === "all members") return true;
     return member?.role?.toLowerCase() === roleFilter.toLowerCase();
   })
   .sort((a, b) => {
@@ -157,10 +152,10 @@ export default function AllMembers() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12">
-      <h1>All Members</h1>
+          <div className="max-w-4xl mx-auto py-12">
+        <h1>{capitalizeWords(pluralizeRole(roleFilter))}</h1>
       <p className="text-lg text-center mt-4 mb-10">
-        List of all the members of the DTU Times team.
+        List of {pluralizeRole(roleFilter)} of the DTU Times team.
       </p>
       <div className="px-3">
         <SearchBar
@@ -169,13 +164,17 @@ export default function AllMembers() {
             dispatch({ type: ActionType.SetSearchTerm, payload: value })
           }
         />
-        <div className="w-full flex flex-col sm:flex-row justify-center sm:justify-end gap-3 px-4 mb-4">
-          <div className="relative" ref={roleRef}>
+        <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-3 px-4 mb-4">
+          <div className="text-sm text-gray-600 order-2 sm:order-1">
+            <span className="font-semibold text-gray-900">{filteredMembers.length}</span> {filteredMembers.length !== 1 ? 'members' : 'member'} in this category
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 order-1 sm:order-2">
+            <div className="relative" ref={roleRef}>
             <button
               className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isRoleOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
               onClick={() => { setIsRoleOpen((v) => !v); setIsDateOpen(false); }}
             >
-                             Role
+                             {roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}
                <ChevronDownIcon className="h-4 w-4" />
             </button>
             {isRoleOpen && (
@@ -207,14 +206,14 @@ export default function AllMembers() {
                 </div>
               </div>
             )}
-          </div>
+            </div>
 
-                     <div className="relative" ref={dateRef}>
+            <div className="relative" ref={dateRef}>
              <button
                className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none text-gray-500 ${isDateOpen && "text-gray-900"} w-full sm:w-auto justify-center sm:justify-start`}
                onClick={() => { setIsDateOpen((v) => !v); setIsRoleOpen(false); }}
              >
-                               Date
+                               {dateSort.charAt(0).toUpperCase() + dateSort.slice(1)}
                 <ChevronDownIcon className="h-4 w-4" />
              </button>
              {isDateOpen && (
@@ -246,6 +245,7 @@ export default function AllMembers() {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
