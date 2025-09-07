@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { MEMBERS_PER_PAGE as perPage } from "@/config";
 import ChevronDownIcon from "@/assets/ChevronDownIcon";
 import CheckIcon from "@/assets/CheckIcon";
+import { pluralizeRole, capitalizeWords } from "@/utils/pluralize";
 
 const initialState = {
   membersList: [] as Member[],
@@ -18,19 +19,6 @@ const initialState = {
   currentPage: 1,
   roleFilter: "all members",
   dateSort: "default" as "default" | "newest" | "oldest",
-};
-const pluralMap: Record<string, string> = {
-  alumni: "alumni",
-  "all members": "all members",
-  developer: "developers",
-  editor: "editors",
-  columnist: "columnists",
-  designer: "designers",
-  illustrator: "illustrators",
-  photographer: "photographers",
-  coordinator: "coordinators",
-  npc: "npcs",
-  superhuman: "superhumans",
 };
 
 
@@ -118,18 +106,11 @@ export default function AllMembers() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isRoleOpen, isDateOpen]);
 
+  // Generate roles options dynamically from members data
+  const uniqueRoles = Array.from(new Set(membersList.map(member => member.role.toLowerCase())));
   const rolesOptions = [
     "all members",
-    "superhuman",
-    "developer",
-    "editor",
-    "columnist",
-    "designer",
-    "alumni",
-    "illustrator",
-    "photographer",
-    "coordinator",
-    "npc",
+    ...uniqueRoles.sort()
   ];
 
   const filteredMembers = membersList
@@ -172,9 +153,9 @@ export default function AllMembers() {
 
   return (
           <div className="max-w-4xl mx-auto py-12">
-        <h1>{pluralMap[roleFilter.toLowerCase()]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</h1>
+        <h1>{capitalizeWords(pluralizeRole(roleFilter))}</h1>
       <p className="text-lg text-center mt-4 mb-10">
-        List of {pluralMap[roleFilter.toLocaleLowerCase()] || roleFilter} of the DTU Times team.
+        List of {pluralizeRole(roleFilter)} of the DTU Times team.
       </p>
       <div className="px-3">
         <SearchBar
